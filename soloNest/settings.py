@@ -159,7 +159,7 @@ EMAIL_HOST_PASSWORD = _os.environ.get('EMAIL_HOST_PASSWORD', '')
 
 
 # ---- CSRF Trusted Origins ----
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000', 'https://*.loca.lt', 'https://*.serveo.net', 'https://*.lhr.life', 'https://*.serveousercontent.com']
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000', 'https://*.loca.lt', 'https://*.serveo.net', 'https://*.lhr.life', 'https://*.serveousercontent.com', 'https://*.onrender.com']
 
 
 # ---- Production HTTPS settings (enable via env vars when using SSL) ----
