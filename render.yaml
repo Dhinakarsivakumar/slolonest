@@ -1,9 +1,9 @@
 services:
   - type: web
-    name: solonest
+    name: slolonest
     runtime: python
     buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
-    startCommand: gunicorn soloNest.wsgi --log-file -
+    startCommand: gunicorn soloNest.wsgi:application --log-file -
     envVars:
       - key: DJANGO_SECRET_KEY
         generateValue: true
@@ -13,33 +13,22 @@ services:
         value: ".onrender.com,localhost,127.0.0.1"
       - key: DATABASE_URL
         fromDatabase:
-          name: solonest-db
+          name: slolonest-db
           property: connectionString
       - key: RAZORPAY_KEY_ID
         value: ""
       - key: RAZORPAY_KEY_SECRET
         value: ""
       - key: EMAIL_BACKEND
-        value: "django.core.mail.backends.smtp.EmailBackend"
-      - key: EMAIL_HOST
-        value: ""
-      - key: EMAIL_PORT
-        value: "587"
-      - key: EMAIL_USE_TLS
-        value: "True"
-      - key: EMAIL_HOST_USER
-        value: ""
-      - key: EMAIL_HOST_PASSWORD
-        value: ""
+        value: "django.core.mail.backends.console.EmailBackend"
       - key: DEFAULT_FROM_EMAIL
-        value: "SoloNest <noreply@solonest.onrender.com>"
+        value: "SoloNest <noreply@slolonest.onrender.com>"
       - key: OTP_DEV_MODE
-        value: "False"
+        value: "True"
       - key: CSRF_TRUSTED_ORIGINS
-        value: "https://*.onrender.com"
+        value: "https://slolonest.onrender.com"
 
 databases:
-  - name: solonest-db
-    databaseName: solonest
+  - name: slolonest-db
+    databaseName: slolonest
     plan: free
-
