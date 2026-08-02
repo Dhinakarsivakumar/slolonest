@@ -1,0 +1,23 @@
+{% extends 'core/base.html' %}
+{% block title %}Delete Listing — SoloNest{% endblock %}
+{% block content %}
+<div class="container" style="max-width:480px;padding:60px 24px;">
+  <div class="form-section" style="text-align:center;">
+    <div style="width:60px;height:60px;border-radius:50%;background:var(--red-soft);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+    </div>
+    <h2 style="color:var(--red);margin-bottom:8px;">Delete this listing?</h2>
+    <p style="margin-bottom:28px;">This will permanently remove <strong>{{ listing.title }}</strong> and all its photos. This action cannot be undone.</p>
+    <div style="display:flex;gap:12px;justify-content:center;">
+      <a href="{% url 'dashboard' %}" class="btn btn-outline">Cancel</a>
+      <form method="post" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          Yes, delete it
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,163 @@
+{% extends 'core/base.html' %}
+{% block title %}Help & FAQ — SoloNest{% endblock %}
+{% block content %}
+
+<!-- Hero -->
+<div style="background:linear-gradient(135deg,var(--navy) 0%,#1E3A5F 100%);padding:60px 0 70px;">
+  <div class="container" style="text-align:center;">
+    <div style="display:inline-flex;align-items:center;gap:8px;font-size:.78rem;font-weight:700;color:var(--amber-400);text-transform:uppercase;letter-spacing:.1em;padding:6px 14px;background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.25);border-radius:999px;margin-bottom:20px;">
+      <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+      Support Center
+    </div>
+    <h1 style="color:#fff;font-size:clamp(1.8rem,5vw,3rem);letter-spacing:-.02em;margin-bottom:14px;">How can we help you?</h1>
+    <p style="color:rgba(255,255,255,.65);font-size:1.05rem;max-width:500px;margin:0 auto;">Everything you need to know about booking rooms and listing your space on SoloNest.</p>
+  </div>
+</div>
+
+<div class="container" style="padding:60px 24px;max-width:900px;">
+
+  <!-- Quick links -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:56px;">
+    <a href="#for-guests" class="form-section" style="text-align:center;text-decoration:none;transition:box-shadow .2s,transform .2s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--shadow-lg)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+      <div style="font-size:2rem;margin-bottom:10px;">🧳</div>
+      <h3 style="margin:0 0 4px;font-size:1rem;">For Guests</h3>
+      <p style="font-size:.82rem;margin:0;">Finding &amp; booking rooms</p>
+    </a>
+    <a href="#for-owners" class="form-section" style="text-align:center;text-decoration:none;transition:box-shadow .2s,transform .2s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--shadow-lg)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+      <div style="font-size:2rem;margin-bottom:10px;">🏠</div>
+      <h3 style="margin:0 0 4px;font-size:1rem;">For Owners</h3>
+      <p style="font-size:.82rem;margin:0;">Listing &amp; managing rooms</p>
+    </a>
+    <a href="#payments" class="form-section" style="text-align:center;text-decoration:none;transition:box-shadow .2s,transform .2s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--shadow-lg)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+      <div style="font-size:2rem;margin-bottom:10px;">💳</div>
+      <h3 style="margin:0 0 4px;font-size:1rem;">Payments</h3>
+      <p style="font-size:.82rem;margin:0;">Pricing &amp; transactions</p>
+    </a>
+    <a href="#safety" class="form-section" style="text-align:center;text-decoration:none;transition:box-shadow .2s,transform .2s;" onmouseover="this.style.transform='translateY(-3px)';this.style.boxShadow='var(--shadow-lg)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+      <div style="font-size:2rem;margin-bottom:10px;">🛡️</div>
+      <h3 style="margin:0 0 4px;font-size:1rem;">Safety &amp; Trust</h3>
+      <p style="font-size:.82rem;margin:0;">Verification &amp; reports</p>
+    </a>
+  </div>
+
+  <!-- FAQ: Guests -->
+  <div id="for-guests" style="margin-bottom:48px;">
+    <h2 style="margin-bottom:24px;display:flex;align-items:center;gap:10px;">
+      <span style="font-size:1.5rem;">🧳</span> For Guests
+    </h2>
+
+    <div class="faq-item form-section" style="margin-bottom:12px;">
+      <h3 style="margin:0 0 8px;font-size:1rem;color:var(--indigo-600);">How do I book a room?</h3>
+      <p style="margin:0;">Browse rooms on the home page, click <strong>Book Now</strong> on any listing, choose your check-in and check-out dates, add a short message to the owner, and submit. The owner will review and approve or decline within 24 hours.</p>
+    </div>
+
+    <div class="faq-item form-section" style="margin-bottom:12px;">
+      <h3 style="margin:0 0 8px;font-size:1rem;color:var(--indigo-600);">Can I book without creating an account?</h3>
+      <p style="margin:0;">No. You need a free guest account to request a booking. Sign up takes under a minute — you can also continue with Google.</p>
+    </div>
+
+    <div class="faq-item form-section" style="margin-bottom:12px;">
+      <h3 style="margin:0 0 8px;font-size:1rem;color:var(--indigo-600);">What do I do if my booking is approved?</h3>
+      <p style="margin:0;">You'll receive a notification. Go to your <strong>Dashboard</strong>, open the booking, and pay securely through Razorpay. Then contact the owner directly via the in-app chat or phone.</p>
+    </div>
+
+    <div class="faq-item form-section" style="margin-bottom:12px;">
+      <h3 style="margin:0 0 8px;font-size:1rem;color:var(--indigo-600);">Can I cancel a booking?</h3>
+      <p style="margin:0;">Yes. Go to the booking detail page and click <strong>Cancel Request</strong> while the booking is still in <em>Requested</em> or <em>Approved</em> status. Once a stay is completed, it cannot be cancelled.</p>
+    </div>
+
+    <div class="faq-item form-section" style="margin-bottom:12px;">
+      <h3 style="margin:0 0 8px;font-size:1rem;color:var(--indigo-600);">How do I filter rooms by city and dates?</h3>
+      <p style="margin:0;">Use the search bar at the top of the home page. Enter a city name, select check-in and check-out dates, and click <strong>Search</strong>. The results will only show rooms available for those specific dates.</p>
+    </div>
+  </div>
+
+  <!-- FAQ: Owners -->
+  <div id="for-owners" style="margin-bottom:48px;">
+    <h2 style="margin-bottom:24px;display:flex;align-items:center;gap:10px;">
+      <span style="font-size:1.5rem;">🏠</span> For Owners
+    </h2>
+
+    <div class="faq-item form-section" style="margin-bottom:12px;">
+      <h3 style="margin:0 0 8px;font-size:1rem;color:var(--indigo-600);">How do I list my room?</h3>
+      <p style="margin:0;">Create or switch to an <strong>Owner</strong> account in Profile Settings. Then click <strong>List Your Room</strong> in the navigation bar. Fill in the room details, set a price (per day and/or per month), add up to 5 photos, and publish.</p>
+    </div>
+
+    <div class="faq-item form-section" style="margin-bottom:12px;">
+      <h3 style="margin:0 0 8px;font-size:1rem;color:var(--indigo-600);">Why does my listing show "Pending verification"?</h3>
+      <p style="margin:0;">New listings are reviewed by our team before getting a <em>Verified</em> badge. This usually takes under 24 hours. Submit your government ID in <strong>Profile Settings → ID Verification</strong> to speed up the process.</p>
+    </div>
+
+    <div class="faq-item form-section" style="margin-bottom:12px;">
+      <h3 style="margin:0 0 8px;font-size:1rem;color:var(--indigo-600);">How do I approve or reject a booking request?</h3>
+      <p style="margin:0;">Go to your <strong>Dashboard</strong>, find the booking request, click <strong>View</strong>, and use the <strong>Approve</strong> or <strong>Reject</strong> buttons. The guest is instantly notified either way.</p>
+    </div>
+
+    <div class="faq-item form-section" style="margin-bottom:12px;">
+      <h3 style="margin:0 0 8px;font-size:1rem;color:var(--indigo-600);">How do I add latitude/longitude for map display?</h3>
+      <p style="margin:0;">Open Google Maps, right-click your room's exact location, and copy the coordinates shown at the top of the menu (e.g. 13.0827, 80.2707). Paste them into the Latitude and Longitude fields in your listing form.</p>
+    </div>
+
+    <div class="faq-item form-section" style="margin-bottom:12px;">
+      <h3 style="margin:0 0 8px;font-size:1rem;color:var(--indigo-600);">Can I edit or delete my listing?</h3>
+      <p style="margin:0;">Yes. On the Dashboard, click the ⋮ menu on any listing card and choose <strong>Edit</strong> or <strong>Delete</strong>. Deleting a listing also removes all its photos permanently.</p>
+    </div>
+  </div>
+
+  <!-- FAQ: Payments -->
+  <div id="payments" style="margin-bottom:48px;">
+    <h2 style="margin-bottom:24px;display:flex;align-items:center;gap:10px;">
+      <span style="font-size:1.5rem;">💳</span> Payments
+    </h2>
+
+    <div class="faq-item form-section" style="margin-bottom:12px;">
+      <h3 style="margin:0 0 8px;font-size:1rem;color:var(--indigo-600);">What payment methods are accepted?</h3>
+      <p style="margin:0;">SoloNest uses <strong>Razorpay</strong> which supports UPI, Credit/Debit cards, Net Banking, and Wallets (Paytm, PhonePe, etc.).</p>
+    </div>
+
+    <div class="faq-item form-section" style="margin-bottom:12px;">
+      <h3 style="margin:0 0 8px;font-size:1rem;color:var(--indigo-600);">Is my payment information secure?</h3>
+      <p style="margin:0;">Yes. SoloNest never stores your card details. All transactions are handled by Razorpay (PCI DSS compliant) with 256-bit encryption.</p>
+    </div>
+
+    <div class="faq-item form-section" style="margin-bottom:12px;">
+      <h3 style="margin:0 0 8px;font-size:1rem;color:var(--indigo-600);">Are there any broker fees or hidden charges?</h3>
+      <p style="margin:0;">No. SoloNest charges no broker fees. You pay exactly what the owner lists. The owner receives the full amount.</p>
+    </div>
+  </div>
+
+  <!-- FAQ: Safety -->
+  <div id="safety" style="margin-bottom:48px;">
+    <h2 style="margin-bottom:24px;display:flex;align-items:center;gap:10px;">
+      <span style="font-size:1.5rem;">🛡️</span> Safety &amp; Trust
+    </h2>
+
+    <div class="faq-item form-section" style="margin-bottom:12px;">
+      <h3 style="margin:0 0 8px;font-size:1rem;color:var(--indigo-600);">What does "Verified" mean on a listing?</h3>
+      <p style="margin:0;">Verified listings have been reviewed by our team and the owner has submitted a government ID. It doesn't guarantee the room quality but confirms the listing is genuine.</p>
+    </div>
+
+    <div class="faq-item form-section" style="margin-bottom:12px;">
+      <h3 style="margin:0 0 8px;font-size:1rem;color:var(--indigo-600);">How do I report a suspicious listing?</h3>
+      <p style="margin:0;">Open the listing detail page and click <strong>Report</strong> in the booking box. Select a reason and add details. Our team reviews all reports within 48 hours.</p>
+    </div>
+
+    <div class="faq-item form-section" style="margin-bottom:12px;">
+      <h3 style="margin:0 0 8px;font-size:1rem;color:var(--indigo-600);">What should I do if I suspect a scam?</h3>
+      <p style="margin:0;">Never pay anyone outside of SoloNest's official payment page. If an owner asks for money via UPI/bank transfer before booking, report the listing immediately. SoloNest will never ask you to pay externally.</p>
+    </div>
+  </div>
+
+  <!-- Contact CTA -->
+  <div class="form-section" style="text-align:center;background:linear-gradient(135deg,var(--indigo-50),#F5F3FF);">
+    <div style="font-size:2rem;margin-bottom:12px;">💬</div>
+    <h3 style="margin:0 0 8px;">Still have questions?</h3>
+    <p style="margin:0 0 20px;max-width:400px;margin-left:auto;margin-right:auto;">Can't find your answer? Reach out — we usually respond within a few hours.</p>
+    <a href="mailto:support@solonest.in" class="btn btn-primary">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      Email support
+    </a>
+  </div>
+
+</div>
+{% endblock %}

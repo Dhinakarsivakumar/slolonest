@@ -1,0 +1,53 @@
+{% extends 'core/base.html' %}
+{% block title %}Favorites — SoloNest{% endblock %}
+{% block content %}
+<div class="container" style="padding:40px 24px;">
+
+  <div class="section-head" style="margin-bottom:24px;">
+    <h2>
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--indigo-600)" stroke-width="2" stroke-linecap="round" style="display:inline;vertical-align:middle;margin-right:8px"><path d="M12 21s-7-4.35-9.5-9C.5 8 2 4 6 4c2 0 3.5 1 6 3.5C14.5 5 16 4 18 4c4 0 5.5 4 3.5 8-2.5 4.65-9.5 9-9.5 9z"/></svg>
+      Saved Rooms
+    </h2>
+    <a href="{% url 'home' %}" class="btn btn-outline btn-small">Browse more</a>
+  </div>
+
+  {% if favorites %}
+  <div class="grid">
+    {% for fav in favorites %}
+    <div class="card">
+      <a href="{% url 'listing_detail' fav.listing.pk %}" style="display:block;">
+        <div class="card-arch">
+          {% with photo=fav.listing.images.first %}
+            {% if photo %}<img src="{{ photo.image.url }}" alt="{{ fav.listing.title }}" loading="lazy">
+            {% else %}<div class="window"></div>{% endif %}
+          {% endwith %}
+        </div>
+        <div class="card-body">
+          <h3>{{ fav.listing.title }}</h3>
+          <div class="card-meta">{{ fav.listing.city }}</div>
+          <div class="tag-row">
+            {% if fav.listing.is_verified %}<span class="tag verified">✓ Verified</span>{% endif %}
+            <span class="tag">{{ fav.listing.get_room_type_display }}</span>
+          </div>
+          {% if fav.listing.price_per_day %}
+          <div class="price">₹{{ fav.listing.price_per_day|floatformat:0 }} <span>/day</span></div>
+          {% endif %}
+        </div>
+      </a>
+      <div class="card-actions">
+        <a href="{% url 'listing_detail' fav.listing.pk %}" class="btn btn-outline btn-small">Details</a>
+        <a href="{% url 'listing_detail' fav.listing.pk %}#bookingBox" class="btn btn-amber btn-small">Book Now</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-state-icon">💝</div>
+    <p>No saved rooms yet.<br>Tap the <strong>♥</strong> heart on any room to save it here.</p>
+    <a href="{% url 'home' %}" class="btn btn-primary" style="margin-top:16px;">Browse rooms</a>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

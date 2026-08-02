@@ -1,0 +1,243 @@
+{% extends 'core/base.html' %}
+{% block title %}{% if editing %}Edit Listing{% else %}List Your Room{% endif %} — SoloNest{% endblock %}
+{% block content %}
+<div class="listing-form-wrap">
+
+  <div class="section-head" style="margin-bottom:28px;">
+    <h2>
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--indigo-600)" stroke-width="2" stroke-linecap="round" style="display:inline;vertical-align:middle;margin-right:8px"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      {% if editing %}Edit Your Room{% else %}List Your Room{% endif %}
+    </h2>
+  </div>
+
+  {% if editing and listing.images.all %}
+  <div class="form-section" style="margin-bottom:16px;">
+    <div class="form-section-title">Current Photos</div>
+    <div class="photo-strip">
+      {% for img in listing.images.all %}<img src="{{ img.image.url }}" alt="Room photo">{% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Global form errors -->
+  {% if form.errors %}
+  <div style="background:#FEF2F2;border:1px solid #FCA5A5;border-radius:var(--radius);padding:16px 20px;margin-bottom:20px;">
+    <strong style="color:#991B1B;display:flex;align-items:center;gap:6px;">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#991B1B" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      Please fix the errors below before publishing:
+    </strong>
+    <ul style="margin:8px 0 0 20px;color:#B91C1C;font-size:.88rem;">
+      {% for field in form %}
+        {% for error in field.errors %}
+          <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+        {% endfor %}
+      {% endfor %}
+      {% for error in form.non_field_errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- ── Section 1: Basic Info ── -->
+    <div class="form-section">
+      <div class="form-section-title">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        Basic Info
+      </div>
+
+      <div class="form-row">
+        {{ form.title.label_tag }}
+        {{ form.title }}
+        {% for error in form.title.errors %}<div class="help" style="color:var(--red);">{{ error }}</div>{% endfor %}
+      </div>
+
+      <div class="form-row">
+        {{ form.description.label_tag }}
+        {{ form.description }}
+        {% for error in form.description.errors %}<div class="help" style="color:var(--red);">{{ error }}</div>{% endfor %}
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="form-row" style="margin-bottom:0;">
+          {{ form.room_type.label_tag }}
+          {{ form.room_type }}
+          {% for error in form.room_type.errors %}<div class="help" style="color:var(--red);">{{ error }}</div>{% endfor %}
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+          {{ form.gender_preference.label_tag }}
+          {{ form.gender_preference }}
+          {% for error in form.gender_preference.errors %}<div class="help" style="color:var(--red);">{{ error }}</div>{% endfor %}
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-top:16px;">
+        {{ form.stay_type.label_tag }}
+        {{ form.stay_type }}
+        <span class="help">Choose what kind of bookings you'll accept.</span>
+        {% for error in form.stay_type.errors %}<div class="help" style="color:var(--red);">{{ error }}</div>{% endfor %}
+      </div>
+
+      <div class="form-row">
+        {{ form.is_available.label_tag }}
+        <label class="checkbox-row" style="margin-top:4px;">
+          {{ form.is_available }} <span>Room is currently available for booking</span>
+        </label>
+        {% for error in form.is_available.errors %}<div class="help" style="color:var(--red);">{{ error }}</div>{% endfor %}
+      </div>
+    </div>
+
+    <!-- ── Section 2: Location ── -->
+    <div class="form-section">
+      <div class="form-section-title">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Location
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="form-row" style="margin-bottom:0;">
+          {{ form.city.label_tag }}
+          {{ form.city }}
+          {% for error in form.city.errors %}<div class="help" style="color:var(--red);">{{ error }}</div>{% endfor %}
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+          {{ form.area.label_tag }}
+          {{ form.area }}
+          {% for error in form.area.errors %}<div class="help" style="color:var(--red);">{{ error }}</div>{% endfor %}
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-top:16px;">
+        {{ form.address.label_tag }}
+        {{ form.address }}
+        {% for error in form.address.errors %}<div class="help" style="color:var(--red);">{{ error }}</div>{% endfor %}
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="form-row" style="margin-bottom:0;">
+          {{ form.latitude.label_tag }}
+          {{ form.latitude }}
+          <span class="help">Optional — shows pin on map</span>
+          {% for error in form.latitude.errors %}<div class="help" style="color:var(--red);">{{ error }}</div>{% endfor %}
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+          {{ form.longitude.label_tag }}
+          {{ form.longitude }}
+          <span class="help">Right-click on Google Maps to copy</span>
+          {% for error in form.longitude.errors %}<div class="help" style="color:var(--red);">{{ error }}</div>{% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 3: Pricing ── -->
+    <div class="form-section">
+      <div class="form-section-title">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        Pricing (₹)
+      </div>
+      <p class="help" style="margin-bottom:14px;">Set at least one price. You can set both if you accept daily and monthly stays.</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="form-row" style="margin-bottom:0;">
+          {{ form.price_per_day.label_tag }}
+          {{ form.price_per_day }}
+          {% for error in form.price_per_day.errors %}<div class="help" style="color:var(--red);">{{ error }}</div>{% endfor %}
+        </div>
+        <div class="form-row" style="margin-bottom:0;">
+          {{ form.price_per_month.label_tag }}
+          {{ form.price_per_month }}
+          {% for error in form.price_per_month.errors %}<div class="help" style="color:var(--red);">{{ error }}</div>{% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section 4: Amenities ── -->
+    <div class="form-section">
+      <div class="form-section-title">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg>
+        Amenities
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;">
+        <label class="checkbox-row">{{ form.wifi }} <span>📶 WiFi</span></label>
+        <label class="checkbox-row">{{ form.ac }} <span>❄️ AC</span></label>
+        <label class="checkbox-row">{{ form.attached_bathroom }} <span>🚿 Attached Bathroom</span></label>
+        <label class="checkbox-row">{{ form.food_included }} <span>🍽️ Food Included</span></label>
+        <label class="checkbox-row">{{ form.parking }} <span>🅿️ Parking</span></label>
+      </div>
+    </div>
+
+    <!-- ── Section 5: Photos ── -->
+    <div class="form-section">
+      <div class="form-section-title">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        {% if editing %}Add More Photos{% else %}Photos{% endif %}
+      </div>
+      <div class="photo-slots" id="photoSlots">
+        {% for i in '01234' %}
+        <label class="photo-slot" data-slot="{{ forloop.counter0 }}">
+          <input type="file" name="photos" accept="image/*" hidden>
+          <span class="slot-plus">+</span>
+          <span class="slot-label">Photo {{ forloop.counter }}</span>
+          <img class="slot-preview" alt="">
+        </label>
+        {% endfor %}
+      </div>
+      <div class="help" style="margin-top:8px;">First slot becomes the main photo shown in search results. JPG/PNG only.</div>
+    </div>
+
+    <button class="btn btn-amber btn-lg w-full" type="submit" id="submitBtn">
+      {% if editing %}
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      Save changes
+      {% else %}
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      Publish listing
+      {% endif %}
+    </button>
+  </form>
+
+  {% if editing %}
+  <div style="text-align:center;margin-top:20px;">
+    <a href="{% url 'delete_listing' listing.pk %}" style="font-size:.85rem;color:var(--red);font-weight:500;">Delete this listing</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function(){
+  // Photo slot preview
+  document.querySelectorAll('.photo-slot').forEach(function(slot){
+    var input = slot.querySelector('input[type=file]');
+    var img   = slot.querySelector('.slot-preview');
+    if(!input) return;
+    input.addEventListener('change', function(){
+      if(input.files && input.files[0]){
+        var reader = new FileReader();
+        reader.onload = function(e){
+          img.src = e.target.result;
+          slot.classList.add('filled');
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    });
+  });
+
+  // Prevent double-submit
+  document.querySelector('form').addEventListener('submit', function(){
+    var btn = document.getElementById('submitBtn');
+    if(btn){
+      btn.disabled = true;
+      btn.innerHTML = '<svg viewBox="0 0 24 24" width="17" height="17" class="spin" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg> Publishing...';
+    }
+  });
+})();
+</script>
+<style>
+.spin { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+{% endblock %}

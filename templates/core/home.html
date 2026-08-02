@@ -1,0 +1,277 @@
+{% extends 'core/base.html' %}
+{% block title %}SoloNest — Find affordable rooms for solo travelers{% endblock %}
+{% block content %}
+
+<!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-inner">
+
+      <div class="hero-eyebrow fade-up">
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg>
+        Verified rooms across India
+      </div>
+
+      <h1 class="fade-up-2">
+        Find your perfect <em>solo stay</em><br>without the hotel price
+      </h1>
+
+      <p class="hero-sub fade-up-3">
+        Safe, affordable rooms for students, travelers &amp; interview candidates.<br>
+        Book daily or monthly — no broker fees.
+      </p>
+
+      <!-- Search bar -->
+      <form method="get" action="{% url 'home' %}" id="filtersForm" class="fade-up-3">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" style="flex-shrink:0"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="text" name="city" placeholder="Search city, area or landmark…" value="{{ filters.city|default:'' }}" id="citySearch" autocomplete="off">
+          <div class="search-divider"></div>
+
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <input type="date" name="check_in"  value="{{ filters.check_in|default:'' }}"  title="Check-in date"  placeholder="Check in">
+          <div class="search-divider"></div>
+          <input type="date" name="check_out" value="{{ filters.check_out|default:'' }}" title="Check-out date" placeholder="Check out">
+
+          <button type="submit" class="btn btn-amber">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            Search
+          </button>
+        </div>
+      </form>
+
+      <!-- Quick city chips -->
+      <div class="city-chips fade-up-3">
+        {% for city in popular_cities %}
+        <button type="button" class="city-chip {% if filters.city == city %}active{% endif %}" data-city="{{ city }}">{{ city }}</button>
+        {% endfor %}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ══════════════════════ LISTINGS + FILTERS ══════════════════════════ -->
+<section style="padding: 40px 0 60px;">
+  <div class="container">
+    <div class="layout-with-sidebar">
+
+      <!-- ── Sidebar filters ── -->
+      <aside class="filters-panel">
+        <div class="filters-title">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+          Filters
+        </div>
+
+        <div class="filter-block">
+          <h4>Room type</h4>
+          <div class="chip-row">
+            <label class="check-line"><input type="radio" name="room_type" value="" form="filtersForm" {% if not filters.room_type %}checked{% endif %} onchange="filtersForm.submit()"> Any</label>
+            <label class="check-line"><input type="radio" name="room_type" value="private" form="filtersForm" {% if filters.room_type == 'private' %}checked{% endif %} onchange="filtersForm.submit()"> Private</label>
+            <label class="check-line"><input type="radio" name="room_type" value="shared"  form="filtersForm" {% if filters.room_type == 'shared'  %}checked{% endif %} onchange="filtersForm.submit()"> Shared</label>
+            <label class="check-line"><input type="radio" name="room_type" value="pg"      form="filtersForm" {% if filters.room_type == 'pg'      %}checked{% endif %} onchange="filtersForm.submit()"> PG</label>
+          </div>
+        </div>
+
+        <div class="filter-block">
+          <h4>Price / day (₹)</h4>
+          <div class="range-slider">
+            <div class="range-track"></div>
+            <div class="range-fill" id="rangeFill"></div>
+            <input type="range" id="minPrice" name="min_price" min="0"   max="2000" step="50" value="{{ filters.min_price|default:'0' }}"    form="filtersForm">
+            <input type="range" id="maxPrice" name="max_price" min="0"   max="2000" step="50" value="{{ filters.max_price|default:'2000' }}"  form="filtersForm">
+          </div>
+          <div class="range-values">
+            <span id="minPriceLabel">₹0</span>
+            <span id="maxPriceLabel">₹2000</span>
+          </div>
+        </div>
+
+        <div class="filter-block">
+          <h4>Amenities</h4>
+          <label class="check-line"><input type="checkbox" name="wifi" value="1" form="filtersForm" {% if filters.wifi %}checked{% endif %} onchange="filtersForm.submit()">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12.55a11 11 0 0 1 14.08 0"/><path d="M1.42 9a16 16 0 0 1 21.16 0"/><path d="M8.53 16.11a6 6 0 0 1 6.95 0"/><circle cx="12" cy="20" r="1" fill="currentColor"/></svg>
+            WiFi
+          </label>
+          <label class="check-line"><input type="checkbox" name="ac" value="1" form="filtersForm" {% if filters.ac %}checked{% endif %} onchange="filtersForm.submit()">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="6" width="20" height="8" rx="2"/><line x1="6" y1="14" x2="6" y2="18"/><line x1="10" y1="14" x2="10" y2="18"/><line x1="14" y1="14" x2="14" y2="18"/><line x1="18" y1="14" x2="18" y2="18"/></svg>
+            AC
+          </label>
+          <label class="check-line"><input type="checkbox" name="food" value="1" form="filtersForm" {% if filters.food %}checked{% endif %} onchange="filtersForm.submit()">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+            Food included
+          </label>
+          <label class="check-line"><input type="checkbox" name="parking" value="1" form="filtersForm" {% if filters.parking %}checked{% endif %} onchange="filtersForm.submit()">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 17V7h4a3 3 0 0 1 0 6H9"/></svg>
+            Parking
+          </label>
+        </div>
+
+        <div class="filter-block">
+          <h4>Preference</h4>
+          <label class="check-line"><input type="radio" name="gender" value="female" form="filtersForm" {% if filters.gender == 'female' %}checked{% endif %} onchange="filtersForm.submit()">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M12 12v8M9 18h6"/></svg>
+            Female-only
+          </label>
+          <label class="check-line"><input type="radio" name="gender" value="male" form="filtersForm" {% if filters.gender == 'male' %}checked{% endif %} onchange="filtersForm.submit()">
+            Male-only
+          </label>
+          <label class="check-line"><input type="radio" name="gender" value="" form="filtersForm" {% if not filters.gender %}checked{% endif %} onchange="filtersForm.submit()">
+            Any
+          </label>
+        </div>
+
+        <button class="btn btn-primary w-full" type="submit" form="filtersForm">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Apply filters
+        </button>
+        <a href="{% url 'home' %}" class="help text-center mt-8" style="display:block;margin-top:10px;">✕ Clear all filters</a>
+      </aside>
+
+      <!-- ── Results panel ── -->
+      <div class="results-panel">
+        <div class="section-head">
+          <h2>Available rooms</h2>
+          <span class="count-pill">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="margin-right:4px"><circle cx="12" cy="12" r="10"/></svg>
+            {{ listings|length }} listing{{ listings|length|pluralize }}
+          </span>
+        </div>
+
+        <div id="mapView" class="map-view">
+          <div class="map-empty">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" style="margin:0 auto 8px;display:block"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            Map will appear when listings have coordinates
+          </div>
+        </div>
+
+        {% if listings %}
+        <div class="grid grid-with-sidebar">
+          {% for listing in listings %}
+          <div class="card">
+            {% if user.is_authenticated %}
+            <form method="post" action="{% url 'toggle_favorite' listing.pk %}">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.get_full_path }}">
+              <button type="submit" class="fav-btn {% if listing.pk in favorited_ids %}active{% endif %}" aria-label="Save to favorites">
+                <svg viewBox="0 0 24 24" fill="{% if listing.pk in favorited_ids %}#F43F5E{% else %}none{% endif %}" stroke="{% if listing.pk in favorited_ids %}#F43F5E{% else %}#FDA4AF{% endif %}" stroke-width="2"><path d="M12 21s-7-4.35-9.5-9C.5 8 2 4 6 4c2 0 3.5 1 6 3.5C14.5 5 16 4 18 4c4 0 5.5 4 3.5 8-2.5 4.65-9.5 9-9.5 9z"/></svg>
+              </button>
+            </form>
+            {% endif %}
+
+            <a href="{% url 'listing_detail' listing.pk %}" style="display:block;">
+              <div class="card-arch">
+                {% with photo=listing.images.first %}
+                  {% if photo %}<img src="{{ photo.image.url }}" alt="{{ listing.title }}" loading="lazy">
+                  {% else %}<div class="window"></div>{% endif %}
+                {% endwith %}
+              </div>
+              <div class="card-body">
+                <h3>{{ listing.title }}</h3>
+                <div class="card-meta">{{ listing.area }}{% if listing.area %}, {% endif %}{{ listing.city }}</div>
+                <div class="tag-row">
+                  {% if listing.is_verified %}<span class="tag verified">✓ Verified</span>{% endif %}
+                  <span class="tag">{{ listing.get_room_type_display }}</span>
+                  {% if listing.gender_preference == 'female' %}<span class="tag female">♀ Female only</span>
+                  {% elif listing.gender_preference == 'male' %}<span class="tag">♂ Male only</span>{% endif %}
+                </div>
+                <div class="price-row">
+                  {% if listing.price_per_day %}<div class="price">₹{{ listing.price_per_day|floatformat:0 }} <span>/day</span></div>{% endif %}
+                  {% if listing.price_per_month %}<div class="price">₹{{ listing.price_per_month|floatformat:0 }} <span>/mo</span></div>{% endif %}
+                </div>
+              </div>
+            </a>
+
+            <div class="card-actions">
+              <a href="{% url 'listing_detail' listing.pk %}" class="btn btn-outline btn-small">Details</a>
+              <a href="{% url 'listing_detail' listing.pk %}#bookingBox" class="btn btn-amber btn-small">Book Now</a>
+              {% if listing.owner.phone %}
+              <a href="tel:{{ listing.owner.phone }}" class="call-btn" title="Call owner" aria-label="Call owner">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8c1.4 2.8 3.7 5.1 6.5 6.5l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1L6.6 10.8z"/></svg>
+              </a>
+              {% else %}
+              <span class="call-btn disabled" title="No phone">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8c1.4 2.8 3.7 5.1 6.5 6.5l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.6 21 3 13.4 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.4 0 .8-.2 1L6.6 10.8z"/></svg>
+              </span>
+              {% endif %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        {% else %}
+        <div class="empty-state">
+          <div class="empty-state-icon">🏠</div>
+          <p>No rooms match your search. Try different filters or <a href="{% url 'signup' %}" style="color:var(--indigo-600);font-weight:600;">list a room</a>.</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(function(){
+  // City chips
+  document.querySelectorAll('.city-chip').forEach(function(chip){
+    chip.addEventListener('click', function(){
+      var form = document.getElementById('filtersForm');
+      form.querySelectorAll('input[name=city]').forEach(function(i){ i.remove(); });
+      var input = document.createElement('input');
+      input.type='hidden'; input.name='city'; input.value=chip.dataset.city;
+      form.appendChild(input);
+      form.submit();
+    });
+  });
+
+  // Dual range slider
+  var minEl = document.getElementById('minPrice');
+  var maxEl = document.getElementById('maxPrice');
+  var fill  = document.getElementById('rangeFill');
+  var minLbl= document.getElementById('minPriceLabel');
+  var maxLbl= document.getElementById('maxPriceLabel');
+
+  function updateSlider(){
+    var min=parseInt(minEl.value), max=parseInt(maxEl.value);
+    if(min > max-50){ min=max-50; minEl.value=min; }
+    var range=2000;
+    fill.style.left  = (min/range*100)+'%';
+    fill.style.right = ((range-max)/range*100)+'%';
+    minLbl.textContent = '₹'+min;
+    maxLbl.textContent = '₹'+max;
+  }
+  if(minEl && maxEl){
+    minEl.addEventListener('input', updateSlider);
+    maxEl.addEventListener('input', updateSlider);
+    minEl.addEventListener('change', function(){ document.getElementById('filtersForm').submit(); });
+    maxEl.addEventListener('change', function(){ document.getElementById('filtersForm').submit(); });
+    updateSlider();
+  }
+
+  // Leaflet map
+  var points = {{ map_points_json|safe }};
+  var mapEl  = document.getElementById('mapView');
+  if(mapEl && points.length){
+    mapEl.innerHTML='';
+    var map = L.map('mapView',{scrollWheelZoom:false}).setView([points[0].lat,points[0].lng],12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:19}).addTo(map);
+    var bounds=[];
+    points.forEach(function(p){
+      var icon = L.divIcon({
+        className:'',
+        html:'<div style="background:var(--indigo-600,#4F46E5);color:#fff;font-size:11px;font-weight:700;padding:4px 8px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.3);white-space:nowrap;">₹'+(p.price||'?')+'</div>',
+        iconAnchor:[20,16]
+      });
+      L.marker([p.lat,p.lng],{icon:icon}).addTo(map)
+       .bindPopup('<strong>'+p.title+'</strong><br><a href="'+p.url+'" style="color:#4F46E5">View room →</a>');
+      bounds.push([p.lat,p.lng]);
+    });
+    if(bounds.length>1) map.fitBounds(bounds,{padding:[30,30]});
+  }
+})();
+</script>
+{% endblock %}

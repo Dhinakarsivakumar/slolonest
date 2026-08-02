@@ -1,0 +1,86 @@
+{% extends 'core/base.html' %}
+{% block title %}Profile Settings — SoloNest{% endblock %}
+{% block content %}
+<div class="container" style="max-width:640px;padding:40px 24px;">
+
+  <div class="section-head" style="margin-bottom:28px;">
+    <h2>
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--indigo-600)" stroke-width="2" stroke-linecap="round" style="display:inline;vertical-align:middle;margin-right:8px"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Profile Settings
+    </h2>
+  </div>
+
+  <!-- Main profile form -->
+  <div class="form-section">
+    <div class="form-section-title">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Account Details
+    </div>
+    <p class="help" style="margin-bottom:20px;">We need your phone number so owners and guests can reach each other.</p>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-row">
+        <label>I am a…</label>
+        <select name="role">
+          <option value="guest" {% if user.role == 'guest' %}selected{% endif %}>🧳 Guest — looking for a room</option>
+          <option value="owner" {% if user.role == 'owner' %}selected{% endif %}>🏠 Owner — listing a room</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Phone number</label>
+        <input type="tel" name="phone" value="{{ user.phone }}" placeholder="e.g. 9876543210" required>
+        <span class="help">Shown only on your listings/bookings so people can call you directly.</span>
+      </div>
+      <button class="btn btn-primary w-full" type="submit">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Save changes
+      </button>
+    </form>
+  </div>
+
+  <!-- Phone verification -->
+  <div class="form-section" style="margin-top:16px;">
+    <div class="form-section-title">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.44 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.4a16 16 0 0 0 7.42 7.42l.87-.87a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      Phone Verification
+    </div>
+    {% if user.phone_verified %}
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span class="tag verified">✓ Verified</span>
+      <span class="help">Your phone number is verified.</span>
+    </div>
+    {% else %}
+    <p class="help" style="margin-bottom:14px;">Your phone is not verified yet. Verify to build trust with other users.</p>
+    <a href="{% url 'send_otp' %}" class="btn btn-outline btn-small" style="border-color:var(--indigo-600);color:var(--indigo-600);">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.44 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.4a16 16 0 0 0 7.42 7.42l.87-.87a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      Verify phone number
+    </a>
+    {% endif %}
+  </div>
+
+  <!-- ID verification (owners only) -->
+  {% if user.role == 'owner' %}
+  <div class="form-section" style="margin-top:16px;">
+    <div class="form-section-title">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      ID Verification
+    </div>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+      <div>
+        <p class="help">Status:</p>
+        <span class="status-badge status-{% if user.verification_status == 'approved' %}approved{% elif user.verification_status == 'rejected' %}rejected{% else %}requested{% endif %}" style="margin-top:4px;">
+          {{ user.get_verification_status_display }}
+        </span>
+      </div>
+      {% if user.verification_status != 'approved' %}
+      <a href="{% url 'submit_verification' %}" class="btn btn-outline btn-small" style="border-color:var(--indigo-600);color:var(--indigo-600);">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Submit ID for review
+      </a>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

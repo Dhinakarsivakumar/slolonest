@@ -1,0 +1,71 @@
+{% extends 'core/base.html' %}
+{% block title %}Pay for Stay — SoloNest{% endblock %}
+{% block content %}
+<div class="container" style="max-width:480px;padding:40px 24px;">
+  <div class="form-section">
+    <div class="form-section-title">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Secure Payment
+    </div>
+
+    <h2 style="margin:0 0 6px;">Pay for your stay</h2>
+    <p style="margin-bottom:20px;">{{ booking.listing.title }}</p>
+
+    <div style="background:var(--indigo-50);border:1px solid #C7D2FE;border-radius:var(--radius);padding:18px;margin-bottom:24px;display:flex;align-items:center;gap:12px;">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="var(--indigo-600)" stroke-width="1.5" stroke-linecap="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      <div>
+        <div style="font-size:.78rem;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;">Amount due</div>
+        <div class="price" style="font-size:1.8rem;">₹{{ payment.amount|floatformat:0 }}</div>
+      </div>
+    </div>
+
+    {% if razorpay_error %}
+    <div style="background:var(--red-soft);border:1px solid #FCA5A5;border-radius:var(--radius);padding:16px;margin-bottom:20px;display:flex;gap:10px;align-items:flex-start;">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <div>
+        <strong style="color:var(--red);font-size:.9rem;">Payment not configured</strong>
+        <p style="font-size:.82rem;color:var(--red);margin:4px 0 0;">{{ razorpay_error }}</p>
+      </div>
+    </div>
+    {% else %}
+    <form action="{% url 'payment_callback' booking.pk %}" method="POST" id="paymentForm">
+      {% csrf_token %}
+      <input type="hidden" name="razorpay_order_id" id="razorpay_order_id">
+      <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
+      <input type="hidden" name="razorpay_signature" id="razorpay_signature">
+    </form>
+    <button class="btn btn-amber btn-lg w-full" onclick="payNow()">
+      <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Pay ₹{{ payment.amount|floatformat:0 }} Securely
+    </button>
+    <p class="help text-center" style="margin-top:10px;">
+      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:inline;vertical-align:middle"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Secured by Razorpay · 256-bit encryption
+    </p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+function payNow(){
+  var options = {
+    "key": "{{ razorpay_key }}",
+    "amount": "{{ payment.amount|floatformat:0 }}00",
+    "currency": "INR",
+    "name": "SoloNest",
+    "description": "{{ booking.listing.title }}",
+    "order_id": "{{ payment.razorpay_order_id }}",
+    "handler": function(response){
+      document.getElementById('razorpay_order_id').value  = response.razorpay_order_id;
+      document.getElementById('razorpay_payment_id').value = response.razorpay_payment_id;
+      document.getElementById('razorpay_signature').value  = response.razorpay_signature;
+      document.getElementById('paymentForm').submit();
+    },
+  };
+  new Razorpay(options).open();
+}
+</script>
+{% endblock %}

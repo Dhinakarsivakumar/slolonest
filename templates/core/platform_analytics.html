@@ -1,0 +1,27 @@
+{% extends 'core/base.html' %}
+{% block title %}Platform Analytics — SoloNest{% endblock %}
+{% block content %}
+<div class="container dashboard-wrap">
+
+  <div class="section-head" style="margin-bottom:28px;">
+    <h2>
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--indigo-600)" stroke-width="2" stroke-linecap="round" style="display:inline;vertical-align:middle;margin-right:8px"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Platform Overview
+    </h2>
+    <a href="/admin/" class="btn btn-primary btn-small">Admin Panel →</a>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-num">{{ stats.total_users }}</div><div class="stat-label">Total Users</div></div>
+    <div class="stat-card"><div class="stat-num">{{ stats.total_owners }}</div><div class="stat-label">Owners</div></div>
+    <div class="stat-card"><div class="stat-num">{{ stats.total_guests }}</div><div class="stat-label">Guests</div></div>
+    <div class="stat-card"><div class="stat-num">{{ stats.total_listings }}</div><div class="stat-label">Listings</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--green);">{{ stats.verified_listings }}</div><div class="stat-label">Verified</div></div>
+    <div class="stat-card"><div class="stat-num">{{ stats.total_bookings }}</div><div class="stat-label">Bookings</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--indigo-600);">{{ stats.completed_bookings }}</div><div class="stat-label">Completed</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--red);">{{ stats.open_reports }}</div><div class="stat-label">Open Reports</div></div>
+    <div class="stat-card"><div class="stat-num" style="color:var(--yellow);">{{ stats.pending_verifications }}</div><div class="stat-label">Pending IDs</div></div>
+  </div>
+
+</div>
+{% endblock %}

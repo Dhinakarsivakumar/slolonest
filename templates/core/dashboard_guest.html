@@ -1,0 +1,85 @@
+{% extends 'core/base.html' %}
+{% block title %}My Bookings — SoloNest{% endblock %}
+{% block content %}
+<div class="container dashboard-wrap">
+
+  <div class="section-head" style="margin-bottom:24px;">
+    <h2>
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--indigo-600)" stroke-width="2" stroke-linecap="round" style="display:inline;vertical-align:middle;margin-right:8px"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      My Bookings &amp; Orders
+    </h2>
+    <a href="{% url 'home' %}" class="btn btn-amber btn-small">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      Find another Room
+    </a>
+  </div>
+
+  {% if bookings %}
+  <div style="display:flex;flex-direction:column;gap:12px;">
+    {% for b in bookings %}
+    <div class="booking-alert-card {{ b.status }}">
+
+      <!-- Image/Icon -->
+      <div style="width:70px;height:70px;border-radius:var(--radius);overflow:hidden;flex-shrink:0;background:var(--surface-2);">
+        {% with photo=b.listing.images.first %}
+          {% if photo %}
+            <img src="{{ photo.image.url }}" alt="Room" style="width:100%;height:100%;object-fit:cover;">
+          {% else %}
+            <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:var(--muted);"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+          {% endif %}
+        {% endwith %}
+      </div>
+
+      <!-- Details -->
+      <div style="flex:1;min-width:200px;">
+        <div style="font-weight:700;font-size:1.05rem;color:var(--text);margin-bottom:4px;">
+          {{ b.listing.title }}
+        </div>
+        <div style="font-size:.85rem;color:var(--text-2);display:flex;flex-wrap:wrap;gap:12px;margin-bottom:8px;">
+          <span style="display:inline-flex;align-items:center;gap:4px;">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            {{ b.listing.city }}
+          </span>
+          <span style="display:inline-flex;align-items:center;gap:4px;">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            {{ b.check_in|date:"M d" }} → {{ b.check_out|date:"M d, Y" }}
+          </span>
+          <span style="display:inline-flex;align-items:center;gap:4px;">
+            <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            Host: {{ b.listing.owner.username }}
+          </span>
+        </div>
+        
+        <div>
+          <span class="status-badge status-{{ b.status }}">{{ b.get_status_display }}</span>
+          {% if b.is_paid %}
+            <span class="tag verified" style="margin-left:6px;">✓ Paid</span>
+          {% elif b.status == 'approved' %}
+            <span class="tag" style="background:#FEF3C7;color:#92400E;border-color:#FCD34D;margin-left:6px;">⏳ Payment Required</span>
+          {% endif %}
+          <span style="font-size:.75rem;color:var(--muted);margin-left:8px;">Requested on {{ b.created_at|date:"M d" }}</span>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;">
+        {% if b.status == 'approved' and not b.is_paid %}
+          <a href="{% url 'create_payment' b.pk %}" class="btn btn-amber btn-small">Pay Now</a>
+        {% endif %}
+        <a href="{% url 'booking_detail' b.pk %}" class="btn btn-outline btn-small">
+          View Order Details
+        </a>
+      </div>
+
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-state-icon">🏨</div>
+    <p>You haven't booked any rooms yet.<br><a href="{% url 'home' %}" style="color:var(--indigo-600);font-weight:600;">Browse rooms →</a></p>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}

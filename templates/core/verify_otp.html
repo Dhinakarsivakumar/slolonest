@@ -1,0 +1,27 @@
+{% extends 'core/base.html' %}
+{% block title %}Verify OTP — SoloNest{% endblock %}
+{% block content %}
+<div class="container" style="max-width:440px;padding:60px 24px;">
+  <div class="form-section" style="text-align:center;">
+    <div style="width:56px;height:56px;border-radius:50%;background:var(--indigo-50);border:2px solid #C7D2FE;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="var(--indigo-600)" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.44 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.4a16 16 0 0 0 7.42 7.42l.87-.87a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+    </div>
+    <h2 style="margin-bottom:6px;">Verify your phone</h2>
+    <p style="margin-bottom:28px;">Enter the 6-digit OTP sent to your phone number.</p>
+    <form method="post" style="text-align:left;">
+      {% csrf_token %}
+      {% for field in form %}
+      <div class="form-row">
+        {{ field.label_tag }}
+        {{ field }}
+        {% for error in field.errors %}<div class="help" style="color:var(--red);">{{ error }}</div>{% endfor %}
+      </div>
+      {% endfor %}
+      <button class="btn btn-primary w-full" type="submit">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Verify OTP
+      </button>
+    </form>
+  </div>
+</div>
+{% endblock %}

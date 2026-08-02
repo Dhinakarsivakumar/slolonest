@@ -1,0 +1,129 @@
+{% extends 'core/base.html' %}
+{% block title %}Booking Detail — SoloNest{% endblock %}
+{% block content %}
+<div class="container" style="max-width:760px;padding:40px 24px;">
+
+  <!-- Header card -->
+  <div class="form-section">
+    <div class="section-head" style="margin-bottom:12px;">
+      <div>
+        <h2 style="margin:0;font-size:1.3rem;">{{ booking.listing.title }}</h2>
+        <div class="card-meta" style="margin-top:4px;">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:inline;vertical-align:middle"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          {{ booking.listing.city }}
+        </div>
+      </div>
+      <span class="status-badge status-{{ booking.status }}">{{ booking.get_status_display }}</span>
+    </div>
+
+    <div class="help" style="margin-bottom:16px;display:flex;gap:16px;flex-wrap:wrap;">
+      <span>
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:inline;vertical-align:middle"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        {{ booking.check_in }} → {{ booking.check_out }}
+      </span>
+      <span>
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:inline;vertical-align:middle"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        Guest: {{ booking.guest.username }}
+      </span>
+      <span>
+        <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:inline;vertical-align:middle"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        Owner: {{ booking.listing.owner.username }}
+      </span>
+    </div>
+
+    <!-- Owner actions -->
+    {% if user == booking.listing.owner and booking.status == 'requested' %}
+    <form method="post" style="display:flex;gap:10px;flex-wrap:wrap;">
+      {% csrf_token %}
+      <button class="btn btn-amber" name="approve" value="1" type="submit">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Approve
+      </button>
+      <button class="btn btn-outline" name="reject" value="1" type="submit" style="border-color:var(--red);color:var(--red);">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        Reject
+      </button>
+    </form>
+    {% elif user == booking.listing.owner and booking.status == 'approved' %}
+    <form method="post">
+      {% csrf_token %}
+      <button class="btn btn-primary" name="complete" value="1" type="submit">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Mark stay completed
+      </button>
+    </form>
+    {% endif %}
+
+    <!-- Guest: Cancel button -->
+    {% if user == booking.guest and booking.status in 'requested,approved' %}
+    <a href="{% url 'cancel_booking' booking.pk %}" class="btn btn-outline btn-small" style="margin-top:12px;display:inline-flex;border-color:var(--red);color:var(--red);">
+      <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      Cancel booking
+    </a>
+    {% endif %}
+
+    <!-- Guest payment -->
+    {% if user == booking.guest and booking.status == 'approved' and not booking.is_paid %}
+    <a href="{% url 'create_payment' booking.pk %}" class="btn btn-amber" style="display:inline-flex;margin-top:12px;">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Pay for this stay
+    </a>
+    {% elif booking.is_paid %}
+    <span class="tag verified" style="margin-top:12px;display:inline-flex;">✓ Paid</span>
+    {% endif %}
+  </div>
+
+  <!-- Chat -->
+  <div class="form-section" style="margin-top:16px;">
+    <div class="form-section-title">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Messages
+    </div>
+    <div class="chat-box">
+      {% for m in chat_messages %}
+      <div class="chat-msg {% if m.sender == user %}mine{% endif %}">
+        <small>{{ m.sender.username }} · {{ m.sent_at|date:"M d, H:i" }}</small>
+        {{ m.text }}
+      </div>
+      {% empty %}
+      <p class="help" style="text-align:center;padding:20px 0;">No messages yet — say hello! 👋</p>
+      {% endfor %}
+    </div>
+    <form method="post" style="display:flex;gap:10px;align-items:flex-end;">
+      {% csrf_token %}
+      <div style="flex:1;">{{ msg_form.text }}</div>
+      <button class="btn btn-primary" name="send_message" value="1" type="submit" style="flex-shrink:0;">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Send
+      </button>
+    </form>
+  </div>
+
+  <!-- Review -->
+  {% if booking.status == 'completed' %}
+  <div class="form-section" style="margin-top:16px;">
+    <div class="form-section-title">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Leave a Review
+    </div>
+    {% if already_reviewed %}
+    <div style="background:var(--green-soft);border:1px solid #A7F3D0;border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:8px;">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#065F46" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      <span style="color:#065F46;font-size:.88rem;font-weight:500;">You've already submitted a review for this stay. Thank you!</span>
+    </div>
+    {% else %}
+    <form method="post" action="{% url 'add_review' booking.pk %}">
+      {% csrf_token %}
+      <div class="form-row">{{ review_form.rating.label_tag }}{{ review_form.rating }}</div>
+      <div class="form-row">{{ review_form.comment.label_tag }}{{ review_form.comment }}</div>
+      <button class="btn btn-amber" type="submit">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        Submit review
+      </button>
+    </form>
+    {% endif %}
+  </div>
+  {% endif %}
+
+</div>
+{% endblock %}
