@@ -2,7 +2,7 @@ services:
   - type: web
     name: solonest
     runtime: python
-    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
     startCommand: gunicorn soloNest.wsgi --log-file -
     envVars:
       - key: DJANGO_SECRET_KEY
