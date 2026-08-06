@@ -1,0 +1,87 @@
+{% extends 'support/portal_base.html' %}
+{% block title %}Dashboard — SoloNest Support Portal{% endblock %}
+{% block nav_dashboard %}active{% endblock %}
+{% block topbar_title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- Stats Row 1: Ticket Stats -->
+<div class="stats-grid">
+  <div class="stat-card indigo">
+    <div class="stat-label">Total Tickets</div>
+    <div class="stat-value">{{ total }}</div>
+    <div class="stat-sub">All time</div>
+  </div>
+  <div class="stat-card yellow">
+    <div class="stat-label">Open Tickets</div>
+    <div class="stat-value">{{ open_count }}</div>
+    <div class="stat-sub">Needs attention</div>
+  </div>
+  <div class="stat-card red">
+    <div class="stat-label">Urgent</div>
+    <div class="stat-value">{{ urgent }}</div>
+    <div class="stat-sub">High priority</div>
+  </div>
+  <div class="stat-card green">
+    <div class="stat-label">Resolved</div>
+    <div class="stat-value">{{ resolved }}</div>
+    <div class="stat-sub">Closed successfully</div>
+  </div>
+</div>
+
+<!-- Stats Row 2: Platform Stats -->
+<div class="stats-grid" style="margin-bottom:28px;">
+  <div class="stat-card indigo">
+    <div class="stat-label">Total Users</div>
+    <div class="stat-value">{{ users_total }}</div>
+    <div class="stat-sub">+{{ users_today }} today</div>
+  </div>
+  <div class="stat-card green">
+    <div class="stat-label">Total Listings</div>
+    <div class="stat-value">{{ listings_total }}</div>
+    <div class="stat-sub">Active properties</div>
+  </div>
+  <div class="stat-card orange">
+    <div class="stat-label">Total Bookings</div>
+    <div class="stat-value">{{ bookings_total }}</div>
+    <div class="stat-sub">+{{ bookings_today }} today</div>
+  </div>
+</div>
+
+<!-- Recent Tickets -->
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">Recent Tickets</span>
+    <a href="{% url 'portal_tickets' %}" class="btn btn-ghost" style="font-size:.75rem;padding:6px 12px;">View All →</a>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>User</th>
+        <th>Subject</th>
+        <th>Category</th>
+        <th>Priority</th>
+        <th>Status</th>
+        <th>Date</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for ticket in recent_tickets %}
+      <tr>
+        <td style="color:var(--muted);">#{{ ticket.pk }}</td>
+        <td><strong style="color:var(--text);">{{ ticket.user.username }}</strong></td>
+        <td>{{ ticket.subject|truncatechars:40 }}</td>
+        <td style="color:var(--text-2);">{{ ticket.get_category_display }}</td>
+        <td><span class="badge badge-{{ ticket.priority }}">{{ ticket.get_priority_display }}</span></td>
+        <td><span class="badge badge-{{ ticket.status }}">{{ ticket.get_status_display }}</span></td>
+        <td style="color:var(--muted);font-size:.75rem;">{{ ticket.created_at|date:"d M, H:i" }}</td>
+        <td><a href="{% url 'portal_ticket_detail' ticket.pk %}">View →</a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted);">No tickets yet</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

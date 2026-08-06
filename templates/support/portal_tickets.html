@@ -1,0 +1,75 @@
+{% extends 'support/portal_base.html' %}
+{% block title %}All Tickets — Support Portal{% endblock %}
+{% block nav_tickets %}active{% endblock %}
+{% block topbar_title %}All Tickets{% endblock %}
+
+{% block content %}
+<!-- Filters -->
+<div class="card" style="margin-bottom:20px;">
+  <div style="padding:16px 20px;">
+    <form method="get" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+      <div style="flex:1;min-width:180px;">
+        <label>Search</label>
+        <input type="text" name="q" value="{{ filters.q }}" placeholder="Username or subject…">
+      </div>
+      <div style="min-width:140px;">
+        <label>Status</label>
+        <select name="status">
+          <option value="">All Status</option>
+          {% for val,label in status_choices %}<option value="{{ val }}" {% if filters.status == val %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+      <div style="min-width:140px;">
+        <label>Priority</label>
+        <select name="priority">
+          <option value="">All Priority</option>
+          {% for val,label in priority_choices %}<option value="{{ val }}" {% if filters.priority == val %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+      <div style="min-width:160px;">
+        <label>Category</label>
+        <select name="category">
+          <option value="">All Categories</option>
+          {% for val,label in category_choices %}<option value="{{ val }}" {% if filters.category == val %}selected{% endif %}>{{ label }}</option>{% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary">Filter</button>
+      <a href="{% url 'portal_tickets' %}" class="btn btn-ghost">Clear</a>
+    </form>
+  </div>
+</div>
+
+<!-- Table -->
+<div class="card">
+  <div class="card-header">
+    <span class="card-title">{{ tickets|length }} ticket{{ tickets|length|pluralize }}</span>
+  </div>
+  <table>
+    <thead>
+      <tr>
+        <th>#</th><th>User</th><th>Subject</th><th>Category</th><th>Replies</th><th>Priority</th><th>Status</th><th>Date</th><th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in tickets %}
+      <tr>
+        <td style="color:var(--muted);font-weight:600;">#{{ t.pk }}</td>
+        <td>
+          <div style="font-weight:600;color:var(--text);">{{ t.user.username }}</div>
+          <div style="font-size:.7rem;color:var(--muted);">{{ t.user.email }}</div>
+        </td>
+        <td style="color:var(--text);">{{ t.subject|truncatechars:45 }}</td>
+        <td>{{ t.get_category_display }}</td>
+        <td style="text-align:center;">{{ t.reply_count }}</td>
+        <td><span class="badge badge-{{ t.priority }}">{{ t.get_priority_display }}</span></td>
+        <td><span class="badge badge-{{ t.status }}">{{ t.get_status_display }}</span></td>
+        <td style="color:var(--muted);font-size:.75rem;">{{ t.created_at|date:"d M, H:i" }}</td>
+        <td><a href="{% url 'portal_ticket_detail' t.pk %}" class="btn btn-ghost" style="padding:5px 12px;font-size:.75rem;">Open →</a></td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="9" style="text-align:center;padding:40px;color:var(--muted);">No tickets found</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

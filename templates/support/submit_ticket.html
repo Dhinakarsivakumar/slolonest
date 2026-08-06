@@ -1,0 +1,48 @@
+{% extends 'core/base.html' %}
+{% block title %}Contact Support — SoloNest{% endblock %}
+{% block content %}
+<div class="container" style="max-width:600px;padding:40px 24px;">
+
+  <div class="section-head" style="margin-bottom:28px;">
+    <h2>
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--indigo-600)" stroke-width="2" stroke-linecap="round" style="display:inline;vertical-align:middle;margin-right:8px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Contact Support
+    </h2>
+    <p style="color:var(--text-2);margin-top:8px;">Our team usually responds within a few hours.</p>
+  </div>
+
+  <div class="form-section">
+    <form method="post">
+      {% csrf_token %}
+
+      <div class="form-row">
+        <label>Category</label>
+        <select name="category" required>
+          {% for val, label in categories %}
+          <option value="{{ val }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-row">
+        <label>Subject</label>
+        <input type="text" name="subject" placeholder="e.g. I can't cancel my booking" required maxlength="200">
+      </div>
+
+      <div class="form-row">
+        <label>Describe your issue</label>
+        <textarea name="message" rows="6" placeholder="Tell us exactly what happened, what you expected, and any error messages you saw…" required style="resize:vertical;"></textarea>
+      </div>
+
+      <button class="btn btn-primary w-full" type="submit" style="margin-top:8px;">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Submit Ticket
+      </button>
+    </form>
+  </div>
+
+  <div style="margin-top:20px;text-align:center;">
+    <a href="{% url 'my_tickets' %}" style="color:var(--indigo-600);font-size:.85rem;">View my previous tickets →</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,27 +1,156 @@
 {% extends 'core/base.html' %}
-{% block title %}Verify OTP — SoloNest{% endblock %}
+{% block title %}Verify Phone — SoloNest{% endblock %}
 {% block content %}
-<div class="container" style="max-width:440px;padding:60px 24px;">
-  <div class="form-section" style="text-align:center;">
-    <div style="width:56px;height:56px;border-radius:50%;background:var(--indigo-50);border:2px solid #C7D2FE;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
-      <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="var(--indigo-600)" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.44 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.4a16 16 0 0 0 7.42 7.42l.87-.87a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+<div class="container" style="max-width:460px;padding:60px 24px;">
+  <div class="form-section" style="text-align:center;padding:40px 32px;">
+
+    <!-- Icon -->
+    <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,#EEF2FF,#E0E7FF);border:2px solid #C7D2FE;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;">
+      <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="var(--indigo-600)" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.44 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.4a16 16 0 0 0 7.42 7.42l.87-.87a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
     </div>
-    <h2 style="margin-bottom:6px;">Verify your phone</h2>
-    <p style="margin-bottom:28px;">Enter the 6-digit OTP sent to your phone number.</p>
-    <form method="post" style="text-align:left;">
+
+    <h2 style="margin-bottom:8px;">Enter your OTP</h2>
+    <p style="color:var(--text-2);margin-bottom:8px;font-size:.9rem;">
+      We sent a 6-digit code to your phone number
+      {% if request.user.phone %}<strong>{{ request.user.phone }}</strong>{% endif %}
+    </p>
+
+    {% if dev_code %}
+    <div style="background:#FEF3C7;border:1.5px solid #FCD34D;border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:.9rem;color:#92400E;">
+      <strong>Dev Mode — Your OTP:</strong>
+      <span style="font-size:1.4rem;font-weight:800;letter-spacing:6px;display:block;margin-top:4px;color:#78350F;">{{ dev_code }}</span>
+    </div>
+    {% endif %}
+
+    <form method="post" action="{% url 'verify_otp' %}" id="otpForm" style="text-align:left;">
       {% csrf_token %}
-      {% for field in form %}
-      <div class="form-row">
-        {{ field.label_tag }}
-        {{ field }}
-        {% for error in field.errors %}<div class="help" style="color:var(--red);">{{ error }}</div>{% endfor %}
+
+      <!-- 6-box OTP input -->
+      <div style="display:flex;gap:10px;justify-content:center;margin:24px 0 28px;">
+        {% for i in "123456" %}
+        <input
+          type="text"
+          maxlength="1"
+          inputmode="numeric"
+          pattern="[0-9]"
+          class="otp-box"
+          id="otp-{{ forloop.counter }}"
+          autocomplete="{% if forloop.first %}one-time-code{% else %}off{% endif %}"
+          style="width:48px;height:58px;text-align:center;font-size:1.5rem;font-weight:700;border:2px solid var(--border-2);border-radius:12px;background:var(--surface);color:var(--text);outline:none;transition:border-color .2s,box-shadow .2s;caret-color:var(--indigo-600);"
+        >
+        {% endfor %}
       </div>
-      {% endfor %}
-      <button class="btn btn-primary w-full" type="submit">
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-        Verify OTP
+
+      <!-- Hidden combined input sent to server -->
+      <input type="hidden" name="code" id="combinedCode">
+
+      <button class="btn btn-primary w-full" type="submit" id="verifyBtn" style="font-size:1rem;padding:14px;">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Verify Phone Number
       </button>
     </form>
+
+    <!-- Resend -->
+    <div style="margin-top:20px;font-size:.85rem;color:var(--muted);">
+      Didn't receive it?
+      <a href="{% url 'send_otp' %}" id="resendBtn" style="color:var(--indigo-600);font-weight:600;">Resend OTP</a>
+      <span id="countdown" style="color:var(--muted);display:none;"> (wait <span id="sec">60</span>s)</span>
+    </div>
+
+    <div style="margin-top:12px;">
+      <a href="{% url 'profile_settings' %}" style="font-size:.82rem;color:var(--muted);">← Back to Profile</a>
+    </div>
+
   </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function(){
+  var boxes = document.querySelectorAll('.otp-box');
+  var combined = document.getElementById('combinedCode');
+  var form = document.getElementById('otpForm');
+
+  // Style on focus
+  boxes.forEach(function(box, i){
+    box.addEventListener('focus', function(){
+      this.style.borderColor = 'var(--indigo-600)';
+      this.style.boxShadow = '0 0 0 3px rgba(99,102,241,.18)';
+      this.select();
+    });
+    box.addEventListener('blur', function(){
+      this.style.borderColor = this.value ? 'var(--indigo-600)' : 'var(--border-2)';
+      this.style.boxShadow = '';
+    });
+
+    // Auto-advance on digit input
+    box.addEventListener('input', function(){
+      var val = this.value.replace(/\D/g,'');
+      this.value = val.slice(-1);
+      if(val && i < boxes.length - 1) boxes[i+1].focus();
+    });
+
+    // Handle paste — fill all boxes
+    box.addEventListener('paste', function(e){
+      e.preventDefault();
+      var paste = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'');
+      boxes.forEach(function(b, idx){ b.value = paste[idx] || ''; });
+      var last = Math.min(paste.length, boxes.length) - 1;
+      if(last >= 0) boxes[last].focus();
+    });
+
+    // Backspace goes back
+    box.addEventListener('keydown', function(e){
+      if(e.key === 'Backspace' && !this.value && i > 0) boxes[i-1].focus();
+    });
+  });
+
+  // On submit: combine all boxes into hidden input
+  form.addEventListener('submit', function(e){
+    var code = Array.from(boxes).map(function(b){ return b.value; }).join('');
+    if(code.length < 6){
+      e.preventDefault();
+      boxes[code.length] ? boxes[code.length].focus() : boxes[0].focus();
+      // shake animation
+      var wrap = boxes[0].parentElement;
+      wrap.style.animation = 'shake .4s ease';
+      setTimeout(function(){ wrap.style.animation=''; }, 400);
+      return;
+    }
+    combined.value = code;
+  });
+
+  // Resend countdown (60s)
+  var resendBtn = document.getElementById('resendBtn');
+  var countdown = document.getElementById('countdown');
+  var secSpan = document.getElementById('sec');
+  var secs = 60;
+  countdown.style.display = 'inline';
+  resendBtn.style.pointerEvents = 'none';
+  resendBtn.style.opacity = '.4';
+  var timer = setInterval(function(){
+    secs--;
+    secSpan.textContent = secs;
+    if(secs <= 0){
+      clearInterval(timer);
+      countdown.style.display = 'none';
+      resendBtn.style.pointerEvents = '';
+      resendBtn.style.opacity = '1';
+    }
+  }, 1000);
+
+  // Auto-focus first empty box
+  boxes[0].focus();
+})();
+</script>
+<style>
+@keyframes shake {
+  0%,100%{transform:translateX(0)}
+  20%{transform:translateX(-8px)}
+  40%{transform:translateX(8px)}
+  60%{transform:translateX(-6px)}
+  80%{transform:translateX(6px)}
+}
+</style>
 {% endblock %}

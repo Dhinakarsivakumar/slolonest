@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Staff Login — SoloNest Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'Inter',sans-serif;
+      background:#0A0C14;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      position:relative;
+      overflow:hidden;
+    }
+    /* Animated background grid */
+    body::before{
+      content:'';
+      position:fixed;inset:0;
+      background-image:
+        linear-gradient(rgba(99,102,241,.06) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(99,102,241,.06) 1px,transparent 1px);
+      background-size:40px 40px;
+      animation:grid-move 20s linear infinite;
+    }
+    @keyframes grid-move{from{transform:translateY(0)}to{transform:translateY(40px)}}
+
+    /* Glowing orbs */
+    .orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:.25;pointer-events:none;}
+    .orb-1{width:500px;height:500px;background:#6366F1;top:-100px;left:-100px;animation:float1 8s ease-in-out infinite;}
+    .orb-2{width:400px;height:400px;background:#8B5CF6;bottom:-100px;right:-100px;animation:float2 10s ease-in-out infinite;}
+    @keyframes float1{0%,100%{transform:translate(0,0)}50%{transform:translate(40px,30px)}}
+    @keyframes float2{0%,100%{transform:translate(0,0)}50%{transform:translate(-30px,-20px)}}
+
+    .card{
+      position:relative;z-index:10;
+      background:rgba(26,29,39,.9);
+      border:1px solid rgba(99,102,241,.2);
+      border-radius:20px;
+      padding:48px 40px;
+      width:100%;max-width:400px;
+      box-shadow:0 40px 80px rgba(0,0,0,.5),0 0 0 1px rgba(99,102,241,.1);
+      backdrop-filter:blur(20px);
+    }
+
+    .logo{display:flex;align-items:center;gap:12px;margin-bottom:36px;justify-content:center;}
+    .logo-icon{
+      width:44px;height:44px;border-radius:12px;
+      background:linear-gradient(135deg,#6366F1,#4F46E5);
+      display:flex;align-items:center;justify-content:center;
+      font-size:20px;
+      box-shadow:0 8px 20px rgba(99,102,241,.4);
+    }
+    .logo-text{font-size:1.2rem;font-weight:800;color:#E8EAF6;letter-spacing:-.02em;}
+    .logo-sub{font-size:.7rem;color:#6366F1;font-weight:600;letter-spacing:.1em;text-transform:uppercase;}
+
+    h1{font-size:1.4rem;font-weight:800;color:#E8EAF6;margin-bottom:6px;text-align:center;}
+    .subtitle{font-size:.83rem;color:#6B7280;text-align:center;margin-bottom:32px;}
+
+    .badge-restricted{
+      display:inline-flex;align-items:center;gap:6px;
+      background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);
+      color:#EF4444;font-size:.72rem;font-weight:600;
+      padding:4px 12px;border-radius:99px;
+      margin:0 auto 24px;
+      display:flex;width:fit-content;
+    }
+
+    label{display:block;font-size:.75rem;font-weight:600;color:#9CA3AF;margin-bottom:7px;letter-spacing:.04em;text-transform:uppercase;}
+    input{
+      width:100%;padding:12px 16px;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:10px;color:#E8EAF6;
+      font-size:.9rem;font-family:inherit;outline:none;
+      transition:border-color .2s,box-shadow .2s;
+    }
+    input:focus{border-color:#6366F1;box-shadow:0 0 0 3px rgba(99,102,241,.15);}
+    .form-row{margin-bottom:18px;}
+
+    .btn{
+      width:100%;padding:13px;
+      background:linear-gradient(135deg,#6366F1,#4F46E5);
+      border:none;border-radius:10px;
+      color:#fff;font-size:.95rem;font-weight:700;
+      cursor:pointer;font-family:inherit;
+      transition:all .2s;
+      box-shadow:0 4px 20px rgba(99,102,241,.4);
+      margin-top:8px;
+    }
+    .btn:hover{transform:translateY(-1px);box-shadow:0 8px 25px rgba(99,102,241,.5);}
+    .btn:active{transform:translateY(0);}
+
+    .error{
+      background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);
+      color:#EF4444;font-size:.82rem;padding:10px 14px;
+      border-radius:8px;margin-bottom:16px;
+    }
+
+    .footer-note{
+      text-align:center;margin-top:24px;
+      font-size:.75rem;color:#4B5563;
+    }
+    .footer-note a{color:#6366F1;text-decoration:none;}
+    .footer-note a:hover{text-decoration:underline;}
+  </style>
+</head>
+<body>
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <div class="card">
+    <div class="logo">
+      <div class="logo-icon">🛡️</div>
+      <div>
+        <div class="logo-text">SoloNest</div>
+        <div class="logo-sub">Support Portal</div>
+      </div>
+    </div>
+
+    <h1>Staff Access Only</h1>
+    <p class="subtitle">This portal is restricted to authorized personnel.</p>
+
+    <div class="badge-restricted">
+      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      Restricted Access
+    </div>
+
+    {% for msg in messages %}
+    <div class="error">{{ msg }}</div>
+    {% endfor %}
+
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-row">
+        <label>Username</label>
+        <input type="text" name="username" autofocus autocomplete="username" placeholder="Staff username">
+      </div>
+      <div class="form-row">
+        <label>Password</label>
+        <input type="password" name="password" autocomplete="current-password" placeholder="••••••••">
+      </div>
+      <button type="submit" class="btn">
+        Sign In to Portal →
+      </button>
+    </form>
+
+    <div class="footer-note">
+      Not a staff member? <a href="/">Go to main site</a>
+    </div>
+  </div>
+</body>
+</html>

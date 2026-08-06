@@ -502,22 +502,114 @@ def notifications_list(request):
 
 
 # ─────────────────────────────────────────────────────────────
-# OTP / PHONE VERIFICATION  (BUG FIX: rate limiting)
+# OTP / PHONE VERIFICATION
 # ─────────────────────────────────────────────────────────────
+
+def _send_sms_otp(phone, code):
+    """
+    Send OTP via Fast2SMS — authorization sent as HTTP header.
+    Returns (success: bool, error_msg: str|None)
+    """
+    import re, urllib.request, urllib.parse, json
+    from django.conf import settings as dj_settings
+
+    api_key = getattr(dj_settings, 'FAST2SMS_API_KEY', '') or ''
+
+    digits = re.sub(r'\D', '', phone)
+    if digits.startswith('91') and len(digits) == 12:
+        digits = digits[2:]
+    if len(digits) != 10:
+        return False, 'Invalid phone number — must be 10 digits.'
+
+    if not api_key or getattr(dj_settings, 'OTP_DEV_MODE', True):
+        print(f'[DEV OTP] Phone: {phone}  Code: {code}')
+        return True, None
+
+    try:
+        payload = urllib.parse.urlencode({
+            'route':            'otp',
+            'variables_values': code,
+            'flash':            0,
+            'numbers':          digits,
+        }).encode()
+        req = urllib.request.Request(
+            'https://www.fast2sms.com/dev/bulkV2',
+            data=payload,
+            # authorization goes in HEADER not body
+            headers={'authorization': api_key, 'Cache-Control': 'no-cache'},
+            method='POST',
+        )
+        with urllib.request.urlopen(req, timeout=10) as resp:
+            data = json.loads(resp.read())
+            if data.get('return'):
+                return True, None
+            return False, data.get('message', 'SMS failed.')
+    except Exception as exc:
+        return False, str(exc)
+
+
+def _send_email_otp(user, code):
+    """Free email OTP fallback — works immediately with no payment."""
+    from django.core.mail import send_mail
+    from django.conf import settings as dj_settings
+    try:
+        send_mail(
+            subject='Your SoloNest OTP Code',
+            message=(
+                f'Hi {user.username},\n\n'
+                f'Your SoloNest verification code is:\n\n'
+                f'  {code}\n\n'
+                f'This code expires in 10 minutes. Do not share it with anyone.\n\n'
+                f'\u2014 SoloNest Team'
+            ),
+            from_email=dj_settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[user.email],
+            fail_silently=False,
+        )
+        return True, None
+    except Exception as exc:
+        return False, str(exc)
+
 
 @login_required
 def send_otp(request):
-    from django.conf import settings as dj_settings
     if not request.user.phone:
         messages.error(request, 'Add a phone number in your profile first.')
         return redirect('profile_settings')
-    # Invalidate old codes first
+
+    from django.core.cache import cache
+    rate_key = f'otp_rate_{request.user.pk}'
+    if cache.get(rate_key):
+        messages.error(request, 'Please wait 60 seconds before requesting another OTP.')
+        return render(request, 'core/verify_otp.html', {'dev_code': None})
+
     OTPCode.objects.filter(user=request.user, is_used=False).update(is_used=True)
     code = f'{random.randint(0, 999999):06d}'
     OTPCode.objects.create(user=request.user, code=code)
-    print(f'[DEV OTP] Code for {request.user.username}: {code}')
-    dev_code = code if getattr(dj_settings, 'OTP_DEV_MODE', False) else None
-    return render(request, 'core/verify_otp.html', {'dev_code': dev_code})
+    cache.set(rate_key, 1, timeout=60)
+
+    from django.conf import settings as dj_settings
+    dev_mode = getattr(dj_settings, 'OTP_DEV_MODE', True)
+    dev_code = code if dev_mode else None
+    channel = None
+
+    # Try SMS first, fall back to email automatically
+    sms_ok, sms_err = _send_sms_otp(request.user.phone, code)
+    if sms_ok and not dev_mode:
+        messages.success(request, f'OTP sent to {request.user.phone} via SMS ✓')
+        channel = 'sms'
+    else:
+        # SMS failed — try email fallback
+        email_ok, email_err = _send_email_otp(request.user, code)
+        if email_ok and not dev_mode:
+            messages.success(request, f'OTP sent to {request.user.email} via Email ✓')
+            channel = 'email'
+        elif not dev_mode:
+            # Both failed — show code on screen as last resort
+            messages.warning(request, 'Could not send OTP — here is your code directly.')
+            dev_code = code
+
+    return render(request, 'core/verify_otp.html', {'dev_code': dev_code, 'channel': channel})
 
 
 @login_required

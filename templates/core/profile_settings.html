@@ -44,19 +44,45 @@
       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.44 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.4a16 16 0 0 0 7.42 7.42l.87-.87a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
       Phone Verification
     </div>
+
     {% if user.phone_verified %}
-    <div style="display:flex;align-items:center;gap:10px;">
-      <span class="tag verified">✓ Verified</span>
-      <span class="help">Your phone number is verified.</span>
+    <!-- LOCKED — already verified -->
+    <div style="display:flex;align-items:center;gap:14px;padding:14px 0;">
+      <div style="width:42px;height:42px;border-radius:50%;background:#D1FAE5;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div>
+        <div style="font-weight:700;color:#065F46;font-size:.95rem;">Phone Verified ✓</div>
+        <div style="font-size:.8rem;color:var(--muted);">{{ user.phone }} — verified and locked</div>
+      </div>
+      <!-- Locked disabled button -->
+      <button disabled style="margin-left:auto;padding:8px 18px;border-radius:8px;border:none;background:#E5E7EB;color:#9CA3AF;font-weight:600;font-size:.82rem;cursor:not-allowed;display:flex;align-items:center;gap:6px;flex-shrink:0;">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        Locked
+      </button>
     </div>
-    {% else %}
-    <p class="help" style="margin-bottom:14px;">Your phone is not verified yet. Verify to build trust with other users.</p>
-    <a href="{% url 'send_otp' %}" class="btn btn-outline btn-small" style="border-color:var(--indigo-600);color:var(--indigo-600);">
+
+    {% elif not user.phone %}
+    <!-- No phone added yet -->
+    <p class="help" style="margin-bottom:14px;">Add a phone number above first, then verify it.</p>
+    <button disabled style="padding:10px 20px;border-radius:10px;border:2px dashed var(--border-2);background:var(--surface-2);color:var(--muted);font-weight:600;font-size:.85rem;cursor:not-allowed;display:inline-flex;align-items:center;gap:8px;">
       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.44 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.4a16 16 0 0 0 7.42 7.42l.87-.87a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-      Verify phone number
+      Verify Phone Number
+    </button>
+
+    {% else %}
+    <!-- Phone added, not yet verified -->
+    <p class="help" style="margin-bottom:14px;">
+      <strong>{{ user.phone }}</strong> is not verified yet.
+      Tap below to receive your OTP code.
+    </p>
+    <a href="{% url 'send_otp' %}" class="btn btn-primary btn-small" id="verifyPhoneBtn" style="display:inline-flex;align-items:center;gap:8px;">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.44 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.4a16 16 0 0 0 7.42 7.42l.87-.87a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      Send OTP to {{ user.phone }}
     </a>
     {% endif %}
   </div>
+
 
   <!-- ID verification (owners only) -->
   {% if user.role == 'owner' %}
@@ -81,6 +107,27 @@
     </div>
   </div>
   {% endif %}
+
+  <!-- Contact Support -->
+  <div class="form-section" style="margin-top:16px;border:1.5px solid var(--indigo-200,#C7D2FE);background:var(--indigo-50,#EEF2FF);">
+    <div class="form-section-title" style="color:var(--indigo-700,#4338CA);">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Customer Support
+    </div>
+    <p class="help" style="margin-bottom:14px;">
+      Having a problem? Our support team is here to help with bookings, payments, or any other issue.
+    </p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <a href="{% url 'submit_ticket' %}" class="btn btn-primary btn-small">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        Contact Support
+      </a>
+      <a href="{% url 'my_tickets' %}" class="btn btn-outline btn-small" style="border-color:var(--indigo-600);color:var(--indigo-600);">
+        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        My Tickets
+      </a>
+    </div>
+  </div>
 
 </div>
 {% endblock %}

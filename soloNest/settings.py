@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'core',
+    'support',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -179,4 +180,8 @@ RAZORPAY_KEY_SECRET = _os.environ.get('RAZORPAY_KEY_SECRET', 'placeholder_secret
 
 
 # ---- OTP ----
-OTP_DEV_MODE = _os.environ.get('OTP_DEV_MODE', 'True').lower() in ('true', '1', 'yes')
+OTP_DEV_MODE = True  # Shows OTP on screen — set False after Fast2SMS ₹100 recharge
+
+# ---- Fast2SMS (real phone OTP for India) ----
+FAST2SMS_API_KEY = _os.environ.get('FAST2SMS_API_KEY', 'IfjFmPSWvyUcYZKg0dwBXln1phCiDT68Ee9G45brJOQAosk7Ht2FcJKDIOExeiYmnVzLNUWQsB6MRhgP')
+
