@@ -604,38 +604,101 @@ select {
 /* ── 11. SEARCH BOX ──────────────────────────────────────── */
 .search-box {
   background: var(--paper);
-  border-radius: var(--radius-xl);
-  padding: 10px 10px 10px 20px;
+  border-radius: 99px;
+  padding: 8px 8px 8px 24px;
   box-shadow: var(--shadow-xl), 0 0 0 1px rgba(0,0,0,.04);
   display: flex;
   align-items: center;
-  gap: 10px;
-  max-width: 780px;
+  gap: 16px;
+  max-width: 820px;
   margin: 0 auto;
 }
-.search-box input[type="text"] {
-  border: none;
-  background: transparent;
-  box-shadow: none;
-  font-size: 1rem;
-  padding: 8px 0;
+.search-field {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   flex: 1;
   min-width: 0;
 }
-.search-box input:focus { box-shadow: none; border-color: transparent; }
-.search-divider { width: 1px; height: 32px; background: var(--border); flex-shrink: 0; }
+.field-icon {
+  display: flex;
+  align-items: center;
+  color: var(--indigo-600);
+  flex-shrink: 0;
+}
+.field-input {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.field-input label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 800;
+  color: var(--text-3, #475569);
+  letter-spacing: 0.08em;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+}
+.search-box input[type="text"],
 .search-box input[type="date"] {
-  border: none; background: transparent; box-shadow: none;
-  font-size: .9rem; padding: 8px 0; width: 130px;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--navy);
+  padding: 0;
+  width: 100%;
+  outline: none;
 }
-.search-box .btn { flex-shrink: 0; padding: 12px 24px; border-radius: var(--radius-lg); }
+.search-box input[type="date"] {
+  color: var(--text-2);
+}
+.search-box input:focus {
+  outline: none;
+  box-shadow: none;
+}
+.search-divider {
+  width: 1px;
+  height: 36px;
+  background: var(--border-2, #E2E8F0);
+  flex-shrink: 0;
+}
+.search-box .btn {
+  flex-shrink: 0;
+  padding: 12px 28px;
+  border-radius: 99px;
+  font-size: 0.95rem;
+}
 
-@media (max-width: 700px) {
-  .search-box { flex-direction: column; padding: 16px; border-radius: var(--radius-lg); }
-  .search-box input[type="text"], .search-box input[type="date"] { width: 100%; }
-  .search-box .btn { width: 100%; }
-  .search-divider { width: 100%; height: 1px; }
+@media (max-width: 768px) {
+  .search-box {
+    flex-direction: column;
+    padding: 18px;
+    border-radius: 20px;
+    gap: 14px;
+    align-items: stretch;
+    box-shadow: var(--shadow-lg);
+  }
+  .search-field {
+    background: var(--bg-accent, #F8FAFC);
+    border: 1px solid var(--border-2, #E2E8F0);
+    border-radius: 12px;
+    padding: 10px 14px;
+    width: 100%;
+  }
+  .search-divider {
+    display: none;
+  }
+  .search-box .btn {
+    width: 100%;
+    border-radius: 12px;
+    padding: 14px;
+  }
 }
+
 
 /* City chips */
 .city-chips {
