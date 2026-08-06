@@ -15,7 +15,7 @@ SECRET_KEY = _os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-build-fallbac
 
 DEBUG = _os.environ.get('DJANGO_DEBUG', 'True').lower() in ('true', '1', 'yes')
 
-ALLOWED_HOSTS = _os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',') + ['*']
+ALLOWED_HOSTS = _os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 
 # Application definition
@@ -87,12 +87,8 @@ DATABASES = {
     'default': dj_database_url.config(
         default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
         conn_max_age=600,
-        ssl_require=True if _os.environ.get('DATABASE_URL') else False
     )
 }
-# SQLite does not support ssl_require
-if not _os.environ.get('DATABASE_URL'):
-    DATABASES['default']['OPTIONS'] = {}
 
 
 
@@ -165,7 +161,7 @@ EMAIL_HOST_PASSWORD = _os.environ.get('EMAIL_HOST_PASSWORD', '')
 
 
 # ---- CSRF Trusted Origins ----
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000', 'https://*.loca.lt', 'https://*.serveo.net', 'https://*.lhr.life', 'https://*.serveousercontent.com', 'https://*.onrender.com', 'https://*.railway.app', 'https://*.up.railway.app']
+CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000', 'https://*.loca.lt', 'https://*.serveo.net', 'https://*.lhr.life', 'https://*.serveousercontent.com', 'https://*.onrender.com']
 
 
 # ---- Production HTTPS settings (enable via env vars when using SSL) ----
@@ -185,8 +181,7 @@ RAZORPAY_KEY_SECRET = _os.environ.get('RAZORPAY_KEY_SECRET', 'placeholder_secret
 
 
 # ---- OTP ----
-OTP_DEV_MODE = True  # Shows OTP on screen — set False after Fast2SMS ₹100 recharge
+OTP_DEV_MODE = _os.environ.get('OTP_DEV_MODE', 'False').lower() in ('true', '1', 'yes')
 
 # ---- Fast2SMS (real phone OTP for India) ----
 FAST2SMS_API_KEY = _os.environ.get('FAST2SMS_API_KEY', 'IfjFmPSWvyUcYZKg0dwBXln1phCiDT68Ee9G45brJOQAosk7Ht2FcJKDIOExeiYmnVzLNUWQsB6MRhgP')
-
