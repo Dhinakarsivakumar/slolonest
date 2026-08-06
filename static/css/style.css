@@ -1343,9 +1343,10 @@ select {
   .grid { grid-template-columns: 1fr 1fr; gap: 12px; }
   .search-grid-dates { grid-template-columns: 1fr; }
 }
-@media (max-width: 400px) {
+@media (max-width: 520px) {
   .grid { grid-template-columns: 1fr; }
 }
+
 
 /* ── 29. UTILITY ─────────────────────────────────────────── */
 .mt-0 { margin-top: 0; }
