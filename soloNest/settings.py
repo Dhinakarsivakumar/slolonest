@@ -164,11 +164,23 @@ EMAIL_HOST_PASSWORD = _os.environ.get('EMAIL_HOST_PASSWORD', '')
 CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000', 'https://*.loca.lt', 'https://*.serveo.net', 'https://*.lhr.life', 'https://*.serveousercontent.com', 'https://*.onrender.com']
 
 
-# ---- Production HTTPS settings (enable via env vars when using SSL) ----
-SECURE_HSTS_SECONDS = int(_os.environ.get('SECURE_HSTS_SECONDS', '0'))
-SECURE_SSL_REDIRECT = _os.environ.get('SECURE_SSL_REDIRECT', 'False').lower() in ('true', '1', 'yes')
-SESSION_COOKIE_SECURE = _os.environ.get('SESSION_COOKIE_SECURE', 'False').lower() in ('true', '1', 'yes')
-CSRF_COOKIE_SECURE = _os.environ.get('CSRF_COOKIE_SECURE', 'False').lower() in ('true', '1', 'yes')
+# ---- Production HTTPS and Security settings ----
+# Automatically enabled in production (when DEBUG is False)
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_HSTS_SECONDS = 31536000  # 1 Year HSTS
+    SECURE_HSTS_PRELOAD = True
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+else:
+    SECURE_SSL_REDIRECT = _os.environ.get('SECURE_SSL_REDIRECT', 'False').lower() in ('true', '1', 'yes')
+    SESSION_COOKIE_SECURE = _os.environ.get('SESSION_COOKIE_SECURE', 'False').lower() in ('true', '1', 'yes')
+    CSRF_COOKIE_SECURE = _os.environ.get('CSRF_COOKIE_SECURE', 'False').lower() in ('true', '1', 'yes')
+    SECURE_HSTS_SECONDS = int(_os.environ.get('SECURE_HSTS_SECONDS', '0'))
+
 
 
 # ---- Default primary key field type ----
