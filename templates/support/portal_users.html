@@ -30,74 +30,76 @@
   <div class="card-header">
     <span class="card-title">{{ users|length }} user{{ users|length|pluralize }}</span>
   </div>
-  <table>
-    <thead>
-      <tr><th>User</th><th>Phone</th><th>Role</th><th>Verified</th><th>Status</th><th>Joined</th><th>Tickets</th><th>Actions</th></tr>
-    </thead>
-    <tbody>
-      {% for u in users %}
-      <tr>
-        <td>
-          <div style="font-weight:700;color:var(--text);">{{ u.username }}</div>
-          <div style="font-size:.7rem;color:var(--muted);">{{ u.email }}</div>
-        </td>
-        <td>{{ u.phone|default:"—" }}</td>
-        <td>
-          <span class="badge {% if u.role == 'owner' %}badge-in_progress{% else %}badge-resolved{% endif %}">
-            {{ u.role|default:"guest" }}
-          </span>
-        </td>
-        <td>
-          {% if u.phone_verified %}
-            <span style="color:var(--green);font-weight:600;">✓ Yes</span>
-          {% else %}
-            <span style="color:var(--muted);">✗ No</span>
-          {% endif %}
-        </td>
-        <td>
-          {% if u.is_active %}
-            <span class="badge badge-resolved">Active</span>
-          {% else %}
-            <span class="badge badge-closed">Banned</span>
-          {% endif %}
-        </td>
-        <td style="font-size:.75rem;color:var(--muted);">{{ u.date_joined|date:"d M Y" }}</td>
-        <td style="text-align:center;">{{ u.tickets.count }}</td>
-        <td>
-          <div style="display:flex;gap:6px;flex-wrap:wrap;">
-            <a href="{% url 'portal_user_detail' u.pk %}" class="btn btn-primary" style="padding:5px 10px;font-size:.72rem;">👁 View</a>
+  <div class="table-responsive">
+    <table>
+      <thead>
+        <tr><th>User</th><th>Phone</th><th>Role</th><th>Verified</th><th>Status</th><th>Joined</th><th>Tickets</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td>
+            <div style="font-weight:700;color:var(--text);">{{ u.username }}</div>
+            <div style="font-size:.7rem;color:var(--muted);">{{ u.email }}</div>
+          </td>
+          <td>{{ u.phone|default:"—" }}</td>
+          <td>
+            <span class="badge {% if u.role == 'owner' %}badge-in_progress{% else %}badge-resolved{% endif %}">
+              {{ u.role|default:"guest" }}
+            </span>
+          </td>
+          <td>
+            {% if u.phone_verified %}
+              <span style="color:var(--green);font-weight:600;">✓ Yes</span>
+            {% else %}
+              <span style="color:var(--muted);">✗ No</span>
+            {% endif %}
+          </td>
+          <td>
             {% if u.is_active %}
-            <form method="post" style="margin:0;" onsubmit="return confirm('Ban {{ u.username }}?');">
-              {% csrf_token %}
-              <input type="hidden" name="user_id" value="{{ u.pk }}">
-              <input type="hidden" name="action" value="ban">
-              <button type="submit" class="btn btn-danger" style="padding:5px 10px;font-size:.72rem;">🚫 Ban</button>
-            </form>
+              <span class="badge badge-resolved">Active</span>
             {% else %}
-            <form method="post" style="margin:0;">
-              {% csrf_token %}
-              <input type="hidden" name="user_id" value="{{ u.pk }}">
-              <input type="hidden" name="action" value="unban">
-              <button type="submit" class="btn btn-success" style="padding:5px 10px;font-size:.72rem;">✓ Unban</button>
-            </form>
+              <span class="badge badge-closed">Banned</span>
             {% endif %}
-            {% if not u.is_staff %}
-            <form method="post" style="margin:0;" onsubmit="return confirm('Make {{ u.username }} a staff member?');">
-              {% csrf_token %}
-              <input type="hidden" name="user_id" value="{{ u.pk }}">
-              <input type="hidden" name="action" value="make_staff">
-              <button type="submit" class="btn btn-ghost" style="padding:5px 10px;font-size:.72rem;">⬆ Staff</button>
-            </form>
-            {% else %}
-            <span style="font-size:.72rem;color:var(--indigo-light);padding:5px;">🛡 Staff</span>
-            {% endif %}
-          </div>
-        </td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted);">No users found</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+          </td>
+          <td style="font-size:.75rem;color:var(--muted);">{{ u.date_joined|date:"d M Y" }}</td>
+          <td style="text-align:center;">{{ u.tickets.count }}</td>
+          <td>
+            <div style="display:flex;gap:6px;flex-wrap:wrap;">
+              <a href="{% url 'portal_user_detail' u.pk %}" class="btn btn-primary" style="padding:5px 10px;font-size:.72rem;">👁 View</a>
+              {% if u.is_active %}
+              <form method="post" style="margin:0;" onsubmit="return confirm('Ban {{ u.username }}?');">
+                {% csrf_token %}
+                <input type="hidden" name="user_id" value="{{ u.pk }}">
+                <input type="hidden" name="action" value="ban">
+                <button type="submit" class="btn btn-danger" style="padding:5px 10px;font-size:.72rem;">🚫 Ban</button>
+              </form>
+              {% else %}
+              <form method="post" style="margin:0;">
+                {% csrf_token %}
+                <input type="hidden" name="user_id" value="{{ u.pk }}">
+                <input type="hidden" name="action" value="unban">
+                <button type="submit" class="btn btn-success" style="padding:5px 10px;font-size:.72rem;">✓ Unban</button>
+              </form>
+              {% endif %}
+              {% if not u.is_staff %}
+              <form method="post" style="margin:0;" onsubmit="return confirm('Make {{ u.username }} a staff member?');">
+                {% csrf_token %}
+                <input type="hidden" name="user_id" value="{{ u.pk }}">
+                <input type="hidden" name="action" value="make_staff">
+                <button type="submit" class="btn btn-ghost" style="padding:5px 10px;font-size:.72rem;">⬆ Staff</button>
+              </form>
+              {% else %}
+              <span style="font-size:.72rem;color:var(--indigo-light);padding:5px;">🛡 Staff</span>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--muted);">No users found</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 {% endblock %}

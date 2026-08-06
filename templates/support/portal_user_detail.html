@@ -7,8 +7,25 @@
   {{ u.username }}
 {% endblock %}
 
+{% block extra_css %}
+<style>
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 20px;
+    align-items: start;
+  }
+  @media (max-width: 992px) {
+    .detail-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}
+
 {% block content %}
-<div style="display:grid;grid-template-columns:1fr 340px;gap:20px;align-items:start;">
+<div class="detail-grid">
+
 
   <!-- LEFT COLUMN -->
   <div>

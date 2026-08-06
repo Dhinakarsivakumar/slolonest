@@ -53,35 +53,37 @@
     <span class="card-title">Recent Tickets</span>
     <a href="{% url 'portal_tickets' %}" class="btn btn-ghost" style="font-size:.75rem;padding:6px 12px;">View All →</a>
   </div>
-  <table>
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>User</th>
-        <th>Subject</th>
-        <th>Category</th>
-        <th>Priority</th>
-        <th>Status</th>
-        <th>Date</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for ticket in recent_tickets %}
-      <tr>
-        <td style="color:var(--muted);">#{{ ticket.pk }}</td>
-        <td><strong style="color:var(--text);">{{ ticket.user.username }}</strong></td>
-        <td>{{ ticket.subject|truncatechars:40 }}</td>
-        <td style="color:var(--text-2);">{{ ticket.get_category_display }}</td>
-        <td><span class="badge badge-{{ ticket.priority }}">{{ ticket.get_priority_display }}</span></td>
-        <td><span class="badge badge-{{ ticket.status }}">{{ ticket.get_status_display }}</span></td>
-        <td style="color:var(--muted);font-size:.75rem;">{{ ticket.created_at|date:"d M, H:i" }}</td>
-        <td><a href="{% url 'portal_ticket_detail' ticket.pk %}">View →</a></td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted);">No tickets yet</td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+  <div class="table-responsive">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>User</th>
+          <th>Subject</th>
+          <th>Category</th>
+          <th>Priority</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ticket in recent_tickets %}
+        <tr>
+          <td style="color:var(--muted);">#{{ ticket.pk }}</td>
+          <td><strong style="color:var(--text);">{{ ticket.user.username }}</strong></td>
+          <td>{{ ticket.subject|truncatechars:40 }}</td>
+          <td style="color:var(--text-2);">{{ ticket.get_category_display }}</td>
+          <td><span class="badge badge-{{ ticket.priority }}">{{ ticket.get_priority_display }}</span></td>
+          <td><span class="badge badge-{{ ticket.status }}">{{ ticket.get_status_display }}</span></td>
+          <td style="color:var(--muted);font-size:.75rem;">{{ ticket.created_at|date:"d M, H:i" }}</td>
+          <td><a href="{% url 'portal_ticket_detail' ticket.pk %}">View →</a></td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted);">No tickets yet</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 </div>
 {% endblock %}
