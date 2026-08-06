@@ -81,14 +81,19 @@ WSGI_APPLICATION = 'soloNest.wsgi.application'
 # Database — use DATABASE_URL env var in production (Render provides this).
 # Falls back to SQLite for local dev.
 
+import dj_database_url
+
 DATABASES = {
-    'default': _os.environ.get('DATABASE_URL')
-} if _os.environ.get('DATABASE_URL') else {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    'default': dj_database_url.config(
+        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        conn_max_age=600,
+        ssl_require=True if _os.environ.get('DATABASE_URL') else False
+    )
 }
+# SQLite does not support ssl_require
+if not _os.environ.get('DATABASE_URL'):
+    DATABASES['default']['OPTIONS'] = {}
+
 
 
 # Password validation
