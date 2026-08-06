@@ -3,7 +3,7 @@ services:
     name: slolonest
     plan: free
     runtime: python
-    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate
+    buildCommand: pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate && python create_superuser.py
     startCommand: gunicorn soloNest.wsgi:application --log-file -
     envVars:
       - key: PYTHON_VERSION
