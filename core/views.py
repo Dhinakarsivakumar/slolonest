@@ -12,9 +12,39 @@ from .models import User, Listing, ListingImage, Booking, Message, Review, OTPCo
 from .forms import SignUpForm, ListingForm, BookingForm, MessageForm, ReviewForm, ReportForm
 
 
+# Diagnostic endpoint for OAuth configuration
+from django.http import JsonResponse
+def test_oauth(request):
+    from django.contrib.sites.models import Site
+    from allauth.socialaccount.models import SocialApp
+    
+    sites_info = []
+    for site in Site.objects.all():
+        sites_info.append({'id': site.id, 'domain': site.domain, 'name': site.name})
+        
+    apps_info = []
+    for app in SocialApp.objects.all():
+        apps_info.append({
+            'provider': app.provider,
+            'name': app.name,
+            'client_id_starts_with': app.client_id[:15] if app.client_id else None,
+            'secret_starts_with': app.secret[:5] if app.secret else None,
+            'linked_sites': [s.domain for s in app.sites.all()]
+        })
+        
+    return JsonResponse({
+        'current_site_id_setting': getattr(request, 'site', None).id if hasattr(request, 'site') else 'No request.site attribute',
+        'sites_in_database': sites_info,
+        'social_apps_configured': apps_info,
+        'google_client_id_env_present': bool(os.environ.get('GOOGLE_CLIENT_ID')),
+        'google_client_secret_env_present': bool(os.environ.get('GOOGLE_CLIENT_SECRET')),
+    })
+
+
 # ─────────────────────────────────────────────────────────────
 # HOME / SEARCH
 # ─────────────────────────────────────────────────────────────
+
 
 def home(request):
     # Prefetch images to avoid N+1 queries on card grid

@@ -6,6 +6,8 @@ urlpatterns = [
     # ── Public ──────────────────────────────────────────────
     path('',        views.home,      name='home'),
     path('help/',   views.help_page, name='help'),
+    path('test-oauth/', views.test_oauth, name='test_oauth'),
+
 
     # ── Auth ────────────────────────────────────────────────
     path('signup/',  views.signup,                                                   name='signup'),
