@@ -82,10 +82,16 @@
 
       <!-- ── Sidebar filters ── -->
       <aside class="filters-panel">
+        <div class="filters-header-mobile">
+          <span>Filters</span>
+          <button type="button" class="close-filters-btn" onclick="toggleFiltersPanel(false)">✕</button>
+        </div>
+
         <div class="filters-title">
           <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
           Filters
         </div>
+
 
         <div class="filter-block">
           <h4>Room type</h4>
@@ -151,16 +157,27 @@
         </button>
         <a href="{% url 'home' %}" class="help text-center mt-8" style="display:block;margin-top:10px;">✕ Clear all filters</a>
       </aside>
+      
+      <!-- Filters overlay for mobile -->
+      <div class="filters-overlay" id="filtersOverlay" onclick="toggleFiltersPanel(false)"></div>
 
       <!-- ── Results panel ── -->
       <div class="results-panel">
-        <div class="section-head">
-          <h2>Available rooms</h2>
-          <span class="count-pill">
-            <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="margin-right:4px"><circle cx="12" cy="12" r="10"/></svg>
-            {{ listings|length }} listing{{ listings|length|pluralize }}
-          </span>
+        <div class="section-head" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div style="display:flex;align-items:center;gap:10px;">
+            <h2 style="margin:0;">Available rooms</h2>
+            <span class="count-pill">
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="margin-right:4px"><circle cx="12" cy="12" r="10"/></svg>
+              {{ listings|length }} listing{{ listings|length|pluralize }}
+            </span>
+          </div>
+          <!-- Mobile filter button -->
+          <button type="button" class="btn btn-ghost btn-small mobile-filter-btn" onclick="toggleFiltersPanel(true)" style="display:none;align-items:center;gap:6px;padding:6px 12px;font-size:.8rem;">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+            Filters
+          </button>
         </div>
+
 
         <div id="mapView" class="map-view">
           <div class="map-empty">
@@ -276,6 +293,23 @@
     updateSlider();
   }
 
+  // Mobile filter panel toggle helper
+  function toggleFiltersPanel(show) {
+    const panel = document.querySelector('.filters-panel');
+    const overlay = document.getElementById('filtersOverlay');
+    if (!panel || !overlay) return;
+    if (show) {
+      panel.classList.add('open');
+      overlay.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    } else {
+      panel.classList.remove('open');
+      overlay.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+  }
+  window.toggleFiltersPanel = toggleFiltersPanel;
+
   // Leaflet map
   var points = {{ map_points_json|safe }};
   var mapEl  = document.getElementById('mapView');
@@ -298,4 +332,5 @@
   }
 })();
 </script>
+
 {% endblock %}

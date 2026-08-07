@@ -641,8 +641,7 @@ select {
   margin-bottom: 2px;
   text-transform: uppercase;
 }
-.search-box input[type="text"],
-.search-box input[type="date"] {
+.search-box input[type="text"] {
   border: none;
   background: transparent;
   box-shadow: none;
@@ -654,12 +653,35 @@ select {
   outline: none;
 }
 .search-box input[type="date"] {
-  color: var(--text-2);
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--navy);
+  padding: 0;
+  width: 100%;
+  outline: none;
+  position: relative;
+  min-height: 20px;
+}
+.search-field {
+  position: relative;
+}
+/* Make the entire checkin/checkout field clickable for the native date calendar picker */
+.search-box input[type="date"]::-webkit-calendar-picker-indicator {
+  position: absolute;
+  top: -12px; left: -30px; right: 0; bottom: -12px;
+  width: auto; height: auto;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
 }
 .search-box input:focus {
   outline: none;
   box-shadow: none;
 }
+
 .search-divider {
   width: 1px;
   height: 36px;
@@ -844,6 +866,26 @@ select {
 .call-btn.disabled { background: var(--border); color: var(--muted); pointer-events: none; box-shadow: none; }
 
 /* ── 13. SIDEBAR FILTERS ─────────────────────────────────── */
+.filters-header-mobile {
+  display: none;
+}
+.filters-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 140;
+  opacity: 0;
+  transition: opacity 0.25s ease-in-out;
+  pointer-events: none;
+  backdrop-filter: blur(2px);
+}
+.filters-overlay.active {
+  display: block;
+  opacity: 1;
+  pointer-events: auto;
+}
+
 .layout-with-sidebar {
   display: grid;
   grid-template-columns: 280px 1fr;
@@ -859,6 +901,7 @@ select {
   position: sticky;
   top: 88px;
 }
+
 
 .filters-title {
   font-size: 1rem;
@@ -1399,7 +1442,78 @@ select {
 /* ── 28. RESPONSIVE LAYOUT ADJUSTMENTS ──────────────────── */
 @media (max-width: 900px) {
   .layout-with-sidebar { grid-template-columns: 1fr; }
-  .filters-panel { position: static; }
+  
+  /* Make filters panel a slide-in right drawer */
+  .filters-panel {
+    position: fixed;
+    top: 0;
+    right: -320px;
+    width: 300px;
+    height: 100vh;
+    background: var(--paper);
+    z-index: 150;
+    box-shadow: -5px 0 25px rgba(0,0,0,0.15);
+    transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    border-radius: 0;
+    border: none;
+    border-left: 1px solid var(--border);
+    padding: 0; /* Clear padding for inner structure */
+  }
+  .filters-panel.open {
+    right: 0;
+  }
+  
+  /* Filter title inside panel hidden on mobile since header-mobile replaces it */
+  .filters-panel .filters-title {
+    display: none;
+  }
+
+  /* Padding wrapper for form blocks in mobile sidebar */
+  .filters-panel .filter-block {
+    padding: 0 24px 18px;
+    margin-bottom: 18px;
+  }
+  .filters-panel .filter-block:first-of-type {
+    margin-top: 20px;
+  }
+  .filters-panel .btn-primary {
+    width: calc(100% - 48px);
+    margin: 10px 24px 24px;
+    border-radius: 10px;
+  }
+  .filters-panel .help {
+    margin-bottom: 32px;
+  }
+
+  /* Mobile header for filters panel */
+  .filters-header-mobile {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface-2);
+  }
+  .filters-header-mobile span {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: var(--text);
+  }
+  .close-filters-btn {
+    background: transparent;
+    border: none;
+    font-size: 1.2rem;
+    color: var(--text-2);
+    cursor: pointer;
+    padding: 4px;
+  }
+
+  /* Toggle button shown on mobile results header */
+  .mobile-filter-btn {
+    display: inline-flex !important;
+  }
 }
 @media (max-width: 600px) {
   .map-view { height: 220px; }
@@ -1409,6 +1523,7 @@ select {
 @media (max-width: 520px) {
   .grid { grid-template-columns: 1fr; }
 }
+
 
 
 /* ── 29. UTILITY ─────────────────────────────────────────── */
