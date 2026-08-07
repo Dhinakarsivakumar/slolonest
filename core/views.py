@@ -690,8 +690,127 @@ def verify_otp(request):
 
 
 # ─────────────────────────────────────────────────────────────
+# PHONE OTP LOGIN (no password needed)
+# ─────────────────────────────────────────────────────────────
+
+def phone_login_request(request):
+    """Step 1: User enters phone number, we send OTP."""
+    if request.method == 'POST':
+        import re
+        phone = request.POST.get('phone', '').strip()
+        digits = re.sub(r'\D', '', phone)
+        if digits.startswith('91') and len(digits) == 12:
+            digits = digits[2:]
+        if len(digits) != 10:
+            messages.error(request, 'Please enter a valid 10-digit phone number.')
+            return render(request, 'core/phone_login_request.html')
+
+        # Rate limiting
+        from django.core.cache import cache
+        rate_key = f'phone_login_rate_{digits}'
+        if cache.get(rate_key):
+            messages.error(request, 'Please wait 60 seconds before requesting another OTP.')
+            return render(request, 'core/phone_login_request.html')
+
+        # Generate OTP
+        code = f'{random.randint(0, 999999):06d}'
+
+        # Store in session for verification
+        request.session['phone_login_number'] = digits
+        request.session['phone_login_code'] = code
+
+        cache.set(rate_key, 1, timeout=60)
+
+        # Send OTP via SMS
+        from django.conf import settings as dj_settings
+        dev_mode = getattr(dj_settings, 'OTP_DEV_MODE', True)
+        dev_code = None
+
+        sms_ok, sms_err = _send_sms_otp(digits, code)
+        if sms_ok and not dev_mode:
+            messages.success(request, f'OTP sent to +91 {digits} ✓')
+        else:
+            # In dev mode, show code on screen
+            dev_code = code
+            if dev_mode:
+                messages.info(request, f'Dev mode: Your OTP is {code}')
+            else:
+                messages.warning(request, f'Could not send SMS. Your OTP is: {code}')
+                dev_code = code
+
+        return render(request, 'core/phone_login_verify.html', {
+            'phone': digits,
+            'dev_code': dev_code,
+        })
+
+    return render(request, 'core/phone_login_request.html')
+
+
+def phone_login_verify(request):
+    """Step 2: User enters OTP, we verify and log them in."""
+    phone = request.session.get('phone_login_number')
+    stored_code = request.session.get('phone_login_code')
+
+    if not phone or not stored_code:
+        messages.error(request, 'Session expired. Please request a new OTP.')
+        return redirect('phone_login_request')
+
+    if request.method == 'POST':
+        entered = request.POST.get('code', '').strip()
+
+        if entered != stored_code:
+            # Track attempts
+            from django.core.cache import cache
+            key = f'phone_login_attempts_{phone}'
+            attempts = cache.get(key, 0) + 1
+            cache.set(key, attempts, timeout=600)
+            if attempts >= 5:
+                cache.delete(key)
+                del request.session['phone_login_number']
+                del request.session['phone_login_code']
+                messages.error(request, 'Too many wrong attempts. Please request a new OTP.')
+                return redirect('phone_login_request')
+            messages.error(request, f'Incorrect code. {5 - attempts} attempt(s) left.')
+            return render(request, 'core/phone_login_verify.html', {'phone': phone, 'dev_code': None})
+
+        # OTP is correct — find or create user
+        user = User.objects.filter(phone=phone).first()
+        if not user:
+            # Auto-create a new guest account
+            import uuid
+            short_id = uuid.uuid4().hex[:8]
+            user = User.objects.create_user(
+                username=f'user_{short_id}',
+                password=None,  # No password — phone-only login
+                phone=phone,
+                phone_verified=True,
+                role='guest',
+            )
+            user.set_unusable_password()
+            user.save()
+            messages.success(request, f'Welcome to SoloNest! Your account has been created.')
+        else:
+            user.phone_verified = True
+            user.save()
+
+        # Log the user in
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+
+        # Clean up session
+        del request.session['phone_login_number']
+        del request.session['phone_login_code']
+        from django.core.cache import cache
+        cache.delete(f'phone_login_attempts_{phone}')
+
+        return redirect('home')
+
+    return render(request, 'core/phone_login_verify.html', {'phone': phone, 'dev_code': None})
+
+
+# ─────────────────────────────────────────────────────────────
 # IDENTITY VERIFICATION
 # ─────────────────────────────────────────────────────────────
+
 
 @login_required
 def submit_verification(request):

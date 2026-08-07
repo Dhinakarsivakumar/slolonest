@@ -1,0 +1,179 @@
+{% extends 'core/base.html' %}
+{% block title %}Verify OTP — SoloNest{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+
+  <!-- Left brand panel -->
+  <div class="auth-brand">
+    <div class="auth-brand-inner">
+      <div class="brand" style="color:#fff;margin-bottom:48px;">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        SoloNest
+      </div>
+      <h2>Almost<br>there <em>✓</em></h2>
+      <p>Enter the 6-digit code we just sent to your phone to complete your login.</p>
+    </div>
+  </div>
+
+  <!-- Right form panel -->
+  <div class="auth-form-wrap">
+    <div class="auth-form-card" style="text-align:center;">
+      <div style="margin-bottom:24px;">
+        <div style="width:64px;height:64px;border-radius:16px;background:linear-gradient(135deg,#10B981,#059669);display:inline-flex;align-items:center;justify-content:center;margin-bottom:16px;">
+          <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+        </div>
+        <h1 style="margin-bottom:6px;">Verify OTP</h1>
+        <p class="sub" style="margin-bottom:0;">Code sent to <strong style="color:var(--text);">+91 {{ phone }}</strong></p>
+      </div>
+
+      {% if messages %}
+      {% for message in messages %}
+      <div style="margin-bottom:16px;padding:12px 16px;border-radius:10px;font-size:.85rem;text-align:left;
+        {% if 'error' in message.tags %}background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;{% elif 'success' in message.tags %}background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0;{% elif 'info' in message.tags %}background:#EFF6FF;color:#2563EB;border:1px solid #BFDBFE;{% else %}background:#FFFBEB;color:#D97706;border:1px solid #FDE68A;{% endif %}">
+        {{ message }}
+      </div>
+      {% endfor %}
+      {% endif %}
+
+      {% if dev_code %}
+      <div style="margin-bottom:20px;padding:16px;border-radius:12px;background:linear-gradient(135deg,#EFF6FF,#DBEAFE);border:1px solid #93C5FD;text-align:center;">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#3B82F6;margin-bottom:6px;">Dev Mode — Your OTP</div>
+        <div style="font-size:2rem;font-weight:800;letter-spacing:0.3em;color:#1E40AF;font-family:'Plus Jakarta Sans',monospace;">{{ dev_code }}</div>
+      </div>
+      {% endif %}
+
+      <form method="post" action="{% url 'phone_login_verify' %}">
+        {% csrf_token %}
+        <!-- Hidden single input that collects the OTP -->
+        <input type="hidden" name="code" id="otpHiddenInput">
+
+        <div class="otp-boxes" id="otpBoxes">
+          <input type="text" maxlength="1" class="otp-box" data-index="0" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code" autofocus>
+          <input type="text" maxlength="1" class="otp-box" data-index="1" inputmode="numeric" pattern="[0-9]">
+          <input type="text" maxlength="1" class="otp-box" data-index="2" inputmode="numeric" pattern="[0-9]">
+          <div class="otp-dash">—</div>
+          <input type="text" maxlength="1" class="otp-box" data-index="3" inputmode="numeric" pattern="[0-9]">
+          <input type="text" maxlength="1" class="otp-box" data-index="4" inputmode="numeric" pattern="[0-9]">
+          <input type="text" maxlength="1" class="otp-box" data-index="5" inputmode="numeric" pattern="[0-9]">
+        </div>
+
+        <button class="btn btn-primary w-full" type="submit" id="verifyBtn" style="margin-top:20px;">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Verify & Log In
+        </button>
+      </form>
+
+      <div style="margin-top:20px;">
+        <p style="font-size:.82rem;color:var(--muted);">
+          Didn't receive the code?
+          <a href="{% url 'phone_login_request' %}" style="color:var(--indigo-600);font-weight:600;">Resend OTP</a>
+        </p>
+      </div>
+
+      <div style="margin-top:12px;">
+        <a href="{% url 'login' %}" style="color:var(--text-2);font-size:.82rem;">← Back to login</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<style>
+.otp-boxes {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin: 0 auto;
+}
+.otp-box {
+  width: 48px;
+  height: 56px;
+  border: 2px solid var(--border-2, #E2E8F0);
+  border-radius: 12px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  font-family: 'Plus Jakarta Sans', monospace;
+  color: var(--navy);
+  background: var(--paper);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  caret-color: var(--indigo-600);
+}
+.otp-box:focus {
+  border-color: var(--indigo-600);
+  box-shadow: 0 0 0 3px rgba(79,70,229,0.15);
+}
+.otp-box.filled {
+  border-color: var(--indigo-600);
+  background: #EEF2FF;
+}
+.otp-dash {
+  font-size: 1.2rem;
+  color: var(--muted);
+  font-weight: 600;
+  user-select: none;
+}
+
+@media (max-width: 400px) {
+  .otp-box {
+    width: 40px;
+    height: 48px;
+    font-size: 1.2rem;
+  }
+  .otp-boxes { gap: 5px; }
+}
+</style>
+
+<script>
+(function() {
+  var boxes = document.querySelectorAll('.otp-box');
+  var hidden = document.getElementById('otpHiddenInput');
+
+  function updateHidden() {
+    var val = '';
+    boxes.forEach(function(b) { val += b.value; });
+    hidden.value = val;
+  }
+
+  boxes.forEach(function(box, i) {
+    box.addEventListener('input', function(e) {
+      var v = this.value.replace(/\D/g, '');
+      this.value = v ? v[0] : '';
+      this.classList.toggle('filled', !!this.value);
+      updateHidden();
+      if (v && i < boxes.length - 1) {
+        boxes[i + 1].focus();
+      }
+    });
+
+    box.addEventListener('keydown', function(e) {
+      if (e.key === 'Backspace' && !this.value && i > 0) {
+        // Skip the dash element
+        var prev = i - 1;
+        boxes[prev].focus();
+        boxes[prev].value = '';
+        boxes[prev].classList.remove('filled');
+        updateHidden();
+      }
+    });
+
+    box.addEventListener('paste', function(e) {
+      e.preventDefault();
+      var paste = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+      for (var j = 0; j < Math.min(paste.length, 6); j++) {
+        boxes[j].value = paste[j];
+        boxes[j].classList.add('filled');
+      }
+      updateHidden();
+      if (paste.length >= 6) {
+        boxes[5].focus();
+      }
+    });
+  });
+})();
+</script>
+{% endblock %}

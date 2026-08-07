@@ -14,6 +14,9 @@ urlpatterns = [
     path('login/',   LoginView.as_view(template_name='core/login.html'),            name='login'),
     path('logout/',  LogoutView.as_view(),                                           name='logout'),
     path('welcome/', views.post_login_redirect,                                      name='post_login_redirect'),
+    path('login/phone/',        views.phone_login_request,  name='phone_login_request'),
+    path('login/phone/verify/', views.phone_login_verify,   name='phone_login_verify'),
+
 
     # ── Account / Settings ──────────────────────────────────
     path('settings/profile/',    views.profile_settings,   name='profile_settings'),

@@ -1,0 +1,71 @@
+{% extends 'core/base.html' %}
+{% block title %}Login with Phone — SoloNest{% endblock %}
+{% block content %}
+<div class="auth-wrap">
+
+  <!-- Left brand panel -->
+  <div class="auth-brand">
+    <div class="auth-brand-inner">
+      <div class="brand" style="color:#fff;margin-bottom:48px;">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        SoloNest
+      </div>
+      <h2>Login with<br>your <em>phone</em> number</h2>
+      <p>No password needed. We'll send a one-time code to your phone for instant, secure access.</p>
+      <div class="auth-trust">
+        <div class="auth-trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          OTP verified login
+        </div>
+        <div class="auth-trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Auto-create account if new
+        </div>
+        <div class="auth-trust-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+          No password to remember
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right form panel -->
+  <div class="auth-form-wrap">
+    <div class="auth-form-card">
+      <h1>📱 Phone Login</h1>
+      <p class="sub">Enter your phone number to receive an OTP code.</p>
+
+      {% if messages %}
+      {% for message in messages %}
+      <div class="alert alert-{{ message.tags }}" style="margin-bottom:16px;padding:12px 16px;border-radius:10px;font-size:.85rem;
+        {% if 'error' in message.tags %}background:#FEF2F2;color:#DC2626;border:1px solid #FECACA;{% elif 'success' in message.tags %}background:#F0FDF4;color:#16A34A;border:1px solid #BBF7D0;{% elif 'info' in message.tags %}background:#EFF6FF;color:#2563EB;border:1px solid #BFDBFE;{% else %}background:#FFFBEB;color:#D97706;border:1px solid #FDE68A;{% endif %}">
+        {{ message }}
+      </div>
+      {% endfor %}
+      {% endif %}
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="phone-input-row">
+          <div class="phone-prefix">
+            <span>🇮🇳</span>
+            <span>+91</span>
+          </div>
+          <input type="tel" name="phone" placeholder="Enter 10-digit number" maxlength="10" pattern="[0-9]{10}" required class="phone-input" autocomplete="tel">
+        </div>
+        <button class="btn btn-primary w-full" type="submit" style="margin-top:14px;">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          Send OTP
+        </button>
+      </form>
+
+      <div style="text-align:center;margin-top:20px;">
+        <a href="{% url 'login' %}" style="color:var(--indigo-600);font-size:.85rem;font-weight:600;">← Back to all login options</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

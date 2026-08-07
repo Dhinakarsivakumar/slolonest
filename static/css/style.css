@@ -1152,7 +1152,132 @@ select {
   content: ''; flex: 1; height: 1px; background: var(--border);
 }
 
-/* ── 20. LISTING DETAIL ──────────────────────────────────── */
+/* Login method tabs */
+.login-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 24px;
+  background: var(--surface-2);
+  border-radius: 12px;
+  padding: 4px;
+}
+.login-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 8px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.login-tab:hover {
+  color: var(--text);
+  background: rgba(255,255,255,0.5);
+}
+.login-tab.active {
+  background: var(--paper);
+  color: var(--indigo-600);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+.login-tab svg {
+  flex-shrink: 0;
+}
+
+/* Tab content */
+.login-tab-content {
+  display: none;
+  animation: tabFadeIn 0.25s ease-out;
+}
+.login-tab-content.active {
+  display: block;
+}
+@keyframes tabFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Tab info card */
+.tab-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  margin-bottom: 20px;
+  background: var(--surface-2);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+.tab-info-icon {
+  flex-shrink: 0;
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.tab-info p {
+  font-size: 0.82rem;
+  color: var(--text-2);
+  line-height: 1.5;
+  margin: 0;
+}
+
+/* Phone OTP input */
+.phone-input-row {
+  display: flex;
+  align-items: center;
+  border: 1.5px solid var(--border-2, #E2E8F0);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--paper);
+  transition: border-color 0.2s ease;
+}
+.phone-input-row:focus-within {
+  border-color: var(--indigo-600);
+  box-shadow: 0 0 0 3px rgba(79,70,229,0.1);
+}
+.phone-prefix {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 12px 12px 12px 14px;
+  background: var(--surface-2);
+  border-right: 1px solid var(--border);
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text);
+  flex-shrink: 0;
+  user-select: none;
+}
+.phone-input {
+  flex: 1;
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 12px 14px !important;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--navy);
+  letter-spacing: 0.08em;
+  outline: none;
+}
+.phone-input::placeholder {
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: normal;
+}
+
+
 .detail-hero {
   background: linear-gradient(135deg, var(--navy) 0%, #1E3A5F 100%);
   padding: 40px 0 50px;
