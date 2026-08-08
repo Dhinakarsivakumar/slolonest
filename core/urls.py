@@ -18,6 +18,8 @@ urlpatterns = [
     path('welcome/', views.post_login_redirect,                                      name='post_login_redirect'),
     path('login/phone/',        views.phone_login_request,  name='phone_login_request'),
     path('login/phone/verify/', views.phone_login_verify,   name='phone_login_verify'),
+    path('switch-mode/',        views.switch_mode,          name='switch_mode'),
+
 
 
     # ── Account / Settings ──────────────────────────────────

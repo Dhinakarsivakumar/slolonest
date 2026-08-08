@@ -71,6 +71,13 @@
         {% if user.role == 'owner' %}<a href="{% url 'owner_analytics' %}" class="nav-link">Analytics</a>{% endif %}
         {% if user.is_staff %}<a href="{% url 'platform_analytics' %}" class="nav-link">Moderation</a>{% endif %}
 
+        {% if user.role == 'owner' or request.session.is_original_owner or user.is_verified or user.verification_status == 'pending' or user.verification_status == 'approved' %}
+        <a href="{% url 'switch_mode' %}" class="nav-link" style="border: 1.5px solid var(--border); border-radius: var(--radius-full); padding: 6px 12px; margin-right: 8px;">
+          <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 21l6-6M9 8l-5 5-4-4"/></svg>
+          {% if user.role == 'owner' %}Switch to Guest{% else %}Switch to Owner{% endif %}
+        </a>
+        {% endif %}
+
         <!-- Settings dropdown -->
         <div class="nav-settings-wrap" id="settingsWrap">
           <button type="button" class="nav-link nav-settings-btn" id="settingsBtn" aria-label="Settings" aria-haspopup="true">
