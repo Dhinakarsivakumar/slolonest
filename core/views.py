@@ -149,6 +149,34 @@ def home(request):
     return render(request, 'core/home.html', context)
 
 
+def city_suggestions(request):
+    """API view returning matching city names for auto-complete search."""
+    q = request.GET.get('q', '').strip()
+
+    # 1. Fetch cities from database
+    db_cities = list(
+        Listing.objects.filter(is_available=True)
+        .exclude(city='')
+        .values_list('city', flat=True)
+        .distinct()
+    )
+
+    # 2. Known popular cities in South India / Tamil Nadu
+    popular = [
+        'Thanjavur', 'Chennai', 'Coimbatore', 'Madurai', 'Tiruchirappalli', 
+        'Salem', 'Tirunelveli', 'Vellore', 'Erode', 'Kanchipuram', 
+        'Thoothukudi', 'Nagercoil', 'Dindigul', 'Bengaluru', 'Hyderabad', 'Kochi'
+    ]
+
+    all_cities = list(dict.fromkeys(db_cities + popular))
+
+    if q:
+        matched = [c for c in all_cities if q.lower() in c.lower()]
+    else:
+        matched = all_cities[:8]
+
+    return JsonResponse({'cities': matched[:8]})
+
 
 # ─────────────────────────────────────────────────────────────
 # LISTING DETAIL
