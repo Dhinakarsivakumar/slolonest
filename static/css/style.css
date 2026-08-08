@@ -324,14 +324,16 @@ p { color: var(--text-2); }
 /* Menu toggle (mobile) */
 .menu-toggle {
   display: none;
-  width: 38px; height: 38px;
+  width: 42px; height: 42px;
   border-radius: var(--radius-sm);
   background: var(--surface-2);
+  border: 1px solid var(--border);
   align-items: center; justify-content: center;
   flex-shrink: 0;
   color: var(--text);
 }
-.menu-toggle svg { width: 20px; height: 20px; }
+.menu-toggle svg { width: 24px; height: 24px; stroke-width: 2.2px; }
+
 
 .nav-scrim {
   display: none;
@@ -1715,7 +1717,7 @@ select {
 
 @media (max-width: 820px) {
   body {
-    padding-bottom: 68px;
+    padding-bottom: 78px;
   }
   .mobile-bottom-nav {
     display: flex;
@@ -1723,13 +1725,13 @@ select {
     bottom: 0;
     left: 0;
     right: 0;
-    height: 64px;
+    height: 70px;
     background: var(--paper);
-    border-top: 1px solid var(--border);
+    border-top: 1.5px solid var(--border);
     justify-content: space-around;
     align-items: center;
     z-index: 999;
-    box-shadow: 0 -4px 16px rgba(0,0,0,0.08);
+    box-shadow: 0 -6px 20px rgba(0,0,0,0.08);
     padding-bottom: env(safe-area-inset-bottom);
   }
   .mobile-nav-item {
@@ -1737,26 +1739,34 @@ select {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 3px;
+    gap: 4px;
     flex: 1;
     height: 100%;
     color: var(--muted);
-    font-size: 0.72rem;
-    font-weight: 600;
+    font-size: 0.78rem;
+    font-weight: 700;
     text-decoration: none;
-    transition: color 0.15s ease;
+    transition: all 0.2s ease;
   }
   .mobile-nav-item svg {
-    transition: transform 0.15s ease;
+    width: 24px !important;
+    height: 24px !important;
+    stroke-width: 2.3px !important;
+    transition: transform 0.2s ease, stroke 0.2s ease;
   }
   .mobile-nav-item:hover, .mobile-nav-item.active {
     color: var(--indigo-600);
   }
   .mobile-nav-item.active svg {
     stroke: var(--indigo-600);
-    transform: translateY(-1px);
+    transform: translateY(-2px) scale(1.1);
+  }
+  .mobile-nav-item.active span {
+    font-weight: 800;
+    color: var(--indigo-600);
   }
 }
+
 
 /* ── 32. SEARCH MODAL & AUTOCOMPLETE ────────────────────────── */
 .search-modal-overlay {
