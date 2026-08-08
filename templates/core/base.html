@@ -370,7 +370,13 @@
     var form  = document.getElementById('modalSearchForm');
     if(input && form){
       input.value = cityName;
-      form.submit();
+      var params = new URLSearchParams(new FormData(form));
+      var targetUrl = form.action + '?' + params.toString();
+      if (typeof window.performAjaxSearch === 'function') {
+        window.performAjaxSearch(targetUrl, true);
+      } else {
+        window.location.href = targetUrl;
+      }
     }
   };
 
@@ -410,7 +416,15 @@
                 dropdown.classList.remove('open');
                 if(formId){
                   var form = document.getElementById(formId);
-                  if(form) form.submit();
+                  if(form) {
+                    var params = new URLSearchParams(new FormData(form));
+                    var targetUrl = form.action + '?' + params.toString();
+                    if (typeof window.performAjaxSearch === 'function') {
+                      window.performAjaxSearch(targetUrl, true);
+                    } else {
+                      window.location.href = targetUrl;
+                    }
+                  }
                 }
               });
             });
@@ -418,12 +432,27 @@
           .catch(function(){
             dropdown.classList.remove('open');
           });
-      }, 150);
+      }, 200);
     });
 
     document.addEventListener('click', function(e){
       if(!input.contains(e.target) && !dropdown.contains(e.target)){
         dropdown.classList.remove('open');
+      }
+    });
+  }
+
+  // Intercept modal search form submit for AJAX
+  var modalForm = document.getElementById('modalSearchForm');
+  if (modalForm) {
+    modalForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      var params = new URLSearchParams(new FormData(modalForm));
+      var targetUrl = modalForm.action + '?' + params.toString();
+      if (typeof window.performAjaxSearch === 'function') {
+        window.performAjaxSearch(targetUrl, true);
+      } else {
+        window.location.href = targetUrl;
       }
     });
   }

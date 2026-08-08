@@ -254,15 +254,84 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
-  // City chips
+  // Universal SPA AJAX Search Runner
+  window.performAjaxSearch = function(targetUrl, shouldScroll) {
+    var resultsPanel = document.getElementById('resultsPanel');
+    if (!resultsPanel) {
+      window.location.href = targetUrl;
+      return;
+    }
+
+    resultsPanel.style.opacity = '0.5';
+    resultsPanel.style.transition = 'opacity 0.2s ease';
+
+    var ajaxUrl = new URL(targetUrl, window.location.origin);
+    ajaxUrl.searchParams.set('ajax', '1');
+
+    fetch(ajaxUrl.toString(), {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    })
+    .then(function(res){ return res.text(); })
+    .then(function(html){
+      var tempDiv = document.createElement('div');
+      tempDiv.innerHTML = html;
+      var newResults = tempDiv.querySelector('#resultsPanel') || tempDiv.firstElementChild;
+      if (newResults && resultsPanel.parentNode) {
+        resultsPanel.parentNode.replaceChild(newResults, resultsPanel);
+      }
+      history.pushState(null, '', targetUrl);
+
+      if (typeof closeSearchModal === 'function') closeSearchModal();
+      if (typeof toggleFiltersPanel === 'function') toggleFiltersPanel(false);
+
+      if (shouldScroll) {
+        var updatedPanel = document.getElementById('resultsPanel');
+        if (updatedPanel) {
+          updatedPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    })
+    .catch(function(err){
+      console.error('AJAX search error:', err);
+      window.location.href = targetUrl;
+    });
+  };
+
+  // Form Submission Intercept
+  var filtersForm = document.getElementById('filtersForm');
+  if (filtersForm) {
+    filtersForm.addEventListener('submit', function(e){
+      e.preventDefault();
+      var formData = new FormData(filtersForm);
+      var params = new URLSearchParams(formData);
+      var targetUrl = window.location.pathname + '?' + params.toString();
+      window.performAjaxSearch(targetUrl, true);
+    });
+
+    // Auto-update on radio & checkbox changes without full reload
+    filtersForm.querySelectorAll('input[type=radio], input[type=checkbox]').forEach(function(inp){
+      inp.addEventListener('change', function(){
+        var formData = new FormData(filtersForm);
+        var params = new URLSearchParams(formData);
+        var targetUrl = window.location.pathname + '?' + params.toString();
+        window.performAjaxSearch(targetUrl, false);
+      });
+    });
+  }
+
+  // City chips click intercept
   document.querySelectorAll('.city-chip').forEach(function(chip){
-    chip.addEventListener('click', function(){
-      var form = document.getElementById('filtersForm');
-      form.querySelectorAll('input[name=city]').forEach(function(i){ i.remove(); });
-      var input = document.createElement('input');
-      input.type='hidden'; input.name='city'; input.value=chip.dataset.city;
-      form.appendChild(input);
-      form.submit();
+    chip.addEventListener('click', function(e){
+      e.preventDefault();
+      document.querySelectorAll('.city-chip').forEach(function(c){ c.classList.remove('active'); });
+      chip.classList.add('active');
+
+      var city = chip.dataset.city;
+      var cityInput = document.getElementById('citySearch');
+      if (cityInput) cityInput.value = city;
+
+      var targetUrl = window.location.pathname + '?city=' + encodeURIComponent(city);
+      window.performAjaxSearch(targetUrl, true);
     });
   });
 
@@ -274,19 +343,31 @@
   var maxLbl= document.getElementById('maxPriceLabel');
 
   function updateSlider(){
+    if (!minEl || !maxEl) return;
     var min=parseInt(minEl.value), max=parseInt(maxEl.value);
     if(min > max-50){ min=max-50; minEl.value=min; }
     var range=2000;
-    fill.style.left  = (min/range*100)+'%';
-    fill.style.right = ((range-max)/range*100)+'%';
-    minLbl.textContent = '₹'+min;
-    maxLbl.textContent = '₹'+max;
+    if (fill) {
+      fill.style.left  = (min/range*100)+'%';
+      fill.style.right = ((range-max)/range*100)+'%';
+    }
+    if (minLbl) minLbl.textContent = '₹'+min;
+    if (maxLbl) maxLbl.textContent = '₹'+max;
   }
+
   if(minEl && maxEl){
     minEl.addEventListener('input', updateSlider);
     maxEl.addEventListener('input', updateSlider);
-    minEl.addEventListener('change', function(){ document.getElementById('filtersForm').submit(); });
-    maxEl.addEventListener('change', function(){ document.getElementById('filtersForm').submit(); });
+    minEl.addEventListener('change', function(){
+      var formData = new FormData(filtersForm);
+      var params = new URLSearchParams(formData);
+      window.performAjaxSearch(window.location.pathname + '?' + params.toString(), false);
+    });
+    maxEl.addEventListener('change', function(){
+      var formData = new FormData(filtersForm);
+      var params = new URLSearchParams(formData);
+      window.performAjaxSearch(window.location.pathname + '?' + params.toString(), false);
+    });
     updateSlider();
   }
 
@@ -309,5 +390,6 @@
 
 })();
 </script>
+
 
 {% endblock %}

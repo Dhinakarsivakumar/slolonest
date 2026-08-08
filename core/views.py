@@ -146,7 +146,12 @@ def home(request):
         'popular_cities': popular_cities,
         'favorited_ids': favorited_ids,
     }
+
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest' or request.GET.get('ajax') == '1':
+        return render(request, 'core/partials/listings_grid.html', context)
+
     return render(request, 'core/home.html', context)
+
 
 
 def city_suggestions(request):
