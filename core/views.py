@@ -336,9 +336,11 @@ def dashboard(request):
 
 @login_required
 def add_listing(request):
+    # Auto-upgrade role to owner if user clicks List Your Room
     if request.user.role != 'owner':
-        messages.error(request, 'Only owners can add listings. Update your role in profile settings.')
-        return redirect('profile_settings')
+        request.user.role = 'owner'
+        request.user.save()
+        request.session['is_original_owner'] = True
 
     # Mandatory Owner ID Verification Check
     if request.user.verification_status != 'approved':
@@ -351,6 +353,7 @@ def add_listing(request):
         else:
             messages.error(request, '🔒 Owner ID Verification Required: Please upload your ID proof document for Admin review before listing a room.')
             return redirect('submit_verification')
+
 
 
     if request.method == 'POST':
