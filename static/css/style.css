@@ -1717,7 +1717,7 @@ select {
 
 @media (max-width: 820px) {
   body {
-    padding-bottom: 90px;
+    padding-bottom: 96px;
   }
   .mobile-bottom-nav {
     display: flex;
@@ -1725,27 +1725,27 @@ select {
     bottom: 0;
     left: 0;
     right: 0;
-    height: 76px;
-    background: rgba(255, 255, 255, 0.96);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
-    border-top: 1px solid rgba(0, 0, 0, 0.08);
+    height: 80px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border-top: 1.5px solid rgba(0, 0, 0, 0.1);
     justify-content: space-around;
     align-items: center;
     z-index: 999;
-    box-shadow: 0 -8px 28px rgba(15, 23, 42, 0.1);
-    padding: 6px 10px calc(6px + env(safe-area-inset-bottom));
+    box-shadow: 0 -10px 32px rgba(15, 23, 42, 0.12);
+    padding: 6px 8px calc(6px + env(safe-area-inset-bottom));
   }
   .mobile-nav-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 3px;
+    gap: 4px;
     flex: 1;
     height: 100%;
-    color: #64748B;
-    font-size: 0.78rem;
+    color: #475569;
+    font-size: 0.82rem;
     font-weight: 700;
     text-decoration: none;
     padding: 6px 0;
@@ -1753,9 +1753,11 @@ select {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .mobile-nav-item svg {
-    width: 28px !important;
-    height: 28px !important;
-    stroke-width: 2.4px !important;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+    stroke-width: 2.6px !important;
     transition: transform 0.2s ease, stroke 0.2s ease;
   }
   .mobile-nav-item:hover {
@@ -1767,13 +1769,14 @@ select {
   }
   .mobile-nav-item.active svg {
     stroke: #4F46E5;
-    transform: scale(1.12);
+    transform: scale(1.14);
   }
   .mobile-nav-item.active span {
     font-weight: 800;
     color: #4F46E5;
   }
 }
+
 
 
 
