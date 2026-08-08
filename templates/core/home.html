@@ -179,12 +179,7 @@
         </div>
 
 
-        <div id="mapView" class="map-view">
-          <div class="map-empty">
-            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#CBD5E1" stroke-width="1.5" stroke-linecap="round" style="margin:0 auto 8px;display:block"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-            Map will appear when listings have coordinates
-          </div>
-        </div>
+
 
         {% if listings %}
         <div class="grid grid-with-sidebar">
@@ -310,26 +305,6 @@
   }
   window.toggleFiltersPanel = toggleFiltersPanel;
 
-  // Leaflet map
-  var points = {{ map_points_json|safe }};
-  var mapEl  = document.getElementById('mapView');
-  if(mapEl && points.length){
-    mapEl.innerHTML='';
-    var map = L.map('mapView',{scrollWheelZoom:false}).setView([points[0].lat,points[0].lng],12);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors',maxZoom:19}).addTo(map);
-    var bounds=[];
-    points.forEach(function(p){
-      var icon = L.divIcon({
-        className:'',
-        html:'<div style="background:var(--indigo-600,#4F46E5);color:#fff;font-size:11px;font-weight:700;padding:4px 8px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.3);white-space:nowrap;">₹'+(p.price||'?')+'</div>',
-        iconAnchor:[20,16]
-      });
-      L.marker([p.lat,p.lng],{icon:icon}).addTo(map)
-       .bindPopup('<strong>'+p.title+'</strong><br><a href="'+p.url+'" style="color:#4F46E5">View room →</a>');
-      bounds.push([p.lat,p.lng]);
-    });
-    if(bounds.length>1) map.fitBounds(bounds,{padding:[30,30]});
-  }
 })();
 </script>
 

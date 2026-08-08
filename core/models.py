@@ -8,8 +8,18 @@ class User(AbstractUser):
         ('guest', 'Guest (looking for a room)'),
         ('owner', 'Owner (listing a room)'),
     ]
+    GENDER_CHOICES = [
+        ('male', 'Male'),
+        ('female', 'Female'),
+        ('other', 'Other'),
+        ('prefer_not_to_say', 'Prefer not to say'),
+    ]
     role = models.CharField(max_length=10, choices=ROLE_CHOICES, default='guest')
     phone = models.CharField(max_length=15, blank=True)
+    gender = models.CharField(max_length=20, choices=GENDER_CHOICES, blank=True)
+    age = models.PositiveIntegerField(null=True, blank=True)
+    from_location = models.CharField(max_length=100, blank=True, verbose_name="From (City/Hometown)")
+    bio = models.TextField(blank=True, max_length=500)
     id_proof = models.FileField(upload_to='id_proofs/', blank=True, null=True)
     is_verified = models.BooleanField(default=False)
     phone_verified = models.BooleanField(default=False)
@@ -21,8 +31,14 @@ class User(AbstractUser):
     ]
     verification_status = models.CharField(max_length=15, choices=VERIFICATION_STATUS_CHOICES, default='not_submitted')
 
+    @property
+    def full_name(self):
+        name = f"{self.first_name} {self.last_name}".strip()
+        return name if name else self.username
+
     def __str__(self):
-        return f"{self.username} ({self.get_role_display()})"
+        return f"{self.full_name} ({self.get_role_display()})"
+
 
 
 class Listing(models.Model):

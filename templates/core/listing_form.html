@@ -116,20 +116,7 @@
         {% for error in form.address.errors %}<div class="help" style="color:var(--red);">{{ error }}</div>{% endfor %}
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-        <div class="form-row" style="margin-bottom:0;">
-          {{ form.latitude.label_tag }}
-          {{ form.latitude }}
-          <span class="help">Optional — shows pin on map</span>
-          {% for error in form.latitude.errors %}<div class="help" style="color:var(--red);">{{ error }}</div>{% endfor %}
-        </div>
-        <div class="form-row" style="margin-bottom:0;">
-          {{ form.longitude.label_tag }}
-          {{ form.longitude }}
-          <span class="help">Right-click on Google Maps to copy</span>
-          {% for error in form.longitude.errors %}<div class="help" style="color:var(--red);">{{ error }}</div>{% endfor %}
-        </div>
-      </div>
+
     </div>
 
     <!-- ── Section 3: Pricing ── -->

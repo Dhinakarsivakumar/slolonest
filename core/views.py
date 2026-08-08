@@ -134,17 +134,6 @@ def home(request):
         .order_by('city')[:8]
     )
 
-    map_points = [
-        {
-            'id': l.pk, 'title': l.title,
-            'lat': l.latitude, 'lng': l.longitude,
-            'price': float(l.price_per_day) if l.price_per_day else (
-                     float(l.price_per_month) if l.price_per_month else None),
-            'url': l.get_absolute_url(),
-        }
-        for l in listings if l.latitude is not None and l.longitude is not None
-    ]
-
     favorited_ids = set()
     if request.user.is_authenticated:
         favorited_ids = set(
@@ -155,10 +144,10 @@ def home(request):
         'listings': listings,
         'filters': request.GET,
         'popular_cities': popular_cities,
-        'map_points_json': json.dumps(map_points),
         'favorited_ids': favorited_ids,
     }
     return render(request, 'core/home.html', context)
+
 
 
 # ─────────────────────────────────────────────────────────────
@@ -228,15 +217,36 @@ def post_login_redirect(request):
 @login_required
 def profile_settings(request):
     if request.method == 'POST':
-        role  = request.POST.get('role')
-        phone = request.POST.get('phone', '').strip()
+        first_name    = request.POST.get('first_name', '').strip()
+        last_name     = request.POST.get('last_name', '').strip()
+        gender        = request.POST.get('gender', '').strip()
+        age_str       = request.POST.get('age', '').strip()
+        from_location = request.POST.get('from_location', '').strip()
+        bio           = request.POST.get('bio', '').strip()
+        role          = request.POST.get('role')
+        phone         = request.POST.get('phone', '').strip()
+
+        request.user.first_name = first_name
+        request.user.last_name = last_name
+        request.user.gender = gender
+        request.user.from_location = from_location
+        request.user.bio = bio
+        request.user.phone = phone
+
+        if age_str.isdigit():
+            request.user.age = int(age_str)
+        elif not age_str:
+            request.user.age = None
+
         if role in ('guest', 'owner'):
             request.user.role = role
-        request.user.phone = phone
+
         request.user.save()
-        messages.success(request, 'Profile updated successfully.')
-        return redirect('dashboard')
+        messages.success(request, 'Profile details updated successfully!')
+        return redirect('profile_settings')
+
     return render(request, 'core/profile_settings.html')
+
 
 
 # ─────────────────────────────────────────────────────────────

@@ -1,99 +1,143 @@
 {% extends 'core/base.html' %}
-{% block title %}Profile Settings — SoloNest{% endblock %}
+{% block title %}Profile & Account Settings — SoloNest{% endblock %}
 {% block content %}
-<div class="container" style="max-width:640px;padding:40px 24px;">
+<div class="container" style="max-width:680px;padding:36px 20px 80px;">
 
-  <div class="section-head" style="margin-bottom:28px;">
-    <h2>
-      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="var(--indigo-600)" stroke-width="2" stroke-linecap="round" style="display:inline;vertical-align:middle;margin-right:8px"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      Profile Settings
-    </h2>
+  <!-- Profile Header Banner -->
+  <div style="background:linear-gradient(135deg, var(--navy) 0%, #1E3A5F 100%);border-radius:var(--radius-xl);padding:28px 24px;color:#fff;margin-bottom:28px;display:flex;align-items:center;gap:20px;box-shadow:var(--shadow-md);">
+    <div style="width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,var(--indigo-500,#6366F1),var(--amber-400,#FBBF24));display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:800;color:#fff;flex-shrink:0;box-shadow:0 4px 12px rgba(0,0,0,0.2);">
+      {% if user.first_name %}{{ user.first_name|slice:":1"|upper }}{% else %}{{ user.username|slice:":1"|upper }}{% endif %}
+    </div>
+    <div style="flex:1;min-width:0;">
+      <h2 style="font-size:1.4rem;font-weight:800;color:#fff;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+        {{ user.full_name }}
+      </h2>
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.85rem;color:rgba(255,255,255,0.75);">
+        <span>@{{ user.username }}</span>
+        <span>•</span>
+        <span>{{ user.email|default:"No email registered" }}</span>
+        <span class="status-badge" style="background:rgba(255,255,255,0.18);color:#fff;font-size:.72rem;padding:2px 10px;">
+          {% if user.role == 'owner' %}🏠 Room Owner{% else %}🧳 Solo Guest{% endif %}
+        </span>
+      </div>
+    </div>
   </div>
 
-  <!-- Main profile form -->
-  <div class="form-section">
-    <div class="form-section-title">
-      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-      Account Details
+  <!-- Personal Profile & Customer Details -->
+  <div class="form-section" style="margin-bottom:24px;">
+    <div class="form-section-title" style="display:flex;align-items:center;gap:8px;">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="var(--indigo-600)" stroke-width="2.2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Personal Details &amp; Profile
     </div>
-    <p class="help" style="margin-bottom:20px;">We need your phone number so owners and guests can reach each other.</p>
+    <p class="help" style="margin-bottom:22px;">Complete your customer details to help room owners and guests verify your identity.</p>
+
     <form method="post">
       {% csrf_token %}
-      <div class="form-row">
-        <label>I am a…</label>
-        <select name="role">
-          <option value="guest" {% if user.role == 'guest' %}selected{% endif %}>🧳 Guest — looking for a room</option>
-          <option value="owner" {% if user.role == 'owner' %}selected{% endif %}>🏠 Owner — listing a room</option>
-        </select>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="form-row">
+          <label>First Name</label>
+          <input type="text" name="first_name" value="{{ user.first_name }}" placeholder="e.g. Rahul" autocomplete="given-name">
+        </div>
+        <div class="form-row">
+          <label>Last Name</label>
+          <input type="text" name="last_name" value="{{ user.last_name }}" placeholder="e.g. Sharma" autocomplete="family-name">
+        </div>
       </div>
-      <div class="form-row">
-        <label>Phone number</label>
-        <input type="tel" name="phone" value="{{ user.phone }}" placeholder="e.g. 9876543210" required>
-        <span class="help">Shown only on your listings/bookings so people can call you directly.</span>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="form-row">
+          <label>Gender</label>
+          <select name="gender">
+            <option value="" {% if not user.gender %}selected{% endif %}>Select Gender</option>
+            <option value="male" {% if user.gender == 'male' %}selected{% endif %}>👨 Male</option>
+            <option value="female" {% if user.gender == 'female' %}selected{% endif %}>👩 Female</option>
+            <option value="other" {% if user.gender == 'other' %}selected{% endif %}>🧑 Other</option>
+            <option value="prefer_not_to_say" {% if user.gender == 'prefer_not_to_say' %}selected{% endif %}>Prefer not to say</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label>Age</label>
+          <input type="number" name="age" value="{{ user.age|default:'' }}" placeholder="e.g. 24" min="16" max="120">
+        </div>
       </div>
-      <button class="btn btn-primary w-full" type="submit">
-        <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
-        Save changes
+
+      <div class="form-row">
+        <label>From (Hometown / City)</label>
+        <input type="text" name="from_location" value="{{ user.from_location }}" placeholder="e.g. Chennai, Tamil Nadu" autocomplete="address-level2">
+        <span class="help">Where you are originally from or currently residing.</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div class="form-row">
+          <label>Phone Number</label>
+          <input type="tel" name="phone" value="{{ user.phone }}" placeholder="e.g. 9876543210" required>
+        </div>
+        <div class="form-row">
+          <label>I am a…</label>
+          <select name="role">
+            <option value="guest" {% if user.role == 'guest' %}selected{% endif %}>🧳 Guest — looking for a room</option>
+            <option value="owner" {% if user.role == 'owner' %}selected{% endif %}>🏠 Owner — listing a room</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label>About Me (Bio)</label>
+        <textarea name="bio" rows="3" placeholder="Tell owners or guests a little about yourself (e.g. student, software engineer, solo traveler)..." style="resize:vertical;">{{ user.bio }}</textarea>
+      </div>
+
+      <button class="btn btn-primary w-full" type="submit" style="margin-top:8px;">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Save Profile Details
       </button>
     </form>
   </div>
 
-  <!-- Phone verification -->
-  <div class="form-section" style="margin-top:16px;">
+  <!-- Phone Verification Card -->
+  <div class="form-section" style="margin-bottom:24px;">
     <div class="form-section-title">
-      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.44 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.4a16 16 0 0 0 7.42 7.42l.87-.87a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.44 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.4a16 16 0 0 0 7.42 7.42l.87-.87a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
       Phone Verification
     </div>
 
     {% if user.phone_verified %}
-    <!-- LOCKED — already verified -->
-    <div style="display:flex;align-items:center;gap:14px;padding:14px 0;">
+    <div style="display:flex;align-items:center;gap:14px;padding:12px 0;">
       <div style="width:42px;height:42px;border-radius:50%;background:#D1FAE5;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
       <div>
-        <div style="font-weight:700;color:#065F46;font-size:.95rem;">Phone Verified ✓</div>
-        <div style="font-size:.8rem;color:var(--muted);">{{ user.phone }} — verified and locked</div>
+        <div style="font-weight:700;color:#065F46;font-size:.95rem;">Phone Number Verified ✓</div>
+        <div style="font-size:.8rem;color:var(--muted);">{{ user.phone }} — verified and secure</div>
       </div>
-      <!-- Locked disabled button -->
-      <button disabled style="margin-left:auto;padding:8px 18px;border-radius:8px;border:none;background:#E5E7EB;color:#9CA3AF;font-weight:600;font-size:.82rem;cursor:not-allowed;display:flex;align-items:center;gap:6px;flex-shrink:0;">
+      <button disabled style="margin-left:auto;padding:8px 16px;border-radius:8px;border:none;background:#E5E7EB;color:#9CA3AF;font-weight:600;font-size:.82rem;cursor:not-allowed;display:flex;align-items:center;gap:6px;flex-shrink:0;">
         <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-        Locked
+        Verified
       </button>
     </div>
-
     {% elif not user.phone %}
-    <!-- No phone added yet -->
-    <p class="help" style="margin-bottom:14px;">Add a phone number above first, then verify it.</p>
-    <button disabled style="padding:10px 20px;border-radius:10px;border:2px dashed var(--border-2);background:var(--surface-2);color:var(--muted);font-weight:600;font-size:.85rem;cursor:not-allowed;display:inline-flex;align-items:center;gap:8px;">
-      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.44 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.4a16 16 0 0 0 7.42 7.42l.87-.87a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-      Verify Phone Number
-    </button>
-
+    <p class="help" style="margin-bottom:14px;">Add a phone number above, then verify it via OTP.</p>
     {% else %}
-    <!-- Phone added, not yet verified -->
     <p class="help" style="margin-bottom:14px;">
-      <strong>{{ user.phone }}</strong> is not verified yet.
-      Tap below to receive your OTP code.
+      <strong>{{ user.phone }}</strong> is not verified yet. Tap below to receive your 6-digit OTP code.
     </p>
-    <a href="{% url 'send_otp' %}" class="btn btn-primary btn-small" id="verifyPhoneBtn" style="display:inline-flex;align-items:center;gap:8px;">
+    <a href="{% url 'send_otp' %}" class="btn btn-primary btn-small" style="display:inline-flex;align-items:center;gap:8px;">
       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.44 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.4a16 16 0 0 0 7.42 7.42l.87-.87a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
       Send OTP to {{ user.phone }}
     </a>
     {% endif %}
   </div>
 
-
-  <!-- ID verification (owners only) -->
+  <!-- ID Verification (Owners) -->
   {% if user.role == 'owner' %}
-  <div class="form-section" style="margin-top:16px;">
+  <div class="form-section" style="margin-bottom:24px;">
     <div class="form-section-title">
-      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-      ID Verification
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+      ID Proof &amp; Verification
     </div>
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
       <div>
-        <p class="help">Status:</p>
+        <p class="help">Verification status:</p>
         <span class="status-badge status-{% if user.verification_status == 'approved' %}approved{% elif user.verification_status == 'rejected' %}rejected{% else %}requested{% endif %}" style="margin-top:4px;">
           {{ user.get_verification_status_display }}
         </span>
@@ -101,31 +145,35 @@
       {% if user.verification_status != 'approved' %}
       <a href="{% url 'submit_verification' %}" class="btn btn-outline btn-small" style="border-color:var(--indigo-600);color:var(--indigo-600);">
         <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        Submit ID for review
+        Upload ID Proof
       </a>
       {% endif %}
     </div>
   </div>
   {% endif %}
 
-  <!-- Contact Support -->
-  <div class="form-section" style="margin-top:16px;border:1.5px solid var(--indigo-200,#C7D2FE);background:var(--indigo-50,#EEF2FF);">
-    <div class="form-section-title" style="color:var(--indigo-700,#4338CA);">
-      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-      Customer Support
-    </div>
-    <p class="help" style="margin-bottom:14px;">
-      Having a problem? Our support team is here to help with bookings, payments, or any other issue.
-    </p>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;">
-      <a href="{% url 'submit_ticket' %}" class="btn btn-primary btn-small">
-        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-        Contact Support
-      </a>
-      <a href="{% url 'my_tickets' %}" class="btn btn-outline btn-small" style="border-color:var(--indigo-600);color:var(--indigo-600);">
-        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        My Tickets
-      </a>
+  <!-- ── LISTED AT THE VERY BOTTOM: Customer Support Portal ── -->
+  <div class="form-section" style="margin-top:36px;border:1.5px solid var(--indigo-200,#C7D2FE);background:var(--indigo-50,#EEF2FF);border-radius:var(--radius-xl);padding:24px;">
+    <div style="display:flex;align-items:flex-start;gap:16px;">
+      <div style="width:48px;height:48px;border-radius:12px;background:var(--indigo-600);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;box-shadow:0 4px 10px rgba(79,70,229,0.25);">
+        <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <div style="flex:1;">
+        <h3 style="font-size:1.1rem;font-weight:800;color:var(--navy);margin-bottom:4px;">Customer Support Portal</h3>
+        <p style="font-size:.85rem;color:var(--text-2);margin-bottom:16px;line-height:1.5;">
+          Need assistance with a room booking, owner inquiry, or account issue? Our customer support team is available 24/7.
+        </p>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;">
+          <a href="{% url 'submit_ticket' %}" class="btn btn-primary btn-small" style="display:inline-flex;align-items:center;gap:6px;">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            Contact Support
+          </a>
+          <a href="{% url 'my_tickets' %}" class="btn btn-outline btn-small" style="border-color:var(--indigo-600);color:var(--indigo-600);background:#fff;display:inline-flex;align-items:center;gap:6px;">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            My Tickets
+          </a>
+        </div>
+      </div>
     </div>
   </div>
 
