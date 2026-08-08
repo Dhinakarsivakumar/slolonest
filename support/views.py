@@ -187,6 +187,26 @@ def portal_users(request):
         elif action == 'verify_phone':
             user.phone_verified = True; user.save()
             messages.success(request, f'{user.username} phone manually verified.')
+        elif action in ('approve', 'approve_id'):
+            user.verification_status = 'approved'
+            user.is_verified = True
+            user.save()
+            Notification.objects.create(
+                user=user,
+                message='ID Verification Approved ✅: Your owner ID proof document has been verified and approved by Support Staff.',
+                link='/settings/profile/'
+            )
+            messages.success(request, f'✅ ID document approved for {user.username}.')
+        elif action in ('reject', 'reject_id'):
+            user.verification_status = 'rejected'
+            user.is_verified = False
+            user.save()
+            Notification.objects.create(
+                user=user,
+                message='ID Verification Update ❌: Your ID proof document could not be verified. Please re-upload a clear ID document.',
+                link='/settings/verify-id/'
+            )
+            messages.success(request, f'❌ ID document rejected for {user.username}.')
         return redirect('portal_users')
     return render(request, 'support/portal_users.html', {'users': users, 'q': q, 'role_filter': role_filter})
 
@@ -194,7 +214,7 @@ def portal_users(request):
 @staff_required
 def portal_user_detail(request, pk):
     """Staff views full user profile with verification controls."""
-    from core.models import User as CoreUser
+    from core.models import User as CoreUser, Notification
     from django.shortcuts import get_object_or_404
     user = get_object_or_404(CoreUser, pk=pk)
 
@@ -211,17 +231,28 @@ def portal_user_detail(request, pk):
             user.save()
             messages.success(request, f'Phone verification removed for {user.username}.')
 
-        elif action == 'approve_id':
+        elif action in ('approve_id', 'approve'):
             user.verification_status = 'approved'
             user.is_verified = True
             user.save()
+            Notification.objects.create(
+                user=user,
+                message='ID Verification Approved ✅: Your owner ID proof document has been verified and approved by Support Staff.',
+                link='/settings/profile/'
+            )
             messages.success(request, f'✅ ID document approved for {user.username}.')
 
-        elif action == 'reject_id':
+        elif action in ('reject_id', 'reject'):
             user.verification_status = 'rejected'
             user.is_verified = False
             user.save()
+            Notification.objects.create(
+                user=user,
+                message='ID Verification Update ❌: Your ID proof document could not be verified. Please re-upload a clear ID document.',
+                link='/settings/verify-id/'
+            )
             messages.success(request, f'❌ ID document rejected for {user.username}.')
+
 
         elif action == 'reset_id':
             user.verification_status = 'not_submitted'
