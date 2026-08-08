@@ -32,7 +32,12 @@
 }
 
 /* Settings dropdown */
-.nav-settings-wrap { position: relative; display: inline-flex; }
+/* Settings dropdown */
+.nav-settings-wrap { 
+  position: relative; 
+  display: inline-flex; 
+  align-items: center;
+}
 .nav-settings-btn {
   display: inline-flex;
   align-items: center;
@@ -47,37 +52,51 @@
   cursor: pointer;
   transition: background .15s, color .15s;
 }
-.nav-settings-btn:hover { background: var(--surface-2); color: var(--text); }
+.nav-settings-btn:hover, .nav-settings-wrap:hover .nav-settings-btn { 
+  background: var(--surface-2); 
+  color: var(--text); 
+}
 .nav-settings-menu {
   display: none;
   position: absolute;
-  top: calc(100% + 8px);
+  top: calc(100% + 4px);
   right: 0;
-  min-width: 200px;
+  min-width: 220px;
   background: var(--paper);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-xl);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
   overflow: hidden;
-  z-index: 200;
+  z-index: 500;
+  padding: 6px 0;
   animation: fadeUp .15s ease;
 }
-.nav-settings-menu.open { display: block; }
+@media (min-width: 821px) {
+  .nav-settings-wrap:hover .nav-settings-menu,
+  .nav-settings-menu.open {
+    display: block !important;
+  }
+}
+.nav-settings-menu.open { 
+  display: block !important; 
+}
 .nav-settings-menu a {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 11px 16px;
-  font-size: .87rem;
+  gap: 10px;
+  padding: 10px 16px;
+  font-size: .88rem;
   font-weight: 500;
   color: var(--text);
-  border-bottom: 1px solid var(--border);
-  transition: background .12s;
+  transition: background .12s, color .12s;
   text-decoration: none;
 }
-.nav-settings-menu a:last-child { border-bottom: none; }
-.nav-settings-menu a:hover { background: var(--surface-2); }
-.settings-divider { height: 1px; background: var(--border); margin: 4px 0; }
+.nav-settings-menu a:hover { 
+  background: var(--surface-2); 
+  color: var(--indigo-600);
+}
+.settings-divider { height: 1px; background: var(--border); margin: 6px 0; }
+
 
 /* Notification badge (red dot on bell) */
 .notif-badge {
