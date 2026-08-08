@@ -870,19 +870,29 @@ def phone_login_verify(request):
 
 @login_required
 def submit_verification(request):
-    if request.method == 'POST' and request.FILES.get('id_proof'):
-        f = request.FILES['id_proof']
-        # Basic file-type guard
-        allowed = ['image/jpeg', 'image/png', 'image/gif', 'application/pdf']
-        if f.content_type not in allowed:
-            messages.error(request, 'Only JPG, PNG, or PDF files are accepted for ID proof.')
+    if request.method == 'POST':
+        f = request.FILES.get('id_proof')
+        if not f:
+            messages.error(request, 'Please select an ID proof document file to upload.')
             return render(request, 'core/submit_verification.html')
+
+        allowed = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp', 'application/pdf']
+        if f.content_type.lower() not in allowed:
+            messages.error(request, 'Invalid file format. Please upload a clear JPG, PNG, WEBP image, or PDF document.')
+            return render(request, 'core/submit_verification.html')
+
+        if f.size > 10 * 1024 * 1024:
+            messages.error(request, 'File size too large. Maximum allowed document size is 10MB.')
+            return render(request, 'core/submit_verification.html')
+
         request.user.id_proof = f
         request.user.verification_status = 'pending'
         request.user.save()
-        messages.success(request, 'ID submitted — an admin will review it soon.')
+        messages.success(request, '🎉 Your ID proof document has been submitted successfully! Our Admin team will review and approve it shortly.')
         return redirect('profile_settings')
+
     return render(request, 'core/submit_verification.html')
+
 
 
 # ─────────────────────────────────────────────────────────────
