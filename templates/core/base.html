@@ -156,14 +156,15 @@
         <a href="{% url 'login' %}">Log in</a>
         <a href="{% url 'signup' %}">Sign up</a>
         {% endif %}
-      </div>
     </div>
     <div class="footer-bottom">
       <span>© 2025 SoloNest. Built for real travelers.</span>
       <span>Safe · Affordable · Verified</span>
     </div>
   </div>
-</foot<!-- Mobile Bottom Navigation Bar -->
+</footer>
+
+<!-- Mobile Bottom Navigation Bar -->
 <nav class="mobile-bottom-nav" aria-label="Mobile Navigation">
   <a href="{% url 'home' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
     <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>

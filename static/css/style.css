@@ -1756,6 +1756,8 @@ select {
     stroke: var(--indigo-600);
     transform: translateY(-1px);
   }
+}
+
 /* ── 32. SEARCH MODAL & AUTOCOMPLETE ────────────────────────── */
 .search-modal-overlay {
   display: flex;
