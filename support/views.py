@@ -334,8 +334,8 @@ def portal_verifications(request):
             u.save()
             Notification.objects.create(
                 user=u,
-                title='ID Verification Approved ✅',
-                message='Your ID proof document has been verified and approved by Support Staff. You can now post room listings!'
+                message='ID Verification Approved ✅: Your ID proof document has been verified and approved by Support Staff. You can now post room listings!',
+                link='/settings/profile/'
             )
             messages.success(request, f'✅ ID Proof approved for {u.username}.')
         elif action == 'reject':
@@ -344,10 +344,11 @@ def portal_verifications(request):
             u.save()
             Notification.objects.create(
                 user=u,
-                title='ID Verification Update ❌',
-                message='Your ID proof document could not be verified. Please re-upload a clear ID document.'
+                message='ID Verification Update ❌: Your ID proof document could not be verified. Please re-upload a clear ID document.',
+                link='/settings/verify-id/'
             )
             messages.success(request, f'❌ ID Proof rejected for {u.username}.')
+
         elif action == 'reset':
             u.verification_status = 'pending'
             u.save()

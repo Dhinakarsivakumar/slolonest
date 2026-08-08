@@ -39,8 +39,8 @@ class SoloNestUserAdmin(UserAdmin):
             count += 1
             Notification.objects.create(
                 user=user,
-                title='ID Verification Approved ✅',
-                message='Your owner ID proof document has been verified and approved by Admin. You can now post room listings!'
+                message='ID Verification Approved ✅: Your owner ID proof document has been verified and approved by Admin. You can now post room listings!',
+                link='/settings/profile/'
             )
         self.message_user(request, f"Approved ID verification for {count} user(s).")
     approve_identity.short_description = "✅ Approve selected owners' ID verification"
@@ -54,8 +54,8 @@ class SoloNestUserAdmin(UserAdmin):
             count += 1
             Notification.objects.create(
                 user=user,
-                title='ID Verification Update ❌',
-                message='Your ID proof document could not be verified. Please re-upload a clear ID document in Profile Settings.'
+                message='ID Verification Update ❌: Your ID proof document could not be verified. Please re-upload a clear ID document in Profile Settings.',
+                link='/settings/verify-id/'
             )
         self.message_user(request, f"Rejected ID verification for {count} user(s).")
     reject_identity.short_description = "❌ Reject selected owners' ID verification"
