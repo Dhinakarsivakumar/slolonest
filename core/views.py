@@ -316,6 +316,19 @@ def add_listing(request):
         messages.error(request, 'Only owners can add listings. Update your role in profile settings.')
         return redirect('profile_settings')
 
+    # Mandatory Owner ID Verification Check
+    if request.user.verification_status != 'approved':
+        if request.user.verification_status == 'pending':
+            messages.warning(request, '⏳ Your ID document has been submitted and is pending Admin review. You will be able to list rooms once approved.')
+            return redirect('profile_settings')
+        elif request.user.verification_status == 'rejected':
+            messages.error(request, '❌ Your previous ID document was rejected. Please re-upload a valid ID proof for Admin review.')
+            return redirect('submit_verification')
+        else:
+            messages.error(request, '🔒 Owner ID Verification Required: Please upload your ID proof document for Admin review before listing a room.')
+            return redirect('submit_verification')
+
+
     if request.method == 'POST':
         form = ListingForm(request.POST)
         if form.is_valid():
