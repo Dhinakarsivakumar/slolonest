@@ -78,7 +78,7 @@
 </section>
 
 <!-- ══════════════════════ LISTINGS + FILTERS ══════════════════════════ -->
-<section style="padding: 40px 0 60px;">
+<section id="resultsSection" style="padding: 40px 0 60px;">
   <div class="container">
     <div class="layout-with-sidebar">
 
@@ -254,6 +254,21 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 (function(){
+  // Smooth scroll offset helper to bypass top header
+  function scrollToRooms() {
+    var target = document.getElementById('resultsSection') || document.getElementById('resultsPanel');
+    if (target) {
+      var headerOffset = 80;
+      var elementPosition = target.getBoundingClientRect().top;
+      var offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+      window.scrollTo({
+        top: Math.max(0, offsetPosition),
+        behavior: 'smooth'
+      });
+    }
+  }
+  window.scrollToRooms = scrollToRooms;
+
   // Universal SPA AJAX Search Runner
   window.performAjaxSearch = function(targetUrl, shouldScroll) {
     var resultsPanel = document.getElementById('resultsPanel');
@@ -285,10 +300,9 @@
       if (typeof toggleFiltersPanel === 'function') toggleFiltersPanel(false);
 
       if (shouldScroll) {
-        var updatedPanel = document.getElementById('resultsPanel');
-        if (updatedPanel) {
-          updatedPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
+        setTimeout(function(){
+          scrollToRooms();
+        }, 50);
       }
     })
     .catch(function(err){
@@ -296,6 +310,13 @@
       window.location.href = targetUrl;
     });
   };
+
+  // Auto-scroll on initial page load if search parameters exist in URL
+  if (window.location.search && window.location.search.length > 1) {
+    setTimeout(function(){
+      scrollToRooms();
+    }, 200);
+  }
 
   // Form Submission Intercept
   var filtersForm = document.getElementById('filtersForm');
