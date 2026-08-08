@@ -249,15 +249,17 @@ def switch_mode(request):
     if request.user.role == 'owner':
         request.user.role = 'guest'
         request.session['is_original_owner'] = True
-        messages.success(request, 'Switched to Guest mode.')
+        messages.success(request, 'Switched to Guest mode 👤')
     else:
         if request.session.get('is_original_owner') or request.user.is_verified or request.user.verification_status in ['pending', 'approved']:
             request.user.role = 'owner'
-            messages.success(request, 'Switched to Owner mode.')
+            messages.success(request, 'Switched to Owner mode 🔑')
         else:
-            messages.error(request, 'Only owners can switch modes.')
+            messages.error(request, 'Only verified owners can switch to Owner mode.')
     request.user.save()
-    return redirect('dashboard')
+    next_url = request.META.get('HTTP_REFERER') or 'dashboard'
+    return redirect(next_url)
+
 
 
 # ─────────────────────────────────────────────────────────────
