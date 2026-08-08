@@ -309,3 +309,61 @@ def portal_reports(request):
         'dismissed_count': dismissed_count,
         'status_filter': status_filter,
     })
+
+
+@staff_required
+def portal_verifications(request):
+    """Staff Portal view specifically for reviewing uploaded Owner ID documents with image previews."""
+    from core.models import User as CoreUser, Notification
+    from django.shortcuts import get_object_or_404
+
+    status_filter = request.GET.get('status', 'pending')
+    users_with_id = CoreUser.objects.exclude(id_proof='').order_by('-date_joined')
+
+    if status_filter in ('pending', 'approved', 'rejected'):
+        users_with_id = users_with_id.filter(verification_status=status_filter)
+
+    if request.method == 'POST':
+        uid = request.POST.get('user_id')
+        action = request.POST.get('action')
+        u = get_object_or_404(CoreUser, pk=uid)
+
+        if action == 'approve':
+            u.verification_status = 'approved'
+            u.is_verified = True
+            u.save()
+            Notification.objects.create(
+                user=u,
+                title='ID Verification Approved ✅',
+                message='Your ID proof document has been verified and approved by Support Staff. You can now post room listings!'
+            )
+            messages.success(request, f'✅ ID Proof approved for {u.username}.')
+        elif action == 'reject':
+            u.verification_status = 'rejected'
+            u.is_verified = False
+            u.save()
+            Notification.objects.create(
+                user=u,
+                title='ID Verification Update ❌',
+                message='Your ID proof document could not be verified. Please re-upload a clear ID document.'
+            )
+            messages.success(request, f'❌ ID Proof rejected for {u.username}.')
+        elif action == 'reset':
+            u.verification_status = 'pending'
+            u.save()
+            messages.success(request, f'Reset verification status for {u.username}.')
+
+        return redirect(f"/support/portal/verifications/?status={status_filter}")
+
+    pending_count  = CoreUser.objects.exclude(id_proof='').filter(verification_status='pending').count()
+    approved_count = CoreUser.objects.exclude(id_proof='').filter(verification_status='approved').count()
+    rejected_count = CoreUser.objects.exclude(id_proof='').filter(verification_status='rejected').count()
+
+    return render(request, 'support/portal_verifications.html', {
+        'users': users_with_id,
+        'status_filter': status_filter,
+        'pending_count': pending_count,
+        'approved_count': approved_count,
+        'rejected_count': rejected_count,
+    })
+

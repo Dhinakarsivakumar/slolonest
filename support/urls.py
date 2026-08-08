@@ -17,5 +17,7 @@ urlpatterns = [
     path('portal/tickets/<int:pk>/', views.portal_ticket_detail, name='portal_ticket_detail'),
     path('portal/users/',            views.portal_users,         name='portal_users'),
     path('portal/users/<int:pk>/',   views.portal_user_detail,   name='portal_user_detail'),
+    path('portal/verifications/',    views.portal_verifications, name='portal_verifications'),
     path('portal/reports/',          views.portal_reports,       name='portal_reports'),
+
 ]

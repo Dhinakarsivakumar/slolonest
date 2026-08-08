@@ -1,0 +1,106 @@
+{% extends 'support/portal_base.html' %}
+{% block title %}Owner ID Verifications — Support Portal{% endblock %}
+{% block nav_verifications %}active{% endblock %}
+{% block topbar_title %}Owner ID Verifications{% endblock %}
+
+{% block content %}
+<!-- Status Filter Tabs -->
+<div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;">
+  <a href="{% url 'portal_verifications' %}?status=pending" class="btn {% if status_filter == 'pending' %}btn-primary{% else %}btn-ghost{% endif %}">
+    ⏳ Pending Review ({{ pending_count }})
+  </a>
+  <a href="{% url 'portal_verifications' %}?status=approved" class="btn {% if status_filter == 'approved' %}btn-primary{% else %}btn-ghost{% endif %}">
+    ✅ Approved ({{ approved_count }})
+  </a>
+  <a href="{% url 'portal_verifications' %}?status=rejected" class="btn {% if status_filter == 'rejected' %}btn-primary{% else %}btn-ghost{% endif %}">
+    ❌ Rejected ({{ rejected_count }})
+  </a>
+</div>
+
+<!-- Users ID Verification Cards Grid -->
+{% if users %}
+<div style="display:grid;grid-template-columns:repeat(auto-fill, minmax(360px, 1fr));gap:20px;">
+  {% for u in users %}
+  <div class="card" style="border:1px solid var(--border);display:flex;flex-direction:column;">
+    
+    <!-- Card Header -->
+    <div class="card-header" style="background:var(--surface-2);">
+      <div>
+        <div style="font-weight:800;font-size:1rem;color:var(--text);">
+          <a href="{% url 'portal_user_detail' u.pk %}" style="color:var(--text);text-decoration:none;">{{ u.username }}</a>
+        </div>
+        <div style="font-size:.78rem;color:var(--muted);">{{ u.email|default:"No email" }} • {{ u.phone|default:"No phone" }}</div>
+      </div>
+      <span class="badge badge-{% if u.verification_status == 'approved' %}resolved{% elif u.verification_status == 'rejected' %}closed{% else %}in_progress{% endif %}">
+        {{ u.get_verification_status_display }}
+      </span>
+    </div>
+
+    <!-- Document Image Preview Container -->
+    <div style="padding:16px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,0.2);">
+      <div style="font-size:.72rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px;align-self:flex-start;">
+        Uploaded ID Proof Document
+      </div>
+
+      {% if u.id_proof %}
+        {% if ".pdf" in u.id_proof.name|lower %}
+          <div style="text-align:center;padding:24px 16px;background:var(--surface-2);border-radius:10px;width:100%;">
+            <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="var(--indigo-light)" stroke-width="2" style="margin-bottom:8px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <div style="font-size:.85rem;font-weight:600;color:var(--text);margin-bottom:10px;">PDF Document Uploaded</div>
+            <a href="{{ u.id_proof.url }}" target="_blank" class="btn btn-primary" style="font-size:.78rem;padding:6px 14px;">
+              📄 Open PDF Document ↗
+            </a>
+          </div>
+        {% else %}
+          <div style="width:100%;text-align:center;position:relative;group;">
+            <a href="{{ u.id_proof.url }}" target="_blank" title="Click to view full image">
+              <img src="{{ u.id_proof.url }}" alt="ID Proof Image for {{ u.username }}" 
+                style="width:100%;max-height:240px;object-fit:contain;border-radius:10px;border:1px solid var(--border);background:var(--surface-2);transition:transform 0.2s ease;">
+            </a>
+            <div style="margin-top:8px;font-size:.75rem;color:var(--muted);">
+              🔍 Click image to enlarge in new tab
+            </div>
+          </div>
+        {% endif %}
+      {% else %}
+        <div style="padding:30px;text-align:center;color:var(--muted);font-size:.85rem;">
+          No document uploaded yet.
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Action Buttons -->
+    <div style="padding:14px 16px;background:var(--surface);border-top:1px solid var(--border);display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <form method="post" style="margin:0;">
+        {% csrf_token %}
+        <input type="hidden" name="user_id" value="{{ u.pk }}">
+        <input type="hidden" name="action" value="approve">
+        <button type="submit" class="btn btn-success" style="width:100%;justify-content:center;font-size:.8rem;"
+          {% if u.verification_status == 'approved' %}disabled style="width:100%;justify-content:center;opacity:.5;"{% endif %}>
+          ✅ Approve ID
+        </button>
+      </form>
+
+      <form method="post" style="margin:0;" onsubmit="return confirm('Reject ID document for {{ u.username }}?');">
+        {% csrf_token %}
+        <input type="hidden" name="user_id" value="{{ u.pk }}">
+        <input type="hidden" name="action" value="reject">
+        <button type="submit" class="btn btn-danger" style="width:100%;justify-content:center;font-size:.8rem;"
+          {% if u.verification_status == 'rejected' %}disabled style="width:100%;justify-content:center;opacity:.5;"{% endif %}>
+          ❌ Reject ID
+        </button>
+      </form>
+    </div>
+
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="card" style="text-align:center;padding:50px 20px;color:var(--muted);">
+  <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="var(--muted)" stroke-width="1.5" style="margin-bottom:12px;"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+  <h3 style="font-size:1.1rem;color:var(--text);margin-bottom:6px;">No Documents Found</h3>
+  <p style="font-size:.85rem;">No owner ID documents matching status <strong>"{{ status_filter }}"</strong>.</p>
+</div>
+{% endif %}
+
+{% endblock %}

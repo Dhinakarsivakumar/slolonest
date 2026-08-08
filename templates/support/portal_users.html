@@ -33,7 +33,7 @@
   <div class="table-responsive">
     <table>
       <thead>
-        <tr><th>User</th><th>Phone</th><th>Role</th><th>Verified</th><th>Status</th><th>Joined</th><th>Tickets</th><th>Actions</th></tr>
+        <tr><th>User</th><th>Phone</th><th>Role</th><th>ID Document</th><th>Verified</th><th>Status</th><th>Joined</th><th>Actions</th></tr>
       </thead>
       <tbody>
         {% for u in users %}
@@ -49,12 +49,24 @@
             </span>
           </td>
           <td>
-            {% if u.phone_verified %}
-              <span style="color:var(--green);font-weight:600;">✓ Yes</span>
+            {% if u.id_proof %}
+              <a href="{{ u.id_proof.url }}" target="_blank" class="btn btn-ghost" style="padding:4px 9px;font-size:.72rem;display:inline-flex;align-items:center;gap:4px;color:var(--indigo-light);border-color:var(--indigo-dark);">
+                🖼️ View Image ↗
+              </a>
             {% else %}
-              <span style="color:var(--muted);">✗ No</span>
+              <span style="font-size:.72rem;color:var(--muted);">No Document</span>
             {% endif %}
           </td>
+          <td>
+            {% if u.is_verified %}
+              <span style="color:var(--green);font-weight:600;">✓ ID Verified</span>
+            {% elif u.verification_status == 'pending' %}
+              <span style="color:var(--yellow);font-weight:600;">⏳ Pending</span>
+            {% else %}
+              <span style="color:var(--muted);">✗ Unverified</span>
+            {% endif %}
+          </td>
+
           <td>
             {% if u.is_active %}
               <span class="badge badge-resolved">Active</span>
