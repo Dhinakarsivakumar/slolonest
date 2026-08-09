@@ -59,8 +59,8 @@ def test_oauth(request):
 
 
 def home(request):
-    # Prefetch images to avoid N+1 queries on card grid (only show published & verified listings to guests)
-    listings = Listing.objects.filter(is_available=True, is_verified=True).prefetch_related('images')
+    # Prefetch images to avoid N+1 queries on card grid (show all available listings to users)
+    listings = Listing.objects.filter(is_available=True).prefetch_related('images')
 
     city      = request.GET.get('city',      '').strip()
     room_type = request.GET.get('room_type', '')
