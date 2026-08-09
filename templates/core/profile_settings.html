@@ -70,8 +70,20 @@
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
         <div class="form-row">
-          <label>Phone Number</label>
-          <input type="tel" name="phone" value="{{ user.phone }}" placeholder="e.g. 9876543210" required>
+          <label style="display:flex;align-items:center;justify-content:space-between;">
+            <span>Phone Number</span>
+            {% if user.phone %}
+            <span style="font-size:.72rem;font-weight:700;color:var(--green,#059669);display:inline-flex;align-items:center;gap:4px;">
+              <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              Registered (Unchangeable)
+            </span>
+            {% endif %}
+          </label>
+          {% if user.phone %}
+          <input type="tel" value="{{ user.phone }}" readonly style="background:var(--surface-2);color:var(--navy);font-weight:700;cursor:not-allowed;border-color:var(--border);" title="Registered mobile number cannot be changed for account security">
+          {% else %}
+          <input type="tel" name="phone" placeholder="e.g. 9876543210" required>
+          {% endif %}
         </div>
         <div class="form-row">
           <label>I am a…</label>

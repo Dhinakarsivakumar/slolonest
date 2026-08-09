@@ -276,14 +276,17 @@ def profile_settings(request):
         from_location = request.POST.get('from_location', '').strip()
         bio           = request.POST.get('bio', '').strip()
         role          = request.POST.get('role')
-        phone         = request.POST.get('phone', '').strip()
+        phone_input   = request.POST.get('phone', '').strip()
 
         request.user.first_name = first_name
         request.user.last_name = last_name
         request.user.gender = gender
         request.user.from_location = from_location
         request.user.bio = bio
-        request.user.phone = phone
+
+        # Once mobile number is registered, it becomes unchangeable
+        if not request.user.phone and phone_input:
+            request.user.phone = phone_input
 
         if age_str.isdigit():
             request.user.age = int(age_str)
@@ -342,7 +345,16 @@ def add_listing(request):
         request.user.save()
         request.session['is_original_owner'] = True
 
-    # Mandatory Owner ID Verification Check
+    # 1. Mandatory Profile Details Check Before Listing
+    u = request.user
+    if not (u.first_name and u.phone and u.gender and u.age and u.from_location):
+        messages.error(
+            request,
+            '📋 Complete Profile Required: Please fill out all required profile details (First Name, Phone Number, Gender, Age, and Hometown) in Profile Settings before listing a room.'
+        )
+        return redirect('profile_settings')
+
+    # 2. Mandatory Owner ID Verification Check
     if request.user.verification_status != 'approved':
         if request.user.verification_status == 'pending':
             messages.warning(request, '⏳ Your ID document has been submitted and is pending Admin review. You will be able to list rooms once approved.')
@@ -353,6 +365,7 @@ def add_listing(request):
         else:
             messages.error(request, '🔒 Owner ID Verification Required: Please upload your ID proof document for Admin review before listing a room.')
             return redirect('submit_verification')
+
 
 
 
