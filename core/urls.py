@@ -48,9 +48,11 @@ urlpatterns = [
     path('booking/<int:pk>/pay/',          views.create_payment,   name='create_payment'),
     path('booking/<int:pk>/pay/callback/', views.payment_callback, name='payment_callback'),
 
-    # ── Extras ──────────────────────────────────────────────
+    # ── Extras & APIs ───────────────────────────────────────
     path('favorites/',       views.favorites_list,     name='favorites_list'),
     path('notifications/',   views.notifications_list, name='notifications_list'),
+    path('api/notifications/poll/', views.api_poll_notifications, name='api_poll_notifications'),
+    path('api/notifications/<int:pk>/read/', views.api_mark_notification_read, name='api_mark_notification_read'),
     path('analytics/',       views.owner_analytics,    name='owner_analytics'),
     path('admin-analytics/', views.platform_analytics, name='platform_analytics'),
 ]

@@ -1130,3 +1130,37 @@ def platform_analytics(request):
         'pending_verifications':  User.objects.filter(verification_status='pending').count(),
     }
     return render(request, 'core/platform_analytics.html', {'stats': stats})
+
+
+# ─────────────────────────────────────────────────────────────
+# REAL-TIME NOTIFICATION API FOR BROWSER PUSH ALERTS
+# ─────────────────────────────────────────────────────────────
+
+@login_required
+def api_poll_notifications(request):
+    """
+    Polled by browser JavaScript to deliver instant real-time
+    Web Browser Notifications to Room Owners when new bookings arrive!
+    """
+    notifs = Notification.objects.filter(user=request.user, is_read=False).order_by('-created_at')[:10]
+    data = [
+        {
+            'id': n.id,
+            'message': n.message,
+            'link': n.link,
+            'created_at': n.created_at.strftime('%I:%M %p, %d %b'),
+        }
+        for n in notifs
+    ]
+    return JsonResponse({
+        'unread_count': len(data),
+        'notifications': data
+    })
+
+
+@login_required
+def api_mark_notification_read(request, pk):
+    notif = get_object_or_404(Notification, pk=pk, user=request.user)
+    notif.is_read = True
+    notif.save()
+    return JsonResponse({'success': True})

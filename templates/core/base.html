@@ -522,6 +522,134 @@
 
 })();
 </script>
+
+{% if user.is_authenticated %}
+<!-- ── REAL-TIME BROWSER DESKTOP NOTIFICATION SYSTEM FOR OWNERS & GUESTS ── -->
+<div id="realtimeToastContainer" style="position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:10px;pointer-events:none;"></div>
+
+<script>
+(function() {
+  var notifiedIds = new Set(JSON.parse(sessionStorage.getItem('solo_notified_ids') || '[]'));
+
+  function getCookie(name) {
+    var value = "; " + document.cookie;
+    var parts = value.split("; " + name + "=");
+    if (parts.length === 2) return parts.pop().split(";").shift();
+  }
+
+  function requestBrowserNotificationPermission() {
+    if ('Notification' in window) {
+      Notification.requestPermission().then(function(permission) {
+        if (permission === 'granted') {
+          var btn = document.getElementById('enableNotifBannerBtn');
+          if (btn) btn.parentElement.parentElement.style.display = 'none';
+          showToastNotification('Browser Notifications Enabled', 'You will now receive instant alerts on your desktop when new bookings arrive.');
+        }
+      });
+    }
+  }
+  window.requestBrowserNotificationPermission = requestBrowserNotificationPermission;
+
+  function showToastNotification(title, body, link, id) {
+    var container = document.getElementById('realtimeToastContainer');
+    if (!container) return;
+
+    var toast = document.createElement('div');
+    toast.className = 'realtime-toast-card';
+    toast.style.cssText = 'background:#1E293B;color:#F8FAFC;padding:16px 20px;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,0.3);border:1px solid #334155;max-width:360px;pointer-events:auto;cursor:pointer;transition:all .3s ease;transform:translateY(20px);opacity:0;';
+
+    toast.innerHTML = '<div style="display:flex;align-items:flex-start;gap:12px;">' +
+      '<div style="width:36px;height:36px;border-radius:50%;background:#6366F1;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0;">' +
+      '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>' +
+      '</div>' +
+      '<div style="flex:1;">' +
+      '<strong style="font-size:0.92rem;color:#F8FAFC;display:block;margin-bottom:2px;">' + title + '</strong>' +
+      '<p style="font-size:0.82rem;color:#94A3B8;margin:0;line-height:1.4;">' + body + '</p>' +
+      '</div>' +
+      '<button onclick="event.stopPropagation();this.parentElement.parentElement.remove();" style="background:none;border:none;color:#64748B;font-size:16px;cursor:pointer;">✕</button>' +
+      '</div>';
+
+    if (link) {
+      toast.onclick = function() {
+        if (id) markNotificationRead(id);
+        window.location.href = link;
+      };
+    }
+
+    container.appendChild(toast);
+    setTimeout(function() {
+      toast.style.transform = 'translateY(0)';
+      toast.style.opacity = '1';
+    }, 50);
+
+    setTimeout(function() {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(20px)';
+      setTimeout(function() { toast.remove(); }, 300);
+    }, 9000);
+  }
+
+  function markNotificationRead(id) {
+    fetch('/api/notifications/' + id + '/read/', {
+      method: 'POST',
+      headers: { 'X-CSRFToken': getCookie('csrftoken') }
+    });
+  }
+
+  function triggerDesktopNotification(notif) {
+    if ('Notification' in window && Notification.permission === 'granted') {
+      try {
+        var n = new Notification("SoloNest Booking Alert", {
+          body: notif.message,
+          tag: 'solo-notif-' + notif.id,
+          requireInteraction: true
+        });
+        n.onclick = function() {
+          window.focus();
+          if (notif.link) {
+            markNotificationRead(notif.id);
+            window.location.href = notif.link;
+          }
+        };
+      } catch (e) {}
+    }
+  }
+
+  function pollNotifications() {
+    fetch('/api/notifications/poll/')
+      .then(function(res) { return res.json(); })
+      .then(function(data) {
+        if (data.notifications && data.notifications.length > 0) {
+          var badge = document.querySelector('.nav-notif-badge');
+          if (badge) {
+            badge.textContent = data.unread_count;
+            badge.style.display = data.unread_count > 0 ? 'inline-flex' : 'none';
+          }
+
+          data.notifications.forEach(function(n) {
+            if (!notifiedIds.has(n.id)) {
+              notifiedIds.add(n.id);
+              sessionStorage.setItem('solo_notified_ids', JSON.stringify(Array.from(notifiedIds)));
+
+              // Trigger native Desktop Push Notification
+              triggerDesktopNotification(n);
+
+              // Trigger Toast Banner on screen
+              showToastNotification("New Booking Request", n.message, n.link, n.id);
+            }
+          });
+        }
+      })
+      .catch(function() {});
+  }
+
+  // Initial poll on page load and repeat every 7 seconds
+  pollNotifications();
+  setInterval(pollNotifications, 7000);
+})();
+</script>
+{% endif %}
+
 {% block extra_js %}{% endblock %}
 </body>
 </html>
