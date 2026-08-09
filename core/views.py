@@ -819,10 +819,12 @@ def phone_login_request(request):
         import re
         phone = request.POST.get('phone', '').strip()
         digits = re.sub(r'\D', '', phone)
-        if digits.startswith('91') and len(digits) == 12:
-            digits = digits[2:]
+        # Extract the last 10 digits to seamlessly handle +91, 91, 0, spaces, & mobile keyboard auto-fill
+        if len(digits) >= 10:
+            digits = digits[-10:]
+
         if len(digits) != 10:
-            messages.error(request, 'Please enter a valid 10-digit phone number.')
+            messages.error(request, 'Please enter a valid 10-digit mobile number.')
             return render(request, 'core/phone_login_request.html')
 
         # Rate limiting
