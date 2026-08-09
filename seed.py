@@ -15,13 +15,13 @@ guest.set_password('guest12345'); guest.role='guest'; guest.save()
 Listing.objects.all().delete()
 
 Listing.objects.create(
-    owner=owner, title='Cozy private room near bus stand', city='Thanjavur', area='Medical College Road',
+    owner=owner, title='Cozy private room near bus stand', city='Chennai', area='Anna Nagar',
     address='12 Gandhi St', room_type='private', gender_preference='any', stay_type='both',
     price_per_day=250, price_per_month=5500, wifi=True, ac=False, attached_bathroom=True,
     food_included=True, is_verified=True, latitude=10.7905, longitude=79.1382
 )
 Listing.objects.create(
-    owner=owner, title='Female-only shared room, walk to college', city='Thanjavur', area='SASTRA Road',
+    owner=owner, title='Female-only shared room, walk to college', city='Chennai', area='Guindy',
     address='45 Anna Nagar', room_type='shared', gender_preference='female', stay_type='monthly',
     price_per_month=4000, wifi=True, ac=False, attached_bathroom=False, food_included=False,
     latitude=10.7745, longitude=79.1467
@@ -33,7 +33,7 @@ Listing.objects.create(
     latitude=11.0053, longitude=76.9661
 )
 Listing.objects.create(
-    owner=owner, title='Budget room near Big Temple', city='Thanjavur', area='Big Temple Fort',
+    owner=owner, title='Budget room near Tech Park', city='Madurai', area='KK Nagar',
     address='3 Fort Rd', room_type='private', gender_preference='male', stay_type='short',
     price_per_day=200, wifi=True, ac=False, attached_bathroom=True,
     latitude=10.7828, longitude=79.1318

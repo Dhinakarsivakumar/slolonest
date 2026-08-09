@@ -135,13 +135,19 @@ def home(request):
 
     listings = listings.order_by('-is_verified', '-created_at')
 
-    popular_cities = (
+    raw_cities = (
         Listing.objects.filter(is_available=True)
         .exclude(city='')
         .values_list('city', flat=True)
-        .distinct()
-        .order_by('city')[:8]
     )
+    popular_cities = []
+    seen_cities = set()
+    for c in raw_cities:
+        norm = c.strip().title()
+        if norm.lower() != 'thanjavur' and norm.lower() not in seen_cities:
+            seen_cities.add(norm.lower())
+            popular_cities.append(norm)
+    popular_cities = popular_cities[:8]
 
     favorited_ids = set()
     if request.user.is_authenticated:
