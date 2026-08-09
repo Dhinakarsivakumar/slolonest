@@ -54,8 +54,8 @@
           <span class="status-badge status-{{ b.status }}">{{ b.get_status_display }}</span>
           {% if b.is_paid %}
             <span class="tag verified" style="margin-left:6px;">✓ Paid</span>
-          {% elif b.status == 'approved' %}
-            <span class="tag" style="background:#FEF3C7;color:#92400E;border-color:#FCD34D;margin-left:6px;">⏳ Payment Required</span>
+          {% else %}
+            <span class="tag" style="background:#ECFDF5;color:#065F46;border-color:#A7F3D0;margin-left:6px;">💵 Pay at Property (No Advance Needed)</span>
           {% endif %}
           <span style="font-size:.75rem;color:var(--muted);margin-left:8px;">Requested on {{ b.created_at|date:"M d" }}</span>
         </div>

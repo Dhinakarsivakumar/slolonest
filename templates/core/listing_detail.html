@@ -166,6 +166,15 @@
         </a>
         {% endif %}
 
+        <!-- Booking Intimation & Pay at Property Guarantee -->
+        <div class="booking-pay-at-property-card">
+          <div class="pay-icon">💵</div>
+          <div>
+            <strong>Pay at Property (Zero Advance Payment)</strong>
+            <p>No online advance payment required! Pay 100% of your stay directly at the property upon check-in.</p>
+          </div>
+        </div>
+
         {% if user.is_authenticated %}
           {% if user.role == 'guest' %}
           <form method="post" action="{% url 'request_booking' listing.pk %}" id="bookingForm" style="margin-top:18px;">

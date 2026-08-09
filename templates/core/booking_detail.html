@@ -31,6 +31,15 @@
       </span>
     </div>
 
+    <!-- Booking Intimation & Pay at Property Guarantee -->
+    <div class="booking-pay-at-property-card" style="margin-top:14px;">
+      <div class="pay-icon">🏨</div>
+      <div>
+        <strong>Payment Notice: Pay 100% at the property</strong>
+        <p>No online advance payment is required to confirm this stay. Pay directly to the owner/hotel upon check-in!</p>
+      </div>
+    </div>
+
     <!-- Owner actions -->
     {% if user == booking.listing.owner and booking.status == 'requested' %}
     <form method="post" style="display:flex;gap:10px;flex-wrap:wrap;">
