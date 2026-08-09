@@ -1179,3 +1179,16 @@ def service_worker(request):
     response = HttpResponse(content, content_type='application/javascript')
     response['Service-Worker-Allowed'] = '/'
     return response
+
+
+def manifest_json(request):
+    """Serve manifest.json directly at /manifest.json for Android PWA & Mobile Push."""
+    from django.conf import settings
+    from django.http import HttpResponse
+    manifest_path = os.path.join(settings.BASE_DIR, 'static', 'manifest.json')
+    if os.path.exists(manifest_path):
+        with open(manifest_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+    else:
+        content = "{}"
+    return HttpResponse(content, content_type='application/manifest+json')

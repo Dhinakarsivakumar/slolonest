@@ -1,4 +1,4 @@
-// SoloNest Background Service Worker for Web Push & Closed-Tab Notifications
+// SoloNest Background Service Worker for Android Mobile & Desktop Notifications
 self.addEventListener('install', function(event) {
   self.skipWaiting();
 });
@@ -7,7 +7,7 @@ self.addEventListener('activate', function(event) {
   event.waitUntil(self.clients.claim());
 });
 
-// Handle Web Push Event sent from Server even when browser tab is closed
+// Handle Push Notifications on Android & Desktop
 self.addEventListener('push', function(event) {
   var data = { title: 'SoloNest Booking Alert', body: 'New booking request received for your room!' };
   if (event.data) {
@@ -21,8 +21,16 @@ self.addEventListener('push', function(event) {
   var options = {
     body: data.body || 'A guest requested a booking for your property.',
     icon: '/static/images/logo-icon.png',
+    badge: '/static/images/logo-icon.png',
+    vibrate: [200, 100, 200, 100, 200, 100, 400], // Android Vibration Pattern
+    tag: 'solonest-booking-' + Date.now(),
+    renotify: true,
+    requireInteraction: true,
     data: { url: data.link || '/dashboard/' },
-    requireInteraction: true
+    actions: [
+      { action: 'open', title: 'View Request' },
+      { action: 'close', title: 'Dismiss' }
+    ]
   };
 
   event.waitUntil(
@@ -30,9 +38,12 @@ self.addEventListener('push', function(event) {
   );
 });
 
-// Handle user clicking the OS notification when tab is closed
+// Handle user tapping the notification on Android / Desktop
 self.addEventListener('notificationclick', function(event) {
   event.notification.close();
+
+  if (event.action === 'close') return;
+
   var targetUrl = (event.notification.data && event.notification.data.url) ? event.notification.data.url : '/dashboard/';
 
   event.waitUntil(

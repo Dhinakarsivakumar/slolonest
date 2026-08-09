@@ -1,0 +1,25 @@
+{
+  "name": "SoloNest - Rooms, PG & Homestays",
+  "short_name": "SoloNest",
+  "description": "Find and book verified rooms, PGs, and homestays with zero advance payment.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#FAFAFA",
+  "theme_color": "#4F46E5",
+  "gcm_sender_id": "103953800507",
+  "icons": [
+    {
+      "src": "/static/images/logo-icon.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/static/images/logo-icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

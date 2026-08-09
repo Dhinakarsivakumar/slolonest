@@ -54,6 +54,7 @@ urlpatterns = [
     path('api/notifications/poll/', views.api_poll_notifications, name='api_poll_notifications'),
     path('api/notifications/<int:pk>/read/', views.api_mark_notification_read, name='api_mark_notification_read'),
     path('sw.js', views.service_worker, name='service_worker'),
+    path('manifest.json', views.manifest_json, name='manifest_json'),
     path('analytics/',       views.owner_analytics,    name='owner_analytics'),
     path('admin-analytics/', views.platform_analytics, name='platform_analytics'),
 ]
