@@ -25,7 +25,7 @@
         </div>
       </div>
       <span class="status-badge status-{% if user.verification_status == 'approved' %}approved{% elif user.verification_status == 'rejected' %}rejected{% else %}requested{% endif %}">
-        {% if user.verification_status == 'approved' %}✅ Verified{% elif user.verification_status == 'pending' %}⏳ Under Review{% elif user.verification_status == 'rejected' %}❌ Rejected{% else %}Not Uploaded{% endif %}
+        {% if user.verification_status == 'approved' %} Verified{% elif user.verification_status == 'pending' %}⏳ Under Review{% elif user.verification_status == 'rejected' %} Rejected{% else %}Not Uploaded{% endif %}
       </span>
     </div>
 
@@ -36,7 +36,7 @@
         <span style="font-size:.84rem;font-weight:600;color:var(--navy);">Currently Uploaded Document</span>
       </div>
       <a href="{{ user.id_proof.url }}" target="_blank" class="btn btn-outline btn-small" style="font-size:.78rem;padding:5px 12px;">
-        📄 View File ↗
+         View File ↗
       </a>
     </div>
     {% endif %}
@@ -93,7 +93,7 @@ function handleFileSelected(input) {
 
   if (input.files && input.files[0]) {
     var file = input.files[0];
-    title.textContent = '📄 Selected: ' + file.name;
+    title.textContent = ' Selected: ' + file.name;
     sub.textContent = 'Size: ' + (file.size / (1024 * 1024)).toFixed(2) + ' MB • Ready to submit';
     area.style.background = '#ECFDF5';
     area.style.borderColor = '#10B981';

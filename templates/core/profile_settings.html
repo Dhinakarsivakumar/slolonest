@@ -17,7 +17,7 @@
         <span>•</span>
         <span>{{ user.email|default:"No email registered" }}</span>
         <span class="status-badge" style="background:rgba(255,255,255,0.18);color:#fff;font-size:.72rem;padding:2px 10px;">
-          {% if user.role == 'owner' %}🏠 Room Owner{% else %}🧳 Solo Guest{% endif %}
+          {% if user.role == 'owner' %} Room Owner{% else %} Solo Guest{% endif %}
         </span>
       </div>
     </div>
@@ -62,7 +62,7 @@
         <div style="background:var(--surface-2);padding:12px 16px;border-radius:var(--radius-sm);border:1px solid var(--border);">
           <div style="font-size:0.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:2px;">Account Role</div>
           <div style="font-size:0.95rem;font-weight:600;color:var(--text);">
-            {% if user.role == 'owner' %}🏠 Room Owner{% else %}🧳 Solo Guest{% endif %}
+            {% if user.role == 'owner' %}Room Owner{% else %}Solo Guest{% endif %}
           </div>
         </div>
       </div>
@@ -106,9 +106,9 @@
           <label>Gender</label>
           <select name="gender">
             <option value="" {% if not user.gender %}selected{% endif %}>Select Gender</option>
-            <option value="male" {% if user.gender == 'male' %}selected{% endif %}>👨 Male</option>
-            <option value="female" {% if user.gender == 'female' %}selected{% endif %}>👩 Female</option>
-            <option value="other" {% if user.gender == 'other' %}selected{% endif %}>🧑 Other</option>
+            <option value="male" {% if user.gender == 'male' %}selected{% endif %}>Male</option>
+            <option value="female" {% if user.gender == 'female' %}selected{% endif %}>Female</option>
+            <option value="other" {% if user.gender == 'other' %}selected{% endif %}>Other</option>
             <option value="prefer_not_to_say" {% if user.gender == 'prefer_not_to_say' %}selected{% endif %}>Prefer not to say</option>
           </select>
         </div>
@@ -144,8 +144,8 @@
         <div class="form-row">
           <label>I am a…</label>
           <select name="role">
-            <option value="guest" {% if user.role == 'guest' %}selected{% endif %}>🧳 Guest — looking for a room</option>
-            <option value="owner" {% if user.role == 'owner' %}selected{% endif %}>🏠 Owner — listing a room</option>
+            <option value="guest" {% if user.role == 'guest' %}selected{% endif %}>Guest — looking for a room</option>
+            <option value="owner" {% if user.role == 'owner' %}selected{% endif %}>Owner — listing a room</option>
           </select>
         </div>
       </div>
@@ -180,7 +180,7 @@
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#059669" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg>
       </div>
       <div>
-        <div style="font-weight:700;color:#065F46;font-size:.95rem;">Phone Number Verified ✓</div>
+        <div style="font-weight:700;color:#065F46;font-size:.95rem;">Phone Number Verified </div>
         <div style="font-size:.8rem;color:var(--muted);">{{ user.phone }} — verified and secure</div>
       </div>
       <button disabled style="margin-left:auto;padding:8px 16px;border-radius:8px;border:none;background:#E5E7EB;color:#9CA3AF;font-weight:600;font-size:.82rem;cursor:not-allowed;display:flex;align-items:center;gap:6px;flex-shrink:0;">

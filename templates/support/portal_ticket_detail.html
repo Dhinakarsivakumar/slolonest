@@ -57,7 +57,7 @@
       ">
         <div style="font-size:.72rem;font-weight:700;margin-bottom:6px;
           {% if reply.is_staff %}color:var(--indigo-light);{% else %}color:var(--muted);{% endif %}">
-          {% if reply.is_staff %}🛡️ {{ reply.author.username }} (Staff){% else %}👤 {{ reply.author.username }}{% endif %}
+          {% if reply.is_staff %} {{ reply.author.username }} (Staff){% else %} {{ reply.author.username }}{% endif %}
           &nbsp;·&nbsp; {{ reply.created_at|date:"d M, H:i" }}
         </div>
         <div style="font-size:.87rem;color:var(--text);line-height:1.6;">{{ reply.message }}</div>
@@ -101,10 +101,10 @@
           </div>
         </div>
         <div style="font-size:.8rem;color:var(--text-2);line-height:2;">
-          📧 {{ ticket.user.email }}<br>
-          📱 {{ ticket.user.phone|default:"—" }}<br>
-          📅 Joined {{ ticket.user.date_joined|date:"d M Y" }}<br>
-          {% if ticket.user.phone_verified %}✅ Phone Verified{% else %}❌ Phone Not Verified{% endif %}
+           {{ ticket.user.email }}<br>
+           {{ ticket.user.phone|default:"—" }}<br>
+           Joined {{ ticket.user.date_joined|date:"d M Y" }}<br>
+          {% if ticket.user.phone_verified %} Phone Verified{% else %} Phone Not Verified{% endif %}
         </div>
         <a href="{% url 'portal_users' %}?q={{ ticket.user.username }}" class="btn btn-ghost" style="width:100%;justify-content:center;margin-top:12px;font-size:.78rem;">View User Profile →</a>
       </div>

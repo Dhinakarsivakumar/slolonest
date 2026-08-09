@@ -26,7 +26,7 @@ class SoloNestUserAdmin(UserAdmin):
 
     def id_proof_preview(self, obj):
         if obj.id_proof:
-            return format_html('<a href="{}" target="_blank" style="font-weight:700;color:#4F46E5;background:#EEF2FF;padding:4px 10px;border-radius:6px;text-decoration:none;">📄 View Document</a>', obj.id_proof.url)
+            return format_html('<a href="{}" target="_blank" style="font-weight:700;color:#4F46E5;background:#EEF2FF;padding:4px 10px;border-radius:6px;text-decoration:none;"> View Document</a>', obj.id_proof.url)
         return format_html('<span style="color:#9CA3AF;">No Document</span>')
     id_proof_preview.short_description = "ID Document"
 
@@ -39,11 +39,11 @@ class SoloNestUserAdmin(UserAdmin):
             count += 1
             Notification.objects.create(
                 user=user,
-                message='ID Verification Approved ✅: Your owner ID proof document has been verified and approved by Admin. You can now post room listings!',
+                message='ID Verification Approved : Your owner ID proof document has been verified and approved by Admin. You can now post room listings!',
                 link='/settings/profile/'
             )
         self.message_user(request, f"Approved ID verification for {count} user(s).")
-    approve_identity.short_description = "✅ Approve selected owners' ID verification"
+    approve_identity.short_description = " Approve selected owners' ID verification"
 
     def reject_identity(self, request, queryset):
         count = 0
@@ -54,11 +54,11 @@ class SoloNestUserAdmin(UserAdmin):
             count += 1
             Notification.objects.create(
                 user=user,
-                message='ID Verification Update ❌: Your ID proof document could not be verified. Please re-upload a clear ID document in Profile Settings.',
+                message='ID Verification Update : Your ID proof document could not be verified. Please re-upload a clear ID document in Profile Settings.',
                 link='/settings/verify-id/'
             )
         self.message_user(request, f"Rejected ID verification for {count} user(s).")
-    reject_identity.short_description = "❌ Reject selected owners' ID verification"
+    reject_identity.short_description = " Reject selected owners' ID verification"
 
 
 

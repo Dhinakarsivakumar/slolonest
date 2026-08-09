@@ -264,11 +264,11 @@ def switch_mode(request):
     if request.user.role == 'owner':
         request.user.role = 'guest'
         request.session['is_original_owner'] = True
-        messages.success(request, 'Switched to Guest mode 👤')
+        messages.success(request, 'Switched to Guest mode ')
     else:
         if request.session.get('is_original_owner') or request.user.is_verified or request.user.verification_status in ['pending', 'approved']:
             request.user.role = 'owner'
-            messages.success(request, 'Switched to Owner mode 🔑')
+            messages.success(request, 'Switched to Owner mode ')
         else:
             messages.error(request, 'Only verified owners can switch to Owner mode.')
     request.user.save()
@@ -327,6 +327,10 @@ def help_page(request):
     return render(request, 'core/help.html')
 
 
+def terms_page(request):
+    return render(request, 'core/terms.html')
+
+
 # ─────────────────────────────────────────────────────────────
 # DASHBOARD
 # ─────────────────────────────────────────────────────────────
@@ -365,7 +369,7 @@ def add_listing(request):
     if not (u.first_name and u.phone and u.gender and u.age and u.from_location):
         messages.error(
             request,
-            '📋 Complete Profile Required: Please fill out all required profile details (First Name, Phone Number, Gender, Age, and Hometown) in Profile Settings before listing a room.'
+            ' Complete Profile Required: Please fill out all required profile details (First Name, Phone Number, Gender, Age, and Hometown) in Profile Settings before listing a room.'
         )
         return redirect('profile_settings')
 
@@ -375,10 +379,10 @@ def add_listing(request):
             messages.warning(request, '⏳ Your ID document has been submitted and is pending Admin review. You will be able to list rooms once approved.')
             return redirect('profile_settings')
         elif request.user.verification_status == 'rejected':
-            messages.error(request, '❌ Your previous ID document was rejected. Please re-upload a valid ID proof for Admin review.')
+            messages.error(request, ' Your previous ID document was rejected. Please re-upload a valid ID proof for Admin review.')
             return redirect('submit_verification')
         else:
-            messages.error(request, '🔒 Owner ID Verification Required: Please upload your ID proof document for Admin review before listing a room.')
+            messages.error(request, ' Owner ID Verification Required: Please upload your ID proof document for Admin review before listing a room.')
             return redirect('submit_verification')
 
 
@@ -404,7 +408,7 @@ def add_listing(request):
                     messages.warning(request, f'"{f.name}" is not a valid image and was skipped.')
                     continue
                 ListingImage.objects.create(listing=listing, image=f)
-            messages.success(request, '🎉 Your room has been listed! It will be verified by our team shortly.')
+            messages.success(request, ' Your room has been listed! It will be verified by our team shortly.')
             return redirect('listing_detail', pk=listing.pk)
     else:
         form = ListingForm()
@@ -744,13 +748,13 @@ def send_otp(request):
     # Try SMS first, fall back to email automatically
     sms_ok, sms_err = _send_sms_otp(request.user.phone, code)
     if sms_ok and not dev_mode:
-        messages.success(request, f'OTP sent to {request.user.phone} via SMS ✓')
+        messages.success(request, f'OTP sent to {request.user.phone} via SMS ')
         channel = 'sms'
     else:
         # SMS failed — try email fallback
         email_ok, email_err = _send_email_otp(request.user, code)
         if email_ok and not dev_mode:
-            messages.success(request, f'OTP sent to {request.user.email} via Email ✓')
+            messages.success(request, f'OTP sent to {request.user.email} via Email ')
             channel = 'email'
         elif not dev_mode:
             # Both failed — show code on screen as last resort
@@ -834,7 +838,7 @@ def phone_login_request(request):
 
         sms_ok, sms_err = _send_sms_otp(digits, code)
         if sms_ok and not dev_mode:
-            messages.success(request, f'OTP sent to +91 {digits} ✓')
+            messages.success(request, f'OTP sent to +91 {digits} ')
         else:
             # In dev mode, show code on screen
             dev_code = code
@@ -938,7 +942,7 @@ def submit_verification(request):
         request.user.id_proof = f
         request.user.verification_status = 'pending'
         request.user.save()
-        messages.success(request, '🎉 Your ID proof document has been submitted successfully! Our Admin team will review and approve it shortly.')
+        messages.success(request, ' Your ID proof document has been submitted successfully! Our Admin team will review and approve it shortly.')
         return redirect('profile_settings')
 
     return render(request, 'core/submit_verification.html')
@@ -1063,7 +1067,7 @@ def payment_callback(request, pk):
             booking.is_paid = True
             booking.save()
             notify(booking.listing.owner, f'Payment received for "{booking.listing.title}".', f'/booking/{booking.pk}/')
-            messages.success(request, 'Payment successful! 🎉')
+            messages.success(request, 'Payment successful! ')
         except Exception:
             payment.status = 'failed'
             payment.save()

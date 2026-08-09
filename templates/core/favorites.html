@@ -26,7 +26,7 @@
           <h3>{{ fav.listing.title }}</h3>
           <div class="card-meta">{{ fav.listing.city }}</div>
           <div class="tag-row">
-            {% if fav.listing.is_verified %}<span class="tag verified">✓ Verified</span>{% endif %}
+            {% if fav.listing.is_verified %}<span class="tag verified"> Verified</span>{% endif %}
             <span class="tag">{{ fav.listing.get_room_type_display }}</span>
           </div>
           {% if fav.listing.price_per_day %}
@@ -43,8 +43,8 @@
   </div>
   {% else %}
   <div class="empty-state">
-    <div class="empty-state-icon">💝</div>
-    <p>No saved rooms yet.<br>Tap the <strong>♥</strong> heart on any room to save it here.</p>
+    <div class="empty-state-icon"></div>
+    <p>No saved rooms yet.<br>Tap the <strong></strong> heart on any room to save it here.</p>
     <a href="{% url 'home' %}" class="btn btn-primary" style="margin-top:16px;">Browse rooms</a>
   </div>
   {% endif %}

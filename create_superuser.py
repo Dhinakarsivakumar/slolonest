@@ -16,7 +16,7 @@ if not User.objects.filter(is_superuser=True).exists():
         password='Admin@1234',
         role='owner',
     )
-    print('✅ Superuser "admin" created successfully!')
+    print(' Superuser "admin" created successfully!')
 else:
     print('ℹ️ Superuser already exists, skipping.')
 
@@ -26,10 +26,10 @@ try:
     site.domain = 'slolonest.onrender.com'
     site.name = 'SoloNest'
     site.save()
-    print('✅ Site domain updated to slolonest.onrender.com')
+    print(' Site domain updated to slolonest.onrender.com')
 except Site.DoesNotExist:
     site = Site.objects.create(id=1, domain='slolonest.onrender.com', name='SoloNest')
-    print('✅ Site created successfully')
+    print(' Site created successfully')
 
 # 3. Google OAuth Setup (loaded via env vars)
 client_id = os.environ.get('GOOGLE_CLIENT_ID')
@@ -49,13 +49,13 @@ if client_id and client_secret:
         app.client_id = client_id
         app.secret = client_secret
         app.save()
-        print('🔄 Google SocialApp updated with latest keys')
+        print(' Google SocialApp updated with latest keys')
     else:
-        print('✅ Google SocialApp created successfully')
+        print(' Google SocialApp created successfully')
 
     # Link SocialApp to current Site
     if not app.sites.filter(id=site.id).exists():
         app.sites.add(site)
-        print('✅ Google SocialApp linked to Site')
+        print(' Google SocialApp linked to Site')
 else:
-    print('⚠️ GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET not set in environment variables. Skipping SocialApp configuration.')
+    print('️ GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET not set in environment variables. Skipping SocialApp configuration.')

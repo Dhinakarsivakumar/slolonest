@@ -193,20 +193,20 @@ def portal_users(request):
             user.save()
             Notification.objects.create(
                 user=user,
-                message='ID Verification Approved ✅: Your owner ID proof document has been verified and approved by Support Staff.',
+                message='ID Verification Approved : Your owner ID proof document has been verified and approved by Support Staff.',
                 link='/settings/profile/'
             )
-            messages.success(request, f'✅ ID document approved for {user.username}.')
+            messages.success(request, f' ID document approved for {user.username}.')
         elif action in ('reject', 'reject_id'):
             user.verification_status = 'rejected'
             user.is_verified = False
             user.save()
             Notification.objects.create(
                 user=user,
-                message='ID Verification Update ❌: Your ID proof document could not be verified. Please re-upload a clear ID document.',
+                message='ID Verification Update : Your ID proof document could not be verified. Please re-upload a clear ID document.',
                 link='/settings/verify-id/'
             )
-            messages.success(request, f'❌ ID document rejected for {user.username}.')
+            messages.success(request, f' ID document rejected for {user.username}.')
         return redirect('portal_users')
     return render(request, 'support/portal_users.html', {'users': users, 'q': q, 'role_filter': role_filter})
 
@@ -224,7 +224,7 @@ def portal_user_detail(request, pk):
         if action == 'verify_phone':
             user.phone_verified = True
             user.save()
-            messages.success(request, f'✅ Phone verified for {user.username}.')
+            messages.success(request, f' Phone verified for {user.username}.')
 
         elif action == 'unverify_phone':
             user.phone_verified = False
@@ -237,10 +237,10 @@ def portal_user_detail(request, pk):
             user.save()
             Notification.objects.create(
                 user=user,
-                message='ID Verification Approved ✅: Your owner ID proof document has been verified and approved by Support Staff.',
+                message='ID Verification Approved : Your owner ID proof document has been verified and approved by Support Staff.',
                 link='/settings/profile/'
             )
-            messages.success(request, f'✅ ID document approved for {user.username}.')
+            messages.success(request, f' ID document approved for {user.username}.')
 
         elif action in ('reject_id', 'reject'):
             user.verification_status = 'rejected'
@@ -248,10 +248,10 @@ def portal_user_detail(request, pk):
             user.save()
             Notification.objects.create(
                 user=user,
-                message='ID Verification Update ❌: Your ID proof document could not be verified. Please re-upload a clear ID document.',
+                message='ID Verification Update : Your ID proof document could not be verified. Please re-upload a clear ID document.',
                 link='/settings/verify-id/'
             )
-            messages.success(request, f'❌ ID document rejected for {user.username}.')
+            messages.success(request, f' ID document rejected for {user.username}.')
 
 
         elif action == 'reset_id':
@@ -263,7 +263,7 @@ def portal_user_detail(request, pk):
         elif action == 'verify_guest':
             user.is_verified = True
             user.save()
-            messages.success(request, f'✅ Guest {user.username} manually verified.')
+            messages.success(request, f' Guest {user.username} manually verified.')
 
         elif action == 'unverify_guest':
             user.is_verified = False
@@ -365,20 +365,20 @@ def portal_verifications(request):
             u.save()
             Notification.objects.create(
                 user=u,
-                message='ID Verification Approved ✅: Your ID proof document has been verified and approved by Support Staff. You can now post room listings!',
+                message='ID Verification Approved : Your ID proof document has been verified and approved by Support Staff. You can now post room listings!',
                 link='/settings/profile/'
             )
-            messages.success(request, f'✅ ID Proof approved for {u.username}.')
+            messages.success(request, f' ID Proof approved for {u.username}.')
         elif action == 'reject':
             u.verification_status = 'rejected'
             u.is_verified = False
             u.save()
             Notification.objects.create(
                 user=u,
-                message='ID Verification Update ❌: Your ID proof document could not be verified. Please re-upload a clear ID document.',
+                message='ID Verification Update : Your ID proof document could not be verified. Please re-upload a clear ID document.',
                 link='/settings/verify-id/'
             )
-            messages.success(request, f'❌ ID Proof rejected for {u.username}.')
+            messages.success(request, f' ID Proof rejected for {u.username}.')
 
         elif action == 'reset':
             u.verification_status = 'pending'

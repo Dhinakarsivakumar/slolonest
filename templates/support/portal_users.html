@@ -7,8 +7,8 @@
 <!-- Role tabs -->
 <div style="display:flex;gap:8px;margin-bottom:16px;">
   <a href="{% url 'portal_users' %}" class="btn {% if not role_filter %}btn-primary{% else %}btn-ghost{% endif %}" style="padding:7px 16px;font-size:.8rem;">All Users</a>
-  <a href="{% url 'portal_users' %}?role=owner" class="btn {% if role_filter == 'owner' %}btn-primary{% else %}btn-ghost{% endif %}" style="padding:7px 16px;font-size:.8rem;">🏠 Owners</a>
-  <a href="{% url 'portal_users' %}?role=guest" class="btn {% if role_filter == 'guest' %}btn-primary{% else %}btn-ghost{% endif %}" style="padding:7px 16px;font-size:.8rem;">🧳 Guests</a>
+  <a href="{% url 'portal_users' %}?role=owner" class="btn {% if role_filter == 'owner' %}btn-primary{% else %}btn-ghost{% endif %}" style="padding:7px 16px;font-size:.8rem;"> Owners</a>
+  <a href="{% url 'portal_users' %}?role=guest" class="btn {% if role_filter == 'guest' %}btn-primary{% else %}btn-ghost{% endif %}" style="padding:7px 16px;font-size:.8rem;"> Guests</a>
 </div>
 
 <!-- Search -->
@@ -51,7 +51,7 @@
           <td>
             {% if u.id_proof %}
               <a href="{{ u.id_proof.url }}" target="_blank" class="btn btn-ghost" style="padding:4px 9px;font-size:.72rem;display:inline-flex;align-items:center;gap:4px;color:var(--indigo-light);border-color:var(--indigo-dark);">
-                🖼️ View Image ↗
+                 View Image ↗
               </a>
             {% else %}
               <span style="font-size:.72rem;color:var(--muted);">No Document</span>
@@ -59,11 +59,11 @@
           </td>
           <td>
             {% if u.is_verified %}
-              <span style="color:var(--green);font-weight:600;">✓ ID Verified</span>
+              <span style="color:var(--green);font-weight:600;"> ID Verified</span>
             {% elif u.verification_status == 'pending' %}
               <span style="color:var(--yellow);font-weight:600;">⏳ Pending</span>
             {% else %}
-              <span style="color:var(--muted);">✗ Unverified</span>
+              <span style="color:var(--muted);"> Unverified</span>
             {% endif %}
           </td>
 
@@ -78,20 +78,20 @@
           <td style="text-align:center;">{{ u.tickets.count }}</td>
           <td>
             <div style="display:flex;gap:6px;flex-wrap:wrap;">
-              <a href="{% url 'portal_user_detail' u.pk %}" class="btn btn-primary" style="padding:5px 10px;font-size:.72rem;">👁 View</a>
+              <a href="{% url 'portal_user_detail' u.pk %}" class="btn btn-primary" style="padding:5px 10px;font-size:.72rem;"> View</a>
               {% if u.is_active %}
               <form method="post" style="margin:0;" onsubmit="return confirm('Ban {{ u.username }}?');">
                 {% csrf_token %}
                 <input type="hidden" name="user_id" value="{{ u.pk }}">
                 <input type="hidden" name="action" value="ban">
-                <button type="submit" class="btn btn-danger" style="padding:5px 10px;font-size:.72rem;">🚫 Ban</button>
+                <button type="submit" class="btn btn-danger" style="padding:5px 10px;font-size:.72rem;"> Ban</button>
               </form>
               {% else %}
               <form method="post" style="margin:0;">
                 {% csrf_token %}
                 <input type="hidden" name="user_id" value="{{ u.pk }}">
                 <input type="hidden" name="action" value="unban">
-                <button type="submit" class="btn btn-success" style="padding:5px 10px;font-size:.72rem;">✓ Unban</button>
+                <button type="submit" class="btn btn-success" style="padding:5px 10px;font-size:.72rem;"> Unban</button>
               </form>
               {% endif %}
               {% if not u.is_staff %}
@@ -102,7 +102,7 @@
                 <button type="submit" class="btn btn-ghost" style="padding:5px 10px;font-size:.72rem;">⬆ Staff</button>
               </form>
               {% else %}
-              <span style="font-size:.72rem;color:var(--indigo-light);padding:5px;">🛡 Staff</span>
+              <span style="font-size:.72rem;color:var(--indigo-light);padding:5px;"> Staff</span>
               {% endif %}
             </div>
           </td>

@@ -27,9 +27,9 @@
 <!-- Filter tabs -->
 <div style="display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;">
   <a href="{% url 'portal_reports' %}"                    class="btn {% if not status_filter %}btn-primary{% else %}btn-ghost{% endif %}" style="padding:7px 16px;font-size:.8rem;">All Reports</a>
-  <a href="{% url 'portal_reports' %}?status=open"        class="btn {% if status_filter == 'open' %}btn-primary{% else %}btn-ghost{% endif %}" style="padding:7px 16px;font-size:.8rem;">🔴 Open</a>
-  <a href="{% url 'portal_reports' %}?status=reviewed"    class="btn {% if status_filter == 'reviewed' %}btn-primary{% else %}btn-ghost{% endif %}" style="padding:7px 16px;font-size:.8rem;">✅ Reviewed</a>
-  <a href="{% url 'portal_reports' %}?status=dismissed"   class="btn {% if status_filter == 'dismissed' %}btn-primary{% else %}btn-ghost{% endif %}" style="padding:7px 16px;font-size:.8rem;">❌ Dismissed</a>
+  <a href="{% url 'portal_reports' %}?status=open"        class="btn {% if status_filter == 'open' %}btn-primary{% else %}btn-ghost{% endif %}" style="padding:7px 16px;font-size:.8rem;"> Open</a>
+  <a href="{% url 'portal_reports' %}?status=reviewed"    class="btn {% if status_filter == 'reviewed' %}btn-primary{% else %}btn-ghost{% endif %}" style="padding:7px 16px;font-size:.8rem;"> Reviewed</a>
+  <a href="{% url 'portal_reports' %}?status=dismissed"   class="btn {% if status_filter == 'dismissed' %}btn-primary{% else %}btn-ghost{% endif %}" style="padding:7px 16px;font-size:.8rem;"> Dismissed</a>
 </div>
 
 <!-- Report Cards -->
@@ -45,41 +45,41 @@
       <!-- Column 1: REPORTED LISTING -->
       <div>
         <div style="font-size:.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">
-          📋 Reported Listing
+           Reported Listing
         </div>
         <div style="font-weight:700;color:var(--text);font-size:.95rem;margin-bottom:4px;">
           {{ r.listing.title }}
         </div>
         <div style="font-size:.78rem;color:var(--text-2);line-height:1.7;">
-          📍 {{ r.listing.city }}{% if r.listing.area %}, {{ r.listing.area }}{% endif %}<br>
-          🏠 Owner: <strong style="color:var(--text);">{{ r.listing.owner.username }}</strong><br>
-          📞 {{ r.listing.owner.phone|default:"No phone" }}<br>
-          💰
+           {{ r.listing.city }}{% if r.listing.area %}, {{ r.listing.area }}{% endif %}<br>
+           Owner: <strong style="color:var(--text);">{{ r.listing.owner.username }}</strong><br>
+           {{ r.listing.owner.phone|default:"No phone" }}<br>
+          
           {% if r.listing.price_per_month %}₹{{ r.listing.price_per_month }}/mo{% endif %}
           {% if r.listing.price_per_day %} · ₹{{ r.listing.price_per_day }}/day{% endif %}
         </div>
         {% if not r.listing.is_available %}
-        <span style="display:inline-block;margin-top:8px;font-size:.68rem;background:rgba(239,68,68,.15);color:var(--red);padding:2px 8px;border-radius:4px;font-weight:700;">🚫 LISTING DEACTIVATED</span>
+        <span style="display:inline-block;margin-top:8px;font-size:.68rem;background:rgba(239,68,68,.15);color:var(--red);padding:2px 8px;border-radius:4px;font-weight:700;"> LISTING DEACTIVATED</span>
         {% endif %}
       </div>
 
       <!-- Column 2: REPORTED BY -->
       <div>
         <div style="font-size:.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;">
-          👤 Reported By
+           Reported By
         </div>
         <div style="font-weight:700;color:var(--text);font-size:.95rem;margin-bottom:4px;">
           {{ r.reporter.username }}
         </div>
         <div style="font-size:.78rem;color:var(--text-2);line-height:1.7;">
-          📧 {{ r.reporter.email }}<br>
-          📱 {{ r.reporter.phone|default:"No phone" }}<br>
-          🧳 Role: {{ r.reporter.role|capfirst }}<br>
-          📅 {{ r.created_at|date:"d M Y, H:i" }}
+           {{ r.reporter.email }}<br>
+           {{ r.reporter.phone|default:"No phone" }}<br>
+           Role: {{ r.reporter.role|capfirst }}<br>
+           {{ r.created_at|date:"d M Y, H:i" }}
         </div>
         <div style="margin-top:10px;">
           <span class="badge {% if r.reason == 'scam' or r.reason == 'fake' %}badge-urgent{% elif r.reason == 'unsafe' %}badge-high{% else %}badge-medium{% endif %}" style="font-size:.75rem;padding:4px 12px;">
-            ⚠️ {{ r.get_reason_display }}
+             {{ r.get_reason_display }}
           </span>
           <span class="badge badge-{{ r.status }}" style="font-size:.75rem;padding:4px 12px;margin-left:6px;">
             {{ r.get_status_display }}
@@ -102,7 +102,7 @@
             <input type="hidden" name="report_id" value="{{ r.pk }}">
             <input type="hidden" name="action" value="mark_reviewed">
             <button type="submit" class="btn btn-success" style="width:100%;justify-content:center;">
-              ✅ Mark Reviewed
+               Mark Reviewed
             </button>
           </form>
 
@@ -111,7 +111,7 @@
             <input type="hidden" name="report_id" value="{{ r.pk }}">
             <input type="hidden" name="action" value="dismiss">
             <button type="submit" class="btn btn-ghost" style="width:100%;justify-content:center;">
-              ❌ Dismiss
+               Dismiss
             </button>
           </form>
 
@@ -121,7 +121,7 @@
             <input type="hidden" name="report_id" value="{{ r.pk }}">
             <input type="hidden" name="action" value="deactivate_listing">
             <button type="submit" class="btn btn-danger" style="width:100%;justify-content:center;">
-              🚫 Remove Listing
+               Remove Listing
             </button>
           </form>
           {% else %}
@@ -137,7 +137,7 @@
             <input type="hidden" name="report_id" value="{{ r.pk }}">
             <input type="hidden" name="action" value="reopen">
             <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">
-              🔄 Reopen
+               Reopen
             </button>
           </form>
 
@@ -147,7 +147,7 @@
             <input type="hidden" name="report_id" value="{{ r.pk }}">
             <input type="hidden" name="action" value="deactivate_listing">
             <button type="submit" class="btn btn-danger" style="width:100%;justify-content:center;">
-              🚫 Remove Listing
+               Remove Listing
             </button>
           </form>
           {% endif %}
@@ -155,7 +155,7 @@
         {% endif %}
 
         <a href="/listing/{{ r.listing.pk }}/" target="_blank" class="btn btn-ghost" style="width:100%;justify-content:center;font-size:.75rem;">
-          👁 View Listing ↗
+           View Listing ↗
         </a>
 
       </div>
@@ -164,7 +164,7 @@
 </div>
 {% empty %}
 <div class="card" style="text-align:center;padding:48px;">
-  <div style="font-size:3rem;margin-bottom:12px;">🎉</div>
+  <div style="font-size:3rem;margin-bottom:12px;"></div>
   <div style="color:var(--text);font-weight:700;font-size:1rem;">No reports found</div>
   <div style="color:var(--muted);font-size:.83rem;margin-top:6px;">All clear — no listing reports in this category.</div>
 </div>

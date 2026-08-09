@@ -34,7 +34,7 @@
   <!-- Right form panel -->
   <div class="auth-form-wrap">
     <div class="auth-form-card">
-      <h1>📱 Phone Login</h1>
+      <h1> Phone Login</h1>
       <p class="sub">Enter your phone number to receive an OTP code.</p>
 
       {% if messages %}
@@ -50,7 +50,7 @@
         {% csrf_token %}
         <div class="phone-input-row">
           <div class="phone-prefix">
-            <span>🇮🇳</span>
+            <span></span>
             <span>+91</span>
           </div>
           <input type="tel" name="phone" placeholder="Enter 10-digit number" maxlength="10" pattern="[0-9]{10}" required class="phone-input" autocomplete="tel">

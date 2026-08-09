@@ -6,6 +6,7 @@ urlpatterns = [
     # ── Public ──────────────────────────────────────────────
     path('',        views.home,      name='home'),
     path('help/',   views.help_page, name='help'),
+    path('terms/',  views.terms_page, name='terms'),
     path('test-oauth/', views.test_oauth, name='test_oauth'),
     path('api/cities/', views.city_suggestions, name='city_suggestions'),
 

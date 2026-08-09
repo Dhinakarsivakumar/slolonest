@@ -6,7 +6,7 @@
 <div class="detail-hero">
   <div class="container">
     <div class="tag-row" style="margin-bottom:12px;">
-      {% if listing.is_verified %}<span class="tag verified">✓ Verified</span>{% endif %}
+      {% if listing.is_verified %}<span class="tag verified"> Verified</span>{% endif %}
       <span class="tag">{{ listing.get_room_type_display }}</span>
       {% if listing.gender_preference != 'any' %}<span class="tag female">{{ listing.get_gender_preference_display }}</span>{% endif %}
     </div>
@@ -85,7 +85,7 @@
           </div>
           <div>
             <strong style="font-size:.95rem;">{{ listing.owner.username }}</strong>
-            {% if listing.owner.is_verified %}<span class="tag verified" style="margin-left:8px;">✓ ID Verified</span>{% endif %}
+            {% if listing.owner.is_verified %}<span class="tag verified" style="margin-left:8px;"> ID Verified</span>{% endif %}
             <p style="font-size:.8rem;margin:2px 0 0;color:var(--muted);">Owner</p>
           </div>
         </div>
@@ -94,9 +94,9 @@
           <div class="star-rating">
             {% for i in "12345" %}
               {% if forloop.counter <= avg_rating %}
-                <span class="star">★</span>
+                <span class="star"></span>
               {% else %}
-                <span class="star empty">★</span>
+                <span class="star empty"></span>
               {% endif %}
             {% endfor %}
           </div>
@@ -122,7 +122,7 @@
             </div>
             <div class="star-rating">
               {% for i in "12345" %}
-                {% if forloop.counter <= r.rating %}<span class="star">★</span>{% else %}<span class="star empty">★</span>{% endif %}
+                {% if forloop.counter <= r.rating %}<span class="star"></span>{% else %}<span class="star empty"></span>{% endif %}
               {% endfor %}
             </div>
           </div>
@@ -168,7 +168,9 @@
 
         <!-- Booking Intimation & Pay at Property Guarantee -->
         <div class="booking-pay-at-property-card">
-          <div class="pay-icon">💵</div>
+          <div class="pay-icon">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/></svg>
+          </div>
           <div>
             <strong>Pay at Property (Zero Advance Payment)</strong>
             <p>No online advance payment required! Pay 100% of your stay directly at the property upon check-in.</p>

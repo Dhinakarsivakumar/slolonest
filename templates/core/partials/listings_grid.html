@@ -39,10 +39,10 @@
           <h3>{{ listing.title }}</h3>
           <div class="card-meta">{{ listing.area }}{% if listing.area %}, {% endif %}{{ listing.city }}</div>
           <div class="tag-row">
-            {% if listing.is_verified %}<span class="tag verified">✓ Verified</span>{% endif %}
+            {% if listing.is_verified %}<span class="tag verified"> Verified</span>{% endif %}
             <span class="tag">{{ listing.get_room_type_display }}</span>
-            {% if listing.gender_preference == 'female' %}<span class="tag female">♀ Female only</span>
-            {% elif listing.gender_preference == 'male' %}<span class="tag">♂ Male only</span>{% endif %}
+            {% if listing.gender_preference == 'female' %}<span class="tag female"> Female only</span>
+            {% elif listing.gender_preference == 'male' %}<span class="tag"> Male only</span>{% endif %}
           </div>
           <div class="price-row">
             {% if listing.price_per_day %}<div class="price">₹{{ listing.price_per_day|floatformat:0 }} <span>/day</span></div>{% endif %}
@@ -70,7 +70,7 @@
 
   {% else %}
   <div class="empty-state">
-    <div class="empty-state-icon">🏠</div>
+    <div class="empty-state-icon"></div>
     <p>No rooms match your search. Try different filters or <a href="{% url 'signup' %}" style="color:var(--indigo-600);font-weight:600;">list a room</a>.</p>
   </div>
   {% endif %}

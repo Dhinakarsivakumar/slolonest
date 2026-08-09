@@ -41,7 +41,7 @@
       {% endif %}">
       <div style="font-size:.72rem;font-weight:700;margin-bottom:6px;
         {% if reply.is_staff %}color:var(--indigo-600);{% else %}color:var(--text-2);{% endif %}">
-        {% if reply.is_staff %}🛡️ SoloNest Support{% else %}👤 You{% endif %}
+        {% if reply.is_staff %} SoloNest Support{% else %} You{% endif %}
         &nbsp;·&nbsp; {{ reply.created_at|date:"d M, H:i" }}
       </div>
       <div style="font-size:.88rem;color:var(--text);line-height:1.6;white-space:pre-wrap;">{{ reply.message }}</div>
@@ -70,7 +70,7 @@
   </div>
   {% else %}
   <div style="text-align:center;padding:16px;background:#F3F4F6;border-radius:12px;color:#6B7280;font-size:.85rem;margin-top:16px;">
-    🔒 This ticket is closed. <a href="{% url 'submit_ticket' %}" style="color:var(--indigo-600);">Open a new ticket</a> if you need more help.
+     This ticket is closed. <a href="{% url 'submit_ticket' %}" style="color:var(--indigo-600);">Open a new ticket</a> if you need more help.
   </div>
   {% endif %}
 

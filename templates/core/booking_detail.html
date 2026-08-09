@@ -33,7 +33,9 @@
 
     <!-- Booking Intimation & Pay at Property Guarantee -->
     <div class="booking-pay-at-property-card" style="margin-top:14px;">
-      <div class="pay-icon">🏨</div>
+      <div class="pay-icon">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 21V5a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v16"/><path d="M9 7h6"/><path d="M9 11h6"/><path d="M9 15h6"/><path d="M10 21v-4h4v4"/></svg>
+      </div>
       <div>
         <strong>Payment Notice: Pay 100% at the property</strong>
         <p>No online advance payment is required to confirm this stay. Pay directly to the owner/hotel upon check-in!</p>
@@ -78,7 +80,7 @@
       Pay for this stay
     </a>
     {% elif booking.is_paid %}
-    <span class="tag verified" style="margin-top:12px;display:inline-flex;">✓ Paid</span>
+    <span class="tag verified" style="margin-top:12px;display:inline-flex;"> Paid</span>
     {% endif %}
   </div>
 
@@ -95,7 +97,7 @@
         {{ m.text }}
       </div>
       {% empty %}
-      <p class="help" style="text-align:center;padding:20px 0;">No messages yet — say hello! 👋</p>
+      <p class="help" style="text-align:center;padding:20px 0;">No messages yet — say hello! </p>
       {% endfor %}
     </div>
     <form method="post" style="display:flex;gap:10px;align-items:flex-end;">

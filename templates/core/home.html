@@ -69,10 +69,10 @@
       <!-- Quick Category Filter Pills -->
       <div class="category-pills fade-up-3" style="display:flex;justify-content:center;gap:10px;margin-top:24px;flex-wrap:wrap;">
         <button type="button" class="cat-pill {% if not filters.room_type %}active{% endif %}" onclick="filterByRoomType('')">All Stays</button>
-        <button type="button" class="cat-pill {% if filters.room_type == 'hotel' %}active{% endif %}" onclick="filterByRoomType('hotel')">🏨 Hotel</button>
-        <button type="button" class="cat-pill {% if filters.room_type == 'pg' %}active{% endif %}" onclick="filterByRoomType('pg')">🏢 PG</button>
-        <button type="button" class="cat-pill {% if filters.room_type == 'homestay' %}active{% endif %}" onclick="filterByRoomType('homestay')">🏡 Home stay</button>
-        <button type="button" class="cat-pill {% if filters.room_type == 'rental' %}active{% endif %}" onclick="filterByRoomType('rental')">🏠 Rental House</button>
+        <button type="button" class="cat-pill {% if filters.room_type == 'hotel' %}active{% endif %}" onclick="filterByRoomType('hotel')">Hotel</button>
+        <button type="button" class="cat-pill {% if filters.room_type == 'pg' %}active{% endif %}" onclick="filterByRoomType('pg')">PG</button>
+        <button type="button" class="cat-pill {% if filters.room_type == 'homestay' %}active{% endif %}" onclick="filterByRoomType('homestay')">Home stay</button>
+        <button type="button" class="cat-pill {% if filters.room_type == 'rental' %}active{% endif %}" onclick="filterByRoomType('rental')">Rental House</button>
       </div>
 
       <!-- Quick city chips -->
@@ -95,7 +95,7 @@
       <aside class="filters-panel">
         <div class="filters-header-mobile">
           <span>Filters</span>
-          <button type="button" class="close-filters-btn" onclick="toggleFiltersPanel(false)">✕</button>
+          <button type="button" class="close-filters-btn" onclick="toggleFiltersPanel(false)"></button>
         </div>
 
         <div class="filters-title">
@@ -108,14 +108,14 @@
           <h4>Room type</h4>
           <div class="chip-row" style="display:flex;flex-direction:column;gap:6px;">
             <label class="check-line"><input type="radio" name="room_type" value="" form="filtersForm" {% if not filters.room_type %}checked{% endif %} onchange="filtersForm.submit()"> Any</label>
-            <label class="check-line"><input type="radio" name="room_type" value="hotel" form="filtersForm" {% if filters.room_type == 'hotel' %}checked{% endif %} onchange="filtersForm.submit()"> 🏨 Hotel</label>
-            <label class="check-line"><input type="radio" name="room_type" value="pg" form="filtersForm" {% if filters.room_type == 'pg' %}checked{% endif %} onchange="filtersForm.submit()"> 🏢 PG (All)</label>
-            <label class="check-line" style="margin-left:16px;font-size:0.82rem;"><input type="radio" name="room_type" value="pg_private" form="filtersForm" {% if filters.room_type == 'pg_private' %}checked{% endif %} onchange="filtersForm.submit()"> 🔒 PG - Private Room</label>
-            <label class="check-line" style="margin-left:16px;font-size:0.82rem;"><input type="radio" name="room_type" value="pg_shared" form="filtersForm" {% if filters.room_type == 'pg_shared' %}checked{% endif %} onchange="filtersForm.submit()"> 👥 PG - Shared Room</label>
-            <label class="check-line"><input type="radio" name="room_type" value="homestay" form="filtersForm" {% if filters.room_type == 'homestay' %}checked{% endif %} onchange="filtersForm.submit()"> 🏡 Home stay (All)</label>
-            <label class="check-line" style="margin-left:16px;font-size:0.82rem;"><input type="radio" name="room_type" value="homestay_private" form="filtersForm" {% if filters.room_type == 'homestay_private' %}checked{% endif %} onchange="filtersForm.submit()"> 🔒 Home stay - Private</label>
-            <label class="check-line" style="margin-left:16px;font-size:0.82rem;"><input type="radio" name="room_type" value="homestay_shared" form="filtersForm" {% if filters.room_type == 'homestay_shared' %}checked{% endif %} onchange="filtersForm.submit()"> 👥 Home stay - Shared</label>
-            <label class="check-line"><input type="radio" name="room_type" value="rental" form="filtersForm" {% if filters.room_type == 'rental' %}checked{% endif %} onchange="filtersForm.submit()"> 🏠 Rental House</label>
+            <label class="check-line"><input type="radio" name="room_type" value="hotel" form="filtersForm" {% if filters.room_type == 'hotel' %}checked{% endif %} onchange="filtersForm.submit()"> Hotel</label>
+            <label class="check-line"><input type="radio" name="room_type" value="pg" form="filtersForm" {% if filters.room_type == 'pg' %}checked{% endif %} onchange="filtersForm.submit()"> PG (All)</label>
+            <label class="check-line" style="margin-left:16px;font-size:0.82rem;"><input type="radio" name="room_type" value="pg_private" form="filtersForm" {% if filters.room_type == 'pg_private' %}checked{% endif %} onchange="filtersForm.submit()"> PG - Private Room</label>
+            <label class="check-line" style="margin-left:16px;font-size:0.82rem;"><input type="radio" name="room_type" value="pg_shared" form="filtersForm" {% if filters.room_type == 'pg_shared' %}checked{% endif %} onchange="filtersForm.submit()"> PG - Shared Room</label>
+            <label class="check-line"><input type="radio" name="room_type" value="homestay" form="filtersForm" {% if filters.room_type == 'homestay' %}checked{% endif %} onchange="filtersForm.submit()"> Home stay (All)</label>
+            <label class="check-line" style="margin-left:16px;font-size:0.82rem;"><input type="radio" name="room_type" value="homestay_private" form="filtersForm" {% if filters.room_type == 'homestay_private' %}checked{% endif %} onchange="filtersForm.submit()"> Home stay - Private</label>
+            <label class="check-line" style="margin-left:16px;font-size:0.82rem;"><input type="radio" name="room_type" value="homestay_shared" form="filtersForm" {% if filters.room_type == 'homestay_shared' %}checked{% endif %} onchange="filtersForm.submit()"> Home stay - Shared</label>
+            <label class="check-line"><input type="radio" name="room_type" value="rental" form="filtersForm" {% if filters.room_type == 'rental' %}checked{% endif %} onchange="filtersForm.submit()"> Rental House</label>
           </div>
         </div>
 
@@ -171,7 +171,7 @@
           <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           Apply filters
         </button>
-        <a href="{% url 'home' %}" class="help text-center mt-8" style="display:block;margin-top:10px;">✕ Clear all filters</a>
+        <a href="{% url 'home' %}" class="help text-center mt-8" style="display:block;margin-top:10px;"> Clear all filters</a>
       </aside>
       
       <!-- Filters overlay for mobile -->
@@ -222,10 +222,10 @@
                 <h3>{{ listing.title }}</h3>
                 <div class="card-meta">{{ listing.area }}{% if listing.area %}, {% endif %}{{ listing.city }}</div>
                 <div class="tag-row">
-                  {% if listing.is_verified %}<span class="tag verified">✓ Verified</span>{% endif %}
+                  {% if listing.is_verified %}<span class="tag verified"> Verified</span>{% endif %}
                   <span class="tag">{{ listing.get_room_type_display }}</span>
-                  {% if listing.gender_preference == 'female' %}<span class="tag female">♀ Female only</span>
-                  {% elif listing.gender_preference == 'male' %}<span class="tag">♂ Male only</span>{% endif %}
+                  {% if listing.gender_preference == 'female' %}<span class="tag female"> Female only</span>
+                  {% elif listing.gender_preference == 'male' %}<span class="tag"> Male only</span>{% endif %}
                 </div>
                 <div class="price-row">
                   {% if listing.price_per_day %}<div class="price">₹{{ listing.price_per_day|floatformat:0 }} <span>/day</span></div>{% endif %}
@@ -253,7 +253,7 @@
 
         {% else %}
         <div class="empty-state">
-          <div class="empty-state-icon">🏠</div>
+          <div class="empty-state-icon"></div>
           <p>No rooms match your search. Try different filters or <a href="{% url 'signup' %}" style="color:var(--indigo-600);font-weight:600;">list a room</a>.</p>
         </div>
         {% endif %}

@@ -42,14 +42,14 @@
             <div style="font-size:.8rem;color:var(--muted);">{{ u.email }}</div>
             <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
               {% if u.role == 'owner' %}
-                <span class="badge badge-in_progress">🏠 Owner</span>
+                <span class="badge badge-in_progress"> Owner</span>
               {% else %}
-                <span class="badge badge-resolved">🧳 Guest</span>
+                <span class="badge badge-resolved"> Guest</span>
               {% endif %}
               {% if u.is_active %}<span class="badge badge-resolved">Active</span>{% else %}<span class="badge badge-closed">Banned</span>{% endif %}
-              {% if u.is_staff %}<span class="badge" style="background:rgba(99,102,241,.2);color:var(--indigo-light);">🛡 Staff</span>{% endif %}
-              {% if u.is_verified %}<span class="badge badge-resolved">✓ ID Verified</span>{% endif %}
-              {% if u.phone_verified %}<span class="badge badge-resolved">📱 Phone Verified</span>{% endif %}
+              {% if u.is_staff %}<span class="badge" style="background:rgba(99,102,241,.2);color:var(--indigo-light);"> Staff</span>{% endif %}
+              {% if u.is_verified %}<span class="badge badge-resolved"> ID Verified</span>{% endif %}
+              {% if u.phone_verified %}<span class="badge badge-resolved"> Phone Verified</span>{% endif %}
             </div>
           </div>
         </div>
@@ -81,7 +81,7 @@
     {% if u.role == 'owner' %}
     <div class="card" style="margin-bottom:20px;border:1px solid rgba(245,158,11,.25);">
       <div class="card-header" style="background:rgba(245,158,11,.06);">
-        <span class="card-title" style="color:#F59E0B;">🏠 Owner ID Verification</span>
+        <span class="card-title" style="color:#F59E0B;"> Owner ID Verification</span>
         <span class="badge badge-{{ u.verification_status }}">{{ u.get_verification_status_display }}</span>
       </div>
       <div style="padding:20px;">
@@ -113,7 +113,7 @@
             <input type="hidden" name="action" value="approve_id">
             <button type="submit" class="btn btn-success" style="width:100%;justify-content:center;"
               {% if u.verification_status == 'approved' %}disabled style="width:100%;justify-content:center;opacity:.5;"{% endif %}>
-              ✅ Approve ID
+               Approve ID
             </button>
           </form>
           <form method="post" onsubmit="return confirm('Reject this ID document?');">
@@ -121,14 +121,14 @@
             <input type="hidden" name="action" value="reject_id">
             <button type="submit" class="btn btn-danger" style="width:100%;justify-content:center;"
               {% if u.verification_status == 'rejected' %}disabled style="width:100%;justify-content:center;opacity:.5;"{% endif %}>
-              ❌ Reject ID
+               Reject ID
             </button>
           </form>
           <form method="post">
             {% csrf_token %}
             <input type="hidden" name="action" value="reset_id">
             <button type="submit" class="btn btn-ghost" style="width:100%;justify-content:center;">
-              🔄 Reset
+               Reset
             </button>
           </form>
         </div>
@@ -141,9 +141,9 @@
     {% else %}
     <div class="card" style="margin-bottom:20px;border:1px solid rgba(16,185,129,.25);">
       <div class="card-header" style="background:rgba(16,185,129,.06);">
-        <span class="card-title" style="color:var(--green);">🧳 Guest / Customer Verification</span>
+        <span class="card-title" style="color:var(--green);"> Guest / Customer Verification</span>
         {% if u.is_verified %}
-          <span class="badge badge-resolved">✓ Verified</span>
+          <span class="badge badge-resolved"> Verified</span>
         {% else %}
           <span class="badge badge-closed">Not Verified</span>
         {% endif %}
@@ -158,14 +158,14 @@
             {% csrf_token %}
             <input type="hidden" name="action" value="verify_guest">
             <button type="submit" class="btn btn-success" style="width:100%;justify-content:center;" {% if u.is_verified %}disabled{% endif %}>
-              ✅ Mark as Verified
+               Mark as Verified
             </button>
           </form>
           <form method="post" onsubmit="return confirm('Remove verification from this guest?');">
             {% csrf_token %}
             <input type="hidden" name="action" value="unverify_guest">
             <button type="submit" class="btn btn-danger" style="width:100%;justify-content:center;" {% if not u.is_verified %}disabled{% endif %}>
-              ❌ Remove Verification
+               Remove Verification
             </button>
           </form>
         </div>
@@ -201,14 +201,14 @@
 
     <!-- Phone Verification -->
     <div class="card" style="margin-bottom:16px;">
-      <div class="card-header"><span class="card-title">📱 Phone Verification</span></div>
+      <div class="card-header"><span class="card-title"> Phone Verification</span></div>
       <div style="padding:16px 20px;">
         <div style="font-size:.83rem;color:var(--text-2);margin-bottom:14px;">
           Phone: <strong style="color:var(--text);">{{ u.phone|default:"Not provided" }}</strong>
         </div>
         {% if u.phone_verified %}
           <div style="background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.3);border-radius:8px;padding:12px;text-align:center;font-size:.83rem;color:var(--green);margin-bottom:12px;">
-            ✅ Phone is verified
+             Phone is verified
           </div>
           <form method="post">
             {% csrf_token %}
@@ -217,13 +217,13 @@
           </form>
         {% else %}
           <div style="background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:12px;text-align:center;font-size:.83rem;color:var(--red);margin-bottom:12px;">
-            ❌ Phone not verified
+             Phone not verified
           </div>
           <form method="post">
             {% csrf_token %}
             <input type="hidden" name="action" value="verify_phone">
             <button type="submit" class="btn btn-success" style="width:100%;justify-content:center;" {% if not u.phone %}disabled{% endif %}>
-              ✅ Manually Verify Phone
+               Manually Verify Phone
             </button>
           </form>
           {% if not u.phone %}<div style="font-size:.72rem;color:var(--muted);text-align:center;margin-top:6px;">No phone number added</div>{% endif %}
@@ -233,7 +233,7 @@
 
     <!-- Change Role -->
     <div class="card" style="margin-bottom:16px;">
-      <div class="card-header"><span class="card-title">🔄 Change Role</span></div>
+      <div class="card-header"><span class="card-title"> Change Role</span></div>
       <div style="padding:16px 20px;">
         <form method="post">
           {% csrf_token %}
@@ -241,8 +241,8 @@
           <div class="form-row">
             <label>Current Role</label>
             <select name="role">
-              <option value="guest" {% if u.role == 'guest' %}selected{% endif %}>🧳 Guest (Customer)</option>
-              <option value="owner" {% if u.role == 'owner' %}selected{% endif %}>🏠 Owner</option>
+              <option value="guest" {% if u.role == 'guest' %}selected{% endif %}> Guest (Customer)</option>
+              <option value="owner" {% if u.role == 'owner' %}selected{% endif %}> Owner</option>
             </select>
           </div>
           <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Update Role</button>
@@ -252,25 +252,25 @@
 
     <!-- Ban / Unban -->
     <div class="card" style="margin-bottom:16px;">
-      <div class="card-header"><span class="card-title">⚡ Account Control</span></div>
+      <div class="card-header"><span class="card-title"> Account Control</span></div>
       <div style="padding:16px 20px;">
         {% if u.is_active %}
         <form method="post" onsubmit="return confirm('Ban {{ u.username }}? They will lose access immediately.');">
           {% csrf_token %}
           <input type="hidden" name="action" value="ban">
           <button type="submit" class="btn btn-danger" style="width:100%;justify-content:center;">
-            🚫 Ban This Account
+             Ban This Account
           </button>
         </form>
         {% else %}
         <div style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:8px;padding:10px 14px;font-size:.8rem;color:var(--red);margin-bottom:12px;text-align:center;">
-          ⛔ This account is currently banned
+           This account is currently banned
         </div>
         <form method="post">
           {% csrf_token %}
           <input type="hidden" name="action" value="unban">
           <button type="submit" class="btn btn-success" style="width:100%;justify-content:center;">
-            ✅ Unban This Account
+             Unban This Account
           </button>
         </form>
         {% endif %}

@@ -892,7 +892,7 @@ select {
   display: flex; align-items: center; justify-content: center;
 }
 .window::after {
-  content: '🏠';
+  content: '';
   font-size: 2.5rem;
   opacity: .4;
 }
@@ -914,7 +914,7 @@ select {
   margin-bottom: 8px;
   display: flex; align-items: center; gap: 4px;
 }
-.card-meta::before { content: '📍'; font-size: .75rem; }
+.card-meta::before { content: ''; font-size: .75rem; }
 
 .tag-row { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
 
