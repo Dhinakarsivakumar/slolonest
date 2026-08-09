@@ -188,17 +188,26 @@
             <h3>{{ listing.title }}</h3>
             <div class="card-meta">{{ listing.city }} · {{ listing.get_room_type_display }}</div>
             <div class="tag-row">
-              <span class="tag {% if listing.is_verified %}verified{% endif %}">
-                {% if listing.is_verified %} Verified{% else %}⏳ Pending{% endif %}
+              <span class="tag {% if listing.is_verified %}verified{% endif %}" {% if not listing.is_verified %}style="background:#FEF3C7;color:#92400E;border-color:#FCD34D;"{% endif %}>
+                {% if listing.is_verified %}✓ Published &amp; Verified{% else %}⏳ Pending ID Verification{% endif %}
               </span>
               {% if listing.price_per_day %}
               <span class="tag">₹{{ listing.price_per_day|floatformat:0 }}/day</span>
               {% endif %}
             </div>
+            {% if not listing.is_verified %}
+            <div style="margin-top:8px;">
+              <span style="font-size:0.75rem;color:#D97706;display:block;margin-bottom:6px;">Upload ID document to make listing visible to guests.</span>
+              <a href="{% url 'submit_verification' %}" class="btn btn-amber btn-small w-full" style="font-size:0.78rem;padding:6px 10px;">
+                Submit ID Document to Publish
+              </a>
+            </div>
+            {% else %}
             <div class="help" style="margin-top:6px;">
               <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:inline;vertical-align:middle"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
               {{ listing.views_count }} view{{ listing.views_count|pluralize }}
             </div>
+            {% endif %}
           </div>
         </a>
         <div class="kebab-wrap">

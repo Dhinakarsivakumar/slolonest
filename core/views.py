@@ -59,8 +59,8 @@ def test_oauth(request):
 
 
 def home(request):
-    # Prefetch images to avoid N+1 queries on card grid
-    listings = Listing.objects.filter(is_available=True).prefetch_related('images')
+    # Prefetch images to avoid N+1 queries on card grid (only show published & verified listings to guests)
+    listings = Listing.objects.filter(is_available=True, is_verified=True).prefetch_related('images')
 
     city      = request.GET.get('city',      '').strip()
     room_type = request.GET.get('room_type', '')
@@ -369,29 +369,16 @@ def add_listing(request):
     if not (u.first_name and u.phone and u.gender and u.age and u.from_location):
         messages.error(
             request,
-            ' Complete Profile Required: Please fill out all required profile details (First Name, Phone Number, Gender, Age, and Hometown) in Profile Settings before listing a room.'
+            'Complete Profile Required: Please fill out all required profile details (First Name, Phone Number, Gender, Age, and Hometown) in Profile Settings before listing a room.'
         )
         return redirect('profile_settings')
 
-    # 2. Mandatory Owner ID Verification Check
-    if request.user.verification_status != 'approved':
-        if request.user.verification_status == 'pending':
-            messages.warning(request, '⏳ Your ID document has been submitted and is pending Admin review. You will be able to list rooms once approved.')
-            return redirect('profile_settings')
-        elif request.user.verification_status == 'rejected':
-            messages.error(request, ' Your previous ID document was rejected. Please re-upload a valid ID proof for Admin review.')
-            return redirect('submit_verification')
-        else:
-            messages.error(request, ' Owner ID Verification Required: Please upload your ID proof document for Admin review before listing a room.')
-            return redirect('submit_verification')
-
-
-
+    # Owners can enter room details & upload photos FIRST without being blocked!
 
     if request.method == 'POST':
         form = ListingForm(request.POST)
         if form.is_valid():
-            # BUG FIX #3: At least one price must be provided
+            # At least one price must be provided
             price_day   = form.cleaned_data.get('price_per_day')
             price_month = form.cleaned_data.get('price_per_month')
             if not price_day and not price_month:
@@ -400,15 +387,38 @@ def add_listing(request):
 
             listing = form.save(commit=False)
             listing.owner = request.user
+            
+            # If owner is already ID verified, mark listing verified and published
+            if request.user.verification_status == 'approved':
+                listing.is_verified = True
+            else:
+                listing.is_verified = False
+
             listing.save()
+
             photos = request.FILES.getlist('photos')
             for f in photos:
-                # BUG FIX #4: Server-side image type validation
                 if not f.content_type.startswith('image/'):
                     messages.warning(request, f'"{f.name}" is not a valid image and was skipped.')
                     continue
                 ListingImage.objects.create(listing=listing, image=f)
-            messages.success(request, ' Your room has been listed! It will be verified by our team shortly.')
+
+            # Check if owner needs to submit ID verification AFTER entering details!
+            if request.user.verification_status != 'approved':
+                if request.user.verification_status == 'pending':
+                    messages.warning(
+                        request,
+                        'Room details & photos saved! Your ID proof is currently pending Admin review. Your room listing will be published live as soon as your ID is approved.'
+                    )
+                    return redirect('profile_settings')
+                else:
+                    messages.warning(
+                        request,
+                        'Room details & photos saved successfully! To publish your room live so guests can view and book it, please submit your Government ID document now.'
+                    )
+                    return redirect('submit_verification')
+
+            messages.success(request, 'Your room has been published live successfully!')
             return redirect('listing_detail', pk=listing.pk)
     else:
         form = ListingForm()

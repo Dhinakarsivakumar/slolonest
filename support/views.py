@@ -188,15 +188,17 @@ def portal_users(request):
             user.phone_verified = True; user.save()
             messages.success(request, f'{user.username} phone manually verified.')
         elif action in ('approve', 'approve_id'):
+            from core.models import Listing
             user.verification_status = 'approved'
             user.is_verified = True
             user.save()
+            Listing.objects.filter(owner=user).update(is_verified=True)
             Notification.objects.create(
                 user=user,
-                message='ID Verification Approved : Your owner ID proof document has been verified and approved by Support Staff.',
-                link='/settings/profile/'
+                message='ID Verification Approved: Your owner ID proof document has been verified and approved by Support Staff. Your saved room listings are now published live!',
+                link='/dashboard/'
             )
-            messages.success(request, f' ID document approved for {user.username}.')
+            messages.success(request, f'ID document approved for {user.username}. Saved listings published live.')
         elif action in ('reject', 'reject_id'):
             user.verification_status = 'rejected'
             user.is_verified = False

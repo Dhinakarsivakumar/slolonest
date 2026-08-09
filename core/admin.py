@@ -36,11 +36,12 @@ class SoloNestUserAdmin(UserAdmin):
             user.is_verified = True
             user.verification_status = 'approved'
             user.save()
+            Listing.objects.filter(owner=user).update(is_verified=True)
             count += 1
             Notification.objects.create(
                 user=user,
-                message='ID Verification Approved : Your owner ID proof document has been verified and approved by Admin. You can now post room listings!',
-                link='/settings/profile/'
+                message='ID Verification Approved: Your owner ID proof document has been verified and approved by Admin. Your saved room listings are now published live!',
+                link='/dashboard/'
             )
         self.message_user(request, f"Approved ID verification for {count} user(s).")
     approve_identity.short_description = " Approve selected owners' ID verification"
