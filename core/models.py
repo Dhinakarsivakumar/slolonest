@@ -43,6 +43,12 @@ class User(AbstractUser):
 
 class Listing(models.Model):
     ROOM_TYPE_CHOICES = [
+        ('hotel', 'Hotel'),
+        ('pg_private', 'PG - Private Room'),
+        ('pg_shared', 'PG - Shared Room'),
+        ('homestay_private', 'Home stay - Private Room'),
+        ('homestay_shared', 'Home stay - Shared Room'),
+        ('rental', 'Rental House'),
         ('private', 'Private Room'),
         ('shared', 'Shared Room'),
         ('guesthouse', 'Guest House'),
@@ -66,7 +72,7 @@ class Listing(models.Model):
     area = models.CharField(max_length=120, blank=True)
     address = models.CharField(max_length=255)
 
-    room_type = models.CharField(max_length=20, choices=ROOM_TYPE_CHOICES, default='private')
+    room_type = models.CharField(max_length=30, choices=ROOM_TYPE_CHOICES, default='hotel')
     gender_preference = models.CharField(max_length=10, choices=GENDER_CHOICES, default='any')
     stay_type = models.CharField(max_length=10, choices=STAY_CHOICES, default='both')
 

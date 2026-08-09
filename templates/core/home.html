@@ -97,11 +97,16 @@
 
         <div class="filter-block">
           <h4>Room type</h4>
-          <div class="chip-row">
+          <div class="chip-row" style="display:flex;flex-direction:column;gap:6px;">
             <label class="check-line"><input type="radio" name="room_type" value="" form="filtersForm" {% if not filters.room_type %}checked{% endif %} onchange="filtersForm.submit()"> Any</label>
-            <label class="check-line"><input type="radio" name="room_type" value="private" form="filtersForm" {% if filters.room_type == 'private' %}checked{% endif %} onchange="filtersForm.submit()"> Private</label>
-            <label class="check-line"><input type="radio" name="room_type" value="shared"  form="filtersForm" {% if filters.room_type == 'shared'  %}checked{% endif %} onchange="filtersForm.submit()"> Shared</label>
-            <label class="check-line"><input type="radio" name="room_type" value="pg"      form="filtersForm" {% if filters.room_type == 'pg'      %}checked{% endif %} onchange="filtersForm.submit()"> PG</label>
+            <label class="check-line"><input type="radio" name="room_type" value="hotel" form="filtersForm" {% if filters.room_type == 'hotel' %}checked{% endif %} onchange="filtersForm.submit()"> 🏨 Hotel</label>
+            <label class="check-line"><input type="radio" name="room_type" value="pg" form="filtersForm" {% if filters.room_type == 'pg' %}checked{% endif %} onchange="filtersForm.submit()"> 🏢 PG (All)</label>
+            <label class="check-line" style="margin-left:16px;font-size:0.82rem;"><input type="radio" name="room_type" value="pg_private" form="filtersForm" {% if filters.room_type == 'pg_private' %}checked{% endif %} onchange="filtersForm.submit()"> 🔒 PG - Private Room</label>
+            <label class="check-line" style="margin-left:16px;font-size:0.82rem;"><input type="radio" name="room_type" value="pg_shared" form="filtersForm" {% if filters.room_type == 'pg_shared' %}checked{% endif %} onchange="filtersForm.submit()"> 👥 PG - Shared Room</label>
+            <label class="check-line"><input type="radio" name="room_type" value="homestay" form="filtersForm" {% if filters.room_type == 'homestay' %}checked{% endif %} onchange="filtersForm.submit()"> 🏡 Home stay (All)</label>
+            <label class="check-line" style="margin-left:16px;font-size:0.82rem;"><input type="radio" name="room_type" value="homestay_private" form="filtersForm" {% if filters.room_type == 'homestay_private' %}checked{% endif %} onchange="filtersForm.submit()"> 🔒 Home stay - Private</label>
+            <label class="check-line" style="margin-left:16px;font-size:0.82rem;"><input type="radio" name="room_type" value="homestay_shared" form="filtersForm" {% if filters.room_type == 'homestay_shared' %}checked{% endif %} onchange="filtersForm.submit()"> 👥 Home stay - Shared</label>
+            <label class="check-line"><input type="radio" name="room_type" value="rental" form="filtersForm" {% if filters.room_type == 'rental' %}checked{% endif %} onchange="filtersForm.submit()"> 🏠 Rental House</label>
           </div>
         </div>
 

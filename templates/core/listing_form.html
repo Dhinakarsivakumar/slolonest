@@ -62,12 +62,55 @@
       </div>
 
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
-        <div class="form-row" style="margin-bottom:0;">
-          {{ form.room_type.label_tag }}
-          {{ form.room_type }}
-          {% for error in form.room_type.errors %}<div class="help" style="color:var(--red);">{{ error }}</div>{% endfor %}
+        <div class="form-row" style="grid-column: 1 / -1; margin-bottom: 12px;">
+          <label style="font-weight:700;font-size:0.92rem;margin-bottom:8px;display:block;">Property & Room Type *</label>
+          
+          <!-- Hidden select bound to Django model form -->
+          <div style="display:none;">
+            {{ form.room_type }}
+          </div>
+          
+          <div class="room-type-picker-grid">
+            <button type="button" class="rt-main-btn" data-type="hotel">
+              <span class="rt-icon">🏨</span>
+              <span class="rt-label">Hotel</span>
+            </button>
+
+            <button type="button" class="rt-main-btn" data-type="pg">
+              <span class="rt-icon">🏢</span>
+              <span class="rt-label">PG</span>
+            </button>
+
+            <button type="button" class="rt-main-btn" data-type="homestay">
+              <span class="rt-icon">🏡</span>
+              <span class="rt-label">Home stay</span>
+            </button>
+
+            <button type="button" class="rt-main-btn" data-type="rental">
+              <span class="rt-icon">🏠</span>
+              <span class="rt-label">Rental</span>
+            </button>
+          </div>
+
+          <!-- Sub-options container for PG and Homestay -->
+          <div id="roomSubOptionsContainer" class="room-sub-options-card" style="display:none;margin-top:12px;">
+            <div style="font-size:0.82rem;font-weight:700;color:var(--text-2);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.04em;">
+              Select <span id="subTypeCategoryName">PG</span> Room Option:
+            </div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+              <button type="button" class="rt-sub-btn" data-sub="private">
+                🔒 Private Room
+              </button>
+              <button type="button" class="rt-sub-btn" data-sub="shared">
+                👥 Shared Room
+              </button>
+            </div>
+          </div>
+
+          {% for error in form.room_type.errors %}<div class="help" style="color:var(--red);margin-top:6px;">{{ error }}</div>{% endfor %}
         </div>
-        <div class="form-row" style="margin-bottom:0;">
+
+        <div class="form-row" style="grid-column: 1 / -1; margin-bottom:0;">
           {{ form.gender_preference.label_tag }}
           {{ form.gender_preference }}
           {% for error in form.gender_preference.errors %}<div class="help" style="color:var(--red);">{{ error }}</div>{% endfor %}
@@ -196,6 +239,74 @@
 {% block extra_js %}
 <script>
 (function(){
+  // Room Type Interactive Selector Logic
+  var selectEl = document.querySelector('select[name="room_type"]') || document.getElementById('id_room_type');
+  var mainBtns = document.querySelectorAll('.rt-main-btn');
+  var subContainer = document.getElementById('roomSubOptionsContainer');
+  var subName = document.getElementById('subTypeCategoryName');
+  var subBtns = document.querySelectorAll('.rt-sub-btn');
+
+  var currentVal = selectEl ? (selectEl.value || 'hotel') : 'hotel';
+  var currentMain = 'hotel';
+  var currentSub = 'private';
+
+  if (currentVal.startsWith('pg_')) {
+    currentMain = 'pg';
+    currentSub = currentVal.replace('pg_', '');
+  } else if (currentVal.startsWith('homestay_')) {
+    currentMain = 'homestay';
+    currentSub = currentVal.replace('homestay_', '');
+  } else if (currentVal === 'shared' || currentVal === 'pg') {
+    currentMain = 'pg';
+    currentSub = 'private';
+  } else if (currentVal === 'guesthouse' || currentVal === 'homestay') {
+    currentMain = 'homestay';
+    currentSub = 'private';
+  } else if (currentVal === 'full_house' || currentVal === 'rental') {
+    currentMain = 'rental';
+  } else if (currentVal === 'private' || currentVal === 'hotel') {
+    currentMain = 'hotel';
+  }
+
+  function updateRoomTypeUI() {
+    mainBtns.forEach(function(btn){
+      btn.classList.toggle('selected', btn.dataset.type === currentMain);
+    });
+
+    if (currentMain === 'pg' || currentMain === 'homestay') {
+      if (subContainer) subContainer.style.display = 'block';
+      if (subName) subName.textContent = (currentMain === 'pg') ? 'PG' : 'Home stay';
+      
+      subBtns.forEach(function(btn){
+        btn.classList.toggle('selected', btn.dataset.sub === currentSub);
+      });
+
+      var targetValue = currentMain + '_' + currentSub;
+      if (selectEl) selectEl.value = targetValue;
+    } else {
+      if (subContainer) subContainer.style.display = 'none';
+      if (selectEl) selectEl.value = currentMain;
+    }
+  }
+
+  mainBtns.forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      currentMain = btn.dataset.type;
+      updateRoomTypeUI();
+    });
+  });
+
+  subBtns.forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      currentSub = btn.dataset.sub;
+      updateRoomTypeUI();
+    });
+  });
+
+  updateRoomTypeUI();
+
   // Photo slot preview
   document.querySelectorAll('.photo-slot').forEach(function(slot){
     var input = slot.querySelector('input[type=file]');
@@ -226,5 +337,74 @@
 <style>
 .spin { animation: spin 1s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+.room-type-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+@media (max-width: 600px) {
+  .room-type-picker-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+.rt-main-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 10px;
+  background: var(--paper);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.rt-main-btn:hover {
+  border-color: var(--indigo-600);
+  background: var(--indigo-50, #EEF2FF);
+}
+.rt-main-btn.selected {
+  border-color: var(--indigo-600);
+  background: var(--indigo-50, #EEF2FF);
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.25);
+}
+.rt-main-btn .rt-icon {
+  font-size: 1.5rem;
+}
+.rt-main-btn .rt-label {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+
+.room-sub-options-card {
+  background: var(--surface-2);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 16px;
+}
+.rt-sub-btn {
+  flex: 1;
+  min-width: 130px;
+  padding: 10px 16px;
+  background: var(--paper);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.rt-sub-btn:hover {
+  border-color: var(--indigo-600);
+}
+.rt-sub-btn.selected {
+  border-color: var(--indigo-600);
+  background: var(--indigo-600);
+  color: #ffffff;
+}
 </style>
 {% endblock %}

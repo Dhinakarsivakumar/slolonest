@@ -78,7 +78,16 @@ def home(request):
     if city:
         listings = listings.filter(Q(city__icontains=city) | Q(area__icontains=city))
     if room_type:
-        listings = listings.filter(room_type=room_type)
+        if room_type == 'hotel':
+            listings = listings.filter(Q(room_type='hotel') | Q(room_type='private'))
+        elif room_type == 'pg':
+            listings = listings.filter(Q(room_type__startswith='pg_') | Q(room_type='pg') | Q(room_type='shared'))
+        elif room_type == 'homestay':
+            listings = listings.filter(Q(room_type__startswith='homestay_') | Q(room_type='homestay') | Q(room_type='guesthouse'))
+        elif room_type == 'rental':
+            listings = listings.filter(Q(room_type='rental') | Q(room_type='full_house'))
+        else:
+            listings = listings.filter(room_type=room_type)
     if gender:
         listings = listings.filter(Q(gender_preference=gender) | Q(gender_preference='any'))
     if stay_type:
