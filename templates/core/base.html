@@ -539,7 +539,7 @@
 
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
-      navigator.serviceWorker.register('/static/js/sw.js').catch(function(){});
+      navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function(){});
     });
   }
 
@@ -548,7 +548,7 @@
       Notification.requestPermission().then(function(permission) {
         if (permission === 'granted') {
           if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/static/js/sw.js').catch(function(){});
+            navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function(){});
           }
           var btn = document.getElementById('enableNotifBannerBtn');
           if (btn) btn.parentElement.parentElement.style.display = 'none';

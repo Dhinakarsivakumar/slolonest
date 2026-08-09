@@ -1164,3 +1164,18 @@ def api_mark_notification_read(request, pk):
     notif.is_read = True
     notif.save()
     return JsonResponse({'success': True})
+
+
+def service_worker(request):
+    """Serve sw.js directly at /sw.js with Service-Worker-Allowed header to prevent 404s."""
+    from django.conf import settings
+    from django.http import HttpResponse
+    sw_path = os.path.join(settings.BASE_DIR, 'static', 'js', 'sw.js')
+    if os.path.exists(sw_path):
+        with open(sw_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+    else:
+        content = "// Service worker"
+    response = HttpResponse(content, content_type='application/javascript')
+    response['Service-Worker-Allowed'] = '/'
+    return response
