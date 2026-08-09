@@ -537,13 +537,22 @@
     if (parts.length === 2) return parts.pop().split(";").shift();
   }
 
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/static/js/sw.js').catch(function(){});
+    });
+  }
+
   function requestBrowserNotificationPermission() {
     if ('Notification' in window) {
       Notification.requestPermission().then(function(permission) {
         if (permission === 'granted') {
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/static/js/sw.js').catch(function(){});
+          }
           var btn = document.getElementById('enableNotifBannerBtn');
           if (btn) btn.parentElement.parentElement.style.display = 'none';
-          showToastNotification('Browser Notifications Enabled', 'You will now receive instant alerts on your desktop when new bookings arrive.');
+          showToastNotification('Browser Notifications Enabled', 'You will now receive instant alerts on your device even when your tab is closed!');
         }
       });
     }
