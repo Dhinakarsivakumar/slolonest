@@ -66,8 +66,17 @@
       </form>
 
 
+      <!-- Quick Category Filter Pills -->
+      <div class="category-pills fade-up-3" style="display:flex;justify-content:center;gap:10px;margin-top:24px;flex-wrap:wrap;">
+        <button type="button" class="cat-pill {% if not filters.room_type %}active{% endif %}" onclick="filterByRoomType('')">All Stays</button>
+        <button type="button" class="cat-pill {% if filters.room_type == 'hotel' %}active{% endif %}" onclick="filterByRoomType('hotel')">🏨 Hotel</button>
+        <button type="button" class="cat-pill {% if filters.room_type == 'pg' %}active{% endif %}" onclick="filterByRoomType('pg')">🏢 PG</button>
+        <button type="button" class="cat-pill {% if filters.room_type == 'homestay' %}active{% endif %}" onclick="filterByRoomType('homestay')">🏡 Home stay</button>
+        <button type="button" class="cat-pill {% if filters.room_type == 'rental' %}active{% endif %}" onclick="filterByRoomType('rental')">🏠 Rental House</button>
+      </div>
+
       <!-- Quick city chips -->
-      <div class="city-chips fade-up-3">
+      <div class="city-chips fade-up-3" style="margin-top:14px;">
         {% for city in popular_cities %}
         <button type="button" class="city-chip {% if filters.city == city %}active{% endif %}" data-city="{{ city }}">{{ city }}</button>
         {% endfor %}
@@ -273,6 +282,26 @@
     }
   }
   window.scrollToRooms = scrollToRooms;
+
+  window.filterByRoomType = function(typeVal) {
+    var form = document.getElementById('filtersForm');
+    if (!form) return;
+
+    var radios = form.querySelectorAll('input[name="room_type"]');
+    radios.forEach(function(r) {
+      if (r.value === typeVal) {
+        r.checked = true;
+      }
+    });
+
+    var formData = new FormData(form);
+    var params = new URLSearchParams(formData);
+    if (typeVal !== undefined) {
+      params.set('room_type', typeVal);
+    }
+    var targetUrl = window.location.pathname + '?' + params.toString();
+    window.performAjaxSearch(targetUrl, true);
+  };
 
   // Universal SPA AJAX Search Runner
   window.performAjaxSearch = function(targetUrl, shouldScroll) {

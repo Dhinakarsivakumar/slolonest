@@ -698,9 +698,47 @@ select {
   cursor: pointer;
   z-index: 2;
 }
-.search-box input:focus {
+.search-box input:focus, .search-box select:focus {
   outline: none;
   box-shadow: none;
+}
+.search-box select {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--navy);
+  padding: 0 16px 0 0;
+  width: 100%;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Category Filter Pills */
+.cat-pill {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.cat-pill:hover {
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+.cat-pill.active {
+  background: var(--amber-400);
+  color: var(--navy);
+  border-color: var(--amber-400);
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
 }
 
 .search-divider {
