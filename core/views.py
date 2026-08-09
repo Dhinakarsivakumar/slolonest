@@ -177,7 +177,7 @@ def city_suggestions(request):
 
     # 2. Known popular cities in South India / Tamil Nadu
     popular = [
-        'Thanjavur', 'Chennai', 'Coimbatore', 'Madurai', 'Tiruchirappalli', 
+        'Chennai', 'Coimbatore', 'Madurai', 'Tiruchirappalli', 
         'Salem', 'Tirunelveli', 'Vellore', 'Erode', 'Kanchipuram', 
         'Thoothukudi', 'Nagercoil', 'Dindigul', 'Bengaluru', 'Hyderabad', 'Kochi'
     ]
