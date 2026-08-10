@@ -1,3 +1,6 @@
+[phases.setup]
+nixpkgs = ["python312", "gcc"]
+
 [phases.install]
 cmds = ["pip install -r requirements.txt"]
 
@@ -5,4 +8,4 @@ cmds = ["pip install -r requirements.txt"]
 cmds = ["python manage.py collectstatic --noinput"]
 
 [start]
-cmd = "python manage.py migrate --noinput && gunicorn soloNest.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --log-file -"
+cmd = "python manage.py migrate --noinput && gunicorn soloNest.wsgi:application --bind 0.0.0.0:$PORT --workers 2"
