@@ -3,7 +3,7 @@ Django settings for soloNest project — production-ready via env vars.
 """
 
 from pathlib import Path
-import os as _os
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -11,11 +11,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
-SECRET_KEY = _os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-build-fallback-key-replace-in-production-abc123xyz')
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-build-fallback-key-replace-in-production-abc123xyz')
 
-DEBUG = _os.environ.get('DJANGO_DEBUG', 'True').lower() in ('true', '1', 'yes')
+DEBUG = os.environ.get('DJANGO_DEBUG', 'True').lower() in ('true', '1', 'yes')
 
-ALLOWED_HOSTS = _os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
 
 
 # Application definition
@@ -151,13 +151,13 @@ SOCIALACCOUNT_PROVIDERS = {
 
 
 # ---- Email (env-based). Defaults to console for dev.
-EMAIL_BACKEND = _os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
-DEFAULT_FROM_EMAIL = _os.environ.get('DEFAULT_FROM_EMAIL', 'SoloNest <noreply@solonest.test>')
-EMAIL_HOST = _os.environ.get('EMAIL_HOST', '')
-EMAIL_PORT = int(_os.environ.get('EMAIL_PORT', '587'))
-EMAIL_USE_TLS = _os.environ.get('EMAIL_USE_TLS', 'True').lower() in ('true', '1', 'yes')
-EMAIL_HOST_USER = _os.environ.get('EMAIL_HOST_USER', '')
-EMAIL_HOST_PASSWORD = _os.environ.get('EMAIL_HOST_PASSWORD', '')
+EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.console.EmailBackend')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'SoloNest <noreply@solonest.test>')
+EMAIL_HOST = os.environ.get('EMAIL_HOST', '')
+EMAIL_PORT = int(os.environ.get('EMAIL_PORT', '587'))
+EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True').lower() in ('true', '1', 'yes')
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 
 
 # ---- CSRF Trusted Origins ----
@@ -176,10 +176,10 @@ if not DEBUG:
     SECURE_HSTS_PRELOAD = True
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 else:
-    SECURE_SSL_REDIRECT = _os.environ.get('SECURE_SSL_REDIRECT', 'False').lower() in ('true', '1', 'yes')
-    SESSION_COOKIE_SECURE = _os.environ.get('SESSION_COOKIE_SECURE', 'False').lower() in ('true', '1', 'yes')
-    CSRF_COOKIE_SECURE = _os.environ.get('CSRF_COOKIE_SECURE', 'False').lower() in ('true', '1', 'yes')
-    SECURE_HSTS_SECONDS = int(_os.environ.get('SECURE_HSTS_SECONDS', '0'))
+    SECURE_SSL_REDIRECT = os.environ.get('SECURE_SSL_REDIRECT', 'False').lower() in ('true', '1', 'yes')
+    SESSION_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', 'False').lower() in ('true', '1', 'yes')
+    CSRF_COOKIE_SECURE = os.environ.get('CSRF_COOKIE_SECURE', 'False').lower() in ('true', '1', 'yes')
+    SECURE_HSTS_SECONDS = int(os.environ.get('SECURE_HSTS_SECONDS', '0'))
 
 
 
@@ -188,12 +188,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # ---- Razorpay (test mode) ----
-RAZORPAY_KEY_ID = _os.environ.get('RAZORPAY_KEY_ID', 'rzp_test_placeholder')
-RAZORPAY_KEY_SECRET = _os.environ.get('RAZORPAY_KEY_SECRET', 'placeholder_secret')
+RAZORPAY_KEY_ID = os.environ.get('RAZORPAY_KEY_ID', 'rzp_test_placeholder')
+RAZORPAY_KEY_SECRET = os.environ.get('RAZORPAY_KEY_SECRET', 'placeholder_secret')
 
 
 # ---- OTP ----
-OTP_DEV_MODE = _os.environ.get('OTP_DEV_MODE', 'False').lower() in ('true', '1', 'yes')
+OTP_DEV_MODE = os.environ.get('OTP_DEV_MODE', 'False').lower() in ('true', '1', 'yes')
 
 # ---- Fast2SMS (real phone OTP for India) ----
-FAST2SMS_API_KEY = _os.environ.get('FAST2SMS_API_KEY', 'IfjFmPSWvyUcYZKg0dwBXln1phCiDT68Ee9G45brJOQAosk7Ht2FcJKDIOExeiYmnVzLNUWQsB6MRhgP')
+FAST2SMS_API_KEY = os.environ.get('FAST2SMS_API_KEY', 'IfjFmPSWvyUcYZKg0dwBXln1phCiDT68Ee9G45brJOQAosk7Ht2FcJKDIOExeiYmnVzLNUWQsB6MRhgP')
