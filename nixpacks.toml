@@ -1,8 +1,11 @@
+[providers]
+providers = ["python"]
+
 [phases.install]
-cmds = ["pip install -r requirements.txt"]
+cmds = ["python -m pip install --upgrade pip", "python -m pip install -r requirements.txt"]
 
 [phases.build]
 cmds = ["python manage.py collectstatic --noinput"]
 
 [start]
-cmd = "python manage.py migrate --noinput && gunicorn soloNest.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --log-file -"
+cmd = "python manage.py migrate --noinput && gunicorn soloNest.wsgi:application --bind 0.0.0.0:$PORT --workers 2"
