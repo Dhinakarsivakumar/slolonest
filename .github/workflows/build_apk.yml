@@ -25,15 +25,16 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Install dependencies
+      - name: Generate Native Android Files & Dependencies
         run: |
           cd solonest_mobile
+          flutter create --platforms=android .
           flutter pub get
 
       - name: Build Android APK
         run: |
           cd solonest_mobile
-          flutter build apk --release
+          flutter build apk --release --no-tree-shake-icons
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
