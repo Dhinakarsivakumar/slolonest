@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+    paths:
+      - 'solonest_mobile/**'
+      - '.github/workflows/build_apk.yml'
   workflow_dispatch:
 
 jobs:
@@ -25,16 +28,26 @@ jobs:
         with:
           channel: 'stable'
 
-      - name: Generate Native Android Files & Dependencies
+      - name: Create full Flutter project structure
+        working-directory: solonest_mobile
         run: |
-          cd solonest_mobile
-          flutter create --platforms=android .
-          flutter pub get
+          # Save our custom Dart source files
+          cp -r lib lib_backup
+
+          # Generate a complete Flutter project (including android/ folder)
+          flutter create --org com.solonest --project-name solonest_mobile --platforms android .
+
+          # Restore our custom source files over the generated ones
+          rm -rf lib
+          mv lib_backup lib
+
+      - name: Install dependencies
+        working-directory: solonest_mobile
+        run: flutter pub get
 
       - name: Build Android APK
-        run: |
-          cd solonest_mobile
-          flutter build apk --release --no-tree-shake-icons
+        working-directory: solonest_mobile
+        run: flutter build apk --release --no-tree-shake-icons
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
