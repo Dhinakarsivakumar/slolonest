@@ -49,6 +49,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   String _getListingImageUrl(Map<String, dynamic> item) {
+    if (item['image_url'] != null && item['image_url'].toString().isNotEmpty) {
+      return ApiService.getImageUrl(item['image_url'].toString());
+    }
     if (item['image'] != null && item['image'].toString().isNotEmpty) {
       return ApiService.getImageUrl(item['image'].toString());
     }

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'screens/home_screen.dart';
 import 'screens/listing_detail_screen.dart';
 import 'screens/login_screen.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
   runApp(const SoloNestApp());
 }
 
 class SoloNestApp extends StatelessWidget {
-  const SoloNestApp({super.key});
+  const SoloNestApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -18,46 +18,44 @@ class SoloNestApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF4F46E5),
+        scaffoldBackgroundColor: const Color(0xFFF8F9FC),
+        colorScheme: ColorScheme.light(
           primary: const Color(0xFF4F46E5),
-          secondary: const Color(0xFF10B981),
-          surface: const Color(0xFFF8FAFC),
+          secondary: const Color(0xFFF59E0B),
+          surface: const Color(0xFFFFFFFF),
+          background: const Color(0xFFF8F9FC),
+          error: const Color(0xFFEF4444),
+          onPrimary: const Color(0xFFFFFFFF),
+          onSecondary: const Color(0xFFFFFFFF),
+          onSurface: const Color(0xFF0F1B2D),
+          onBackground: const Color(0xFF0F1B2D),
         ),
-        scaffoldBackgroundColor: const Color(0xFFF8FAFC),
+        textTheme: TextTheme(
+          displayLarge: GoogleFonts.plusJakartaSans(
+            color: const Color(0xFF0F1B2D),
+            fontWeight: FontWeight.w800,
+          ),
+          displayMedium: GoogleFonts.plusJakartaSans(
+            color: const Color(0xFF0F1B2D),
+            fontWeight: FontWeight.w700,
+          ),
+          bodyLarge: GoogleFonts.inter(
+            color: const Color(0xFF0F1B2D),
+            fontWeight: FontWeight.w400,
+          ),
+          bodyMedium: GoogleFonts.inter(
+            color: const Color(0xFF475569),
+            fontWeight: FontWeight.w400,
+          ),
+          labelLarge: GoogleFonts.inter(
+            color: const Color(0xFFFFFFFF),
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFF0F1B2D),
           foregroundColor: Colors.white,
           elevation: 0,
-          centerTitle: false,
-          titleTextStyle: TextStyle(
-            color: Colors.white,
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-          ),
-          iconTheme: IconThemeData(color: Colors.white),
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF4F46E5),
-            foregroundColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-            textStyle: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ),
-        cardTheme: CardTheme(
-          color: Colors.white,
-          elevation: 1,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         ),
       ),
       initialRoute: '/',
