@@ -57,4 +57,12 @@ urlpatterns = [
     path('manifest.json', views.manifest_json, name='manifest_json'),
     path('analytics/',       views.owner_analytics,    name='owner_analytics'),
     path('admin-analytics/', views.platform_analytics, name='platform_analytics'),
+
+    # ── Mobile REST API Endpoints ───────────────────────────
+    path('api/listings/', views.api_listings, name='api_listings'),
+    path('api/listings/<int:pk>/', views.api_listing_detail, name='api_listing_detail'),
+    path('api/auth/phone/', views.api_phone_login, name='api_phone_login'),
+    path('api/auth/verify/', views.api_phone_verify, name='api_phone_verify'),
+    path('api/bookings/create/', views.api_create_booking, name='api_create_booking'),
 ]
+

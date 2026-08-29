@@ -1,5 +1,6 @@
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q, F
@@ -1204,3 +1205,417 @@ def manifest_json(request):
     else:
         content = "{}"
     return HttpResponse(content, content_type='application/manifest+json')
+
+
+# ─────────────────────────────────────────────────────────────
+# REST API ENDPOINTS FOR FLUTTER MOBILE APP
+# ─────────────────────────────────────────────────────────────
+
+@csrf_exempt
+def api_listings(request):
+    """
+    GET endpoint returning JSON list of all available listings with their first image URL.
+    Supports query params: city, room_type.
+    Return fields: id, title, city, area, room_type, room_type_display, price_per_day,
+    price_per_month, wifi, ac, food_included, parking, is_verified, image_url, owner_name,
+    gender_preference, stay_type.
+    """
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Method not allowed. Use GET.'}, status=405)
+
+    try:
+        listings = Listing.objects.filter(is_available=True).prefetch_related('images').select_related('owner')
+
+        city = request.GET.get('city', '').strip()
+        room_type = request.GET.get('room_type', '').strip()
+
+        if city:
+            listings = listings.filter(Q(city__icontains=city) | Q(area__icontains=city))
+        if room_type:
+            if room_type == 'hotel':
+                listings = listings.filter(Q(room_type='hotel') | Q(room_type='private'))
+            elif room_type == 'pg':
+                listings = listings.filter(Q(room_type__startswith='pg_') | Q(room_type='pg') | Q(room_type='shared'))
+            elif room_type == 'homestay':
+                listings = listings.filter(Q(room_type__startswith='homestay_') | Q(room_type='homestay') | Q(room_type='guesthouse'))
+            elif room_type == 'rental':
+                listings = listings.filter(Q(room_type='rental') | Q(room_type='full_house'))
+            else:
+                listings = listings.filter(room_type=room_type)
+
+        listings = listings.order_by('-is_verified', '-created_at')
+
+        results = []
+        for l in listings:
+            first_img = l.images.first()
+            img_url = request.build_absolute_uri(first_img.image.url) if first_img and first_img.image else None
+
+            results.append({
+                'id': l.id,
+                'title': l.title,
+                'city': l.city,
+                'area': l.area,
+                'room_type': l.room_type,
+                'room_type_display': l.get_room_type_display(),
+                'price_per_day': float(l.price_per_day) if l.price_per_day is not None else None,
+                'price_per_month': float(l.price_per_month) if l.price_per_month is not None else None,
+                'wifi': l.wifi,
+                'ac': l.ac,
+                'food_included': l.food_included,
+                'parking': l.parking,
+                'is_verified': l.is_verified,
+                'image_url': img_url,
+                'owner_name': l.owner.full_name,
+                'gender_preference': l.gender_preference,
+                'stay_type': l.stay_type,
+            })
+
+        return JsonResponse(results, safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@csrf_exempt
+def api_listing_detail(request, pk):
+    """
+    GET endpoint returning full JSON detail of a single listing including ALL image URLs,
+    owner info, amenities, description, address.
+    """
+    if request.method != 'GET':
+        return JsonResponse({'error': 'Method not allowed. Use GET.'}, status=405)
+
+    try:
+        try:
+            listing = Listing.objects.prefetch_related('images').select_related('owner').get(pk=pk)
+        except Listing.DoesNotExist:
+            return JsonResponse({'error': 'Listing not found.'}, status=404)
+
+        images = [
+            request.build_absolute_uri(img.image.url)
+            for img in listing.images.all()
+            if img.image
+        ]
+
+        data = {
+            'id': listing.id,
+            'title': listing.title,
+            'description': listing.description,
+            'city': listing.city,
+            'area': listing.area,
+            'address': listing.address,
+            'room_type': listing.room_type,
+            'room_type_display': listing.get_room_type_display(),
+            'gender_preference': listing.gender_preference,
+            'gender_preference_display': listing.get_gender_preference_display(),
+            'stay_type': listing.stay_type,
+            'stay_type_display': listing.get_stay_type_display(),
+            'price_per_day': float(listing.price_per_day) if listing.price_per_day is not None else None,
+            'price_per_month': float(listing.price_per_month) if listing.price_per_month is not None else None,
+            'wifi': listing.wifi,
+            'ac': listing.ac,
+            'attached_bathroom': listing.attached_bathroom,
+            'food_included': listing.food_included,
+            'parking': listing.parking,
+            'amenities': {
+                'wifi': listing.wifi,
+                'ac': listing.ac,
+                'attached_bathroom': listing.attached_bathroom,
+                'food_included': listing.food_included,
+                'parking': listing.parking,
+            },
+            'is_available': listing.is_available,
+            'is_verified': listing.is_verified,
+            'latitude': listing.latitude,
+            'longitude': listing.longitude,
+            'views_count': listing.views_count,
+            'average_rating': listing.average_rating(),
+            'created_at': listing.created_at.isoformat() if listing.created_at else None,
+            'images': images,
+            'owner': {
+                'id': listing.owner.id,
+                'username': listing.owner.username,
+                'full_name': listing.owner.full_name,
+                'first_name': listing.owner.first_name,
+                'last_name': listing.owner.last_name,
+                'phone': listing.owner.phone,
+                'gender': listing.owner.gender,
+                'bio': listing.owner.bio,
+                'is_verified': listing.owner.is_verified,
+            },
+        }
+        return JsonResponse(data)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@csrf_exempt
+def api_phone_login(request):
+    """
+    POST endpoint accepting {phone} in JSON body.
+    Generate 6-digit OTP, store in session, return {success: true, message: 'OTP sent'}.
+    Reuse the existing OTP logic pattern from phone_login_request view.
+    """
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Method not allowed. Use POST.'}, status=405)
+
+    try:
+        data = {}
+        if request.body:
+            try:
+                data = json.loads(request.body.decode('utf-8'))
+            except (json.JSONDecodeError, UnicodeDecodeError):
+                data = {}
+
+        phone = data.get('phone') or request.POST.get('phone', '')
+        if not phone:
+            return JsonResponse({'success': False, 'error': 'Phone number is required.'}, status=400)
+
+        import re
+        digits = re.sub(r'\D', '', str(phone).strip())
+        if len(digits) >= 10:
+            digits = digits[-10:]
+
+        if len(digits) != 10:
+            return JsonResponse({'success': False, 'error': 'Please enter a valid 10-digit mobile number.'}, status=400)
+
+        # Rate limiting
+        from django.core.cache import cache
+        rate_key = f'phone_login_rate_{digits}'
+        if cache.get(rate_key):
+            return JsonResponse({'success': False, 'error': 'Please wait 60 seconds before requesting another OTP.'}, status=429)
+
+        # Generate OTP
+        code = f'{random.randint(0, 999999):06d}'
+
+        # Store in session for verification
+        request.session['phone_login_number'] = digits
+        request.session['phone_login_code'] = code
+        if not request.session.session_key:
+            request.session.save()
+
+        cache.set(rate_key, 1, timeout=60)
+
+        # Send OTP via SMS
+        from django.conf import settings as dj_settings
+        dev_mode = getattr(dj_settings, 'OTP_DEV_MODE', True)
+
+        sms_ok, sms_err = _send_sms_otp(digits, code)
+
+        res = {
+            'success': True,
+            'message': 'OTP sent',
+        }
+        if dev_mode:
+            res['dev_code'] = code
+
+        return JsonResponse(res)
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+
+@csrf_exempt
+def api_phone_verify(request):
+    """
+    POST endpoint accepting {phone, code} in JSON body.
+    Verify OTP, create/find user, return {success: true, token: session_key, user: {id, username, phone, role}}.
+    """
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Method not allowed. Use POST.'}, status=405)
+
+    try:
+        data = {}
+        if request.body:
+            try:
+                data = json.loads(request.body.decode('utf-8'))
+            except (json.JSONDecodeError, UnicodeDecodeError):
+                data = {}
+
+        phone = data.get('phone') or request.POST.get('phone', '')
+        entered_code = data.get('code') or request.POST.get('code', '')
+
+        if not phone or not entered_code:
+            return JsonResponse({'success': False, 'error': 'Both phone and code are required.'}, status=400)
+
+        import re
+        digits = re.sub(r'\D', '', str(phone).strip())
+        if len(digits) >= 10:
+            digits = digits[-10:]
+
+        entered_code = str(entered_code).strip()
+
+        stored_phone = request.session.get('phone_login_number')
+        stored_code = request.session.get('phone_login_code')
+
+        if not stored_phone or not stored_code:
+            return JsonResponse({'success': False, 'error': 'Session expired or OTP not requested. Please request a new OTP.'}, status=400)
+
+        if stored_phone != digits:
+            return JsonResponse({'success': False, 'error': 'Phone number does not match OTP request.'}, status=400)
+
+        if entered_code != stored_code:
+            from django.core.cache import cache
+            key = f'phone_login_attempts_{digits}'
+            attempts = cache.get(key, 0) + 1
+            cache.set(key, attempts, timeout=600)
+            if attempts >= 5:
+                cache.delete(key)
+                request.session.pop('phone_login_number', None)
+                request.session.pop('phone_login_code', None)
+                return JsonResponse({'success': False, 'error': 'Too many wrong attempts. Please request a new OTP.'}, status=400)
+            return JsonResponse({'success': False, 'error': f'Incorrect code. {5 - attempts} attempt(s) left.'}, status=400)
+
+        # OTP is correct — find or create user
+        user = User.objects.filter(phone=digits).first()
+        if not user:
+            import uuid
+            short_id = uuid.uuid4().hex[:8]
+            user = User.objects.create_user(
+                username=f'user_{short_id}',
+                password=None,
+                phone=digits,
+                phone_verified=True,
+                role='guest',
+            )
+            user.set_unusable_password()
+            user.save()
+        else:
+            user.phone_verified = True
+            user.save()
+
+        login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+        request.session.save()
+
+        # Clean up session OTP keys
+        request.session.pop('phone_login_number', None)
+        request.session.pop('phone_login_code', None)
+        from django.core.cache import cache
+        cache.delete(f'phone_login_attempts_{digits}')
+
+        return JsonResponse({
+            'success': True,
+            'token': request.session.session_key,
+            'user': {
+                'id': user.id,
+                'username': user.username,
+                'phone': user.phone,
+                'role': user.role,
+            }
+        })
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
+
+@csrf_exempt
+def api_create_booking(request):
+    """
+    POST endpoint (login required via session) accepting {listing_id, check_in, check_out}.
+    Create a Booking with status='requested'. Return {success: true, booking_id}.
+    """
+    if request.method != 'POST':
+        return JsonResponse({'success': False, 'error': 'Method not allowed. Use POST.'}, status=405)
+
+    try:
+        user = request.user
+        if not user.is_authenticated:
+            session_key = (
+                request.headers.get('x-session-id')
+                or request.headers.get('session-key')
+            )
+            auth_header = request.headers.get('authorization', '')
+            if not session_key and auth_header:
+                if auth_header.startswith('Bearer ') or auth_header.startswith('Session '):
+                    session_key = auth_header.split(' ', 1)[1].strip()
+                elif ' ' not in auth_header:
+                    session_key = auth_header.strip()
+
+            if session_key:
+                from django.contrib.sessions.models import Session
+                try:
+                    session = Session.objects.get(session_key=session_key)
+                    session_data = session.get_decoded()
+                    user_id = session_data.get('_auth_user_id')
+                    if user_id:
+                        user = User.objects.filter(pk=user_id).first()
+                except Session.DoesNotExist:
+                    pass
+
+        if not user or not user.is_authenticated:
+            return JsonResponse({'success': False, 'error': 'Authentication required. Please log in.'}, status=401)
+
+        data = {}
+        if request.body:
+            try:
+                data = json.loads(request.body.decode('utf-8'))
+            except (json.JSONDecodeError, UnicodeDecodeError):
+                data = {}
+
+        listing_id = data.get('listing_id') or request.POST.get('listing_id')
+        check_in_str = data.get('check_in') or request.POST.get('check_in')
+        check_out_str = data.get('check_out') or request.POST.get('check_out')
+        message = data.get('message') or request.POST.get('message', '')
+
+        if not listing_id or not check_in_str or not check_out_str:
+            return JsonResponse({'success': False, 'error': 'listing_id, check_in, and check_out are required.'}, status=400)
+
+        try:
+            listing = Listing.objects.get(pk=listing_id)
+        except Listing.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Listing not found.'}, status=404)
+
+        if not listing.is_available:
+            return JsonResponse({'success': False, 'error': 'Sorry, this room is currently not available for booking.'}, status=400)
+
+        if user == listing.owner:
+            return JsonResponse({'success': False, 'error': 'You cannot book your own room.'}, status=400)
+
+        from datetime import datetime
+        try:
+            if isinstance(check_in_str, str):
+                check_in = datetime.strptime(check_in_str.strip(), '%Y-%m-%d').date()
+            else:
+                check_in = check_in_str
+            if isinstance(check_out_str, str):
+                check_out = datetime.strptime(check_out_str.strip(), '%Y-%m-%d').date()
+            else:
+                check_out = check_out_str
+        except (ValueError, TypeError):
+            return JsonResponse({'success': False, 'error': 'Invalid date format. Please use YYYY-MM-DD.'}, status=400)
+
+        today = date.today()
+        if check_in < today:
+            return JsonResponse({'success': False, 'error': 'Check-in date cannot be in the past.'}, status=400)
+
+        if check_out <= check_in:
+            return JsonResponse({'success': False, 'error': 'Check-out must be after check-in.'}, status=400)
+
+        overlap = Booking.objects.filter(
+            listing=listing,
+            status__in=['requested', 'approved'],
+            check_in__lt=check_out,
+            check_out__gt=check_in,
+        ).exists()
+        if overlap:
+            return JsonResponse({'success': False, 'error': 'Those dates overlap with an existing booking for this room. Please choose different dates.'}, status=400)
+
+        booking = Booking.objects.create(
+            listing=listing,
+            guest=user,
+            check_in=check_in,
+            check_out=check_out,
+            message=message or '',
+            status='requested',
+        )
+
+        notify(
+            listing.owner,
+            f'New booking request for "{listing.title}" from {user.username}.',
+            f'/booking/{booking.pk}/'
+        )
+
+        return JsonResponse({
+            'success': True,
+            'booking_id': booking.id,
+        })
+    except Exception as e:
+        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+
