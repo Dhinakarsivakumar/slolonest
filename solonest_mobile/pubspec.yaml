@@ -1,5 +1,5 @@
 name: solonest_mobile
-description: SoloNest - Rooms, PGs & Homestays Native Android App
+description: SoloNest - Rooms, PGs & Homestays Android App
 
 publish_to: 'none'
 
@@ -12,10 +12,8 @@ dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^1.0.6
-  http: ^1.2.0
-  shared_preferences: ^2.2.2
-  cached_network_image: ^3.3.1
-  google_fonts: ^6.2.1
+  webview_flutter: ^4.10.0
+  connectivity_plus: ^6.1.0
 
 dev_dependencies:
   flutter_test:
