@@ -40,6 +40,7 @@ class _SoloNestWebViewState extends State<SoloNestWebView> {
   late final WebViewController _controller;
   bool _isLoading = true;
   bool _hasError = false;
+  String _errorMessage = 'Please check your connection and try again.';
   double _loadingProgress = 0;
 
   static const String _siteUrl = 'https://slolonest.onrender.com';
@@ -72,24 +73,27 @@ class _SoloNestWebViewState extends State<SoloNestWebView> {
               _isLoading = false;
             });
           },
-          onWebResourceError: (WebResourceError error) {
+          onWebResourceError: (WebResourceError error) async {
+            // Check real network hardware status before declaring offline error
+            final connectivityResults = await Connectivity().checkConnectivity();
+            final isOffline = connectivityResults.contains(ConnectivityResult.none);
+
             if (error.isForMainFrame == true) {
-              setState(() {
-                _hasError = true;
-                _isLoading = false;
-              });
+              if (isOffline) {
+                setState(() {
+                  _hasError = true;
+                  _isLoading = false;
+                  _errorMessage = 'No network connection on your phone. Turn on Wi-Fi or Mobile Data.';
+                });
+              } else {
+                // Device IS connected to internet, server is just waking up or loading
+                setState(() {
+                  _isLoading = true; // Keep loading spinner, don't show fake offline error
+                });
+              }
             }
           },
           onNavigationRequest: (NavigationRequest request) {
-            // Allow all navigation within the site
-            if (request.url.startsWith(_siteUrl) ||
-                request.url.startsWith('https://accounts.google.com') ||
-                request.url.startsWith('https://www.google.com/maps') ||
-                request.url.contains('google') ||
-                request.url.startsWith('tel:') ||
-                request.url.startsWith('mailto:')) {
-              return NavigationDecision.navigate;
-            }
             return NavigationDecision.navigate;
           },
         ),
@@ -106,7 +110,15 @@ class _SoloNestWebViewState extends State<SoloNestWebView> {
     return true;
   }
 
-  void _retryLoading() {
+  void _retryLoading() async {
+    final connectivityResults = await Connectivity().checkConnectivity();
+    if (connectivityResults.contains(ConnectivityResult.none)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Still offline. Please enable Wi-Fi or Mobile Data.')),
+      );
+      return;
+    }
+
     setState(() {
       _hasError = false;
       _isLoading = true;
@@ -123,11 +135,11 @@ class _SoloNestWebViewState extends State<SoloNestWebView> {
         body: SafeArea(
           child: Stack(
             children: [
-              // WebView
+              // Main WebView Content
               if (!_hasError)
                 WebViewWidget(controller: _controller),
 
-              // Loading indicator
+              // Smooth Loading & Server Awakening Overlay
               if (_isLoading && !_hasError)
                 Container(
                   color: const Color(0xFF0F1B2D),
@@ -135,23 +147,31 @@ class _SoloNestWebViewState extends State<SoloNestWebView> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(
-                          Icons.home_work_rounded,
-                          color: Color(0xFFF59E0B),
-                          size: 48,
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF1A2942),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Icon(
+                            Icons.home_work_rounded,
+                            color: Color(0xFFF59E0B),
+                            size: 48,
+                          ),
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 20),
                         const Text(
                           'SoloNest',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize: 24,
+                            fontSize: 26,
                             fontWeight: FontWeight.bold,
+                            letterSpacing: 0.5,
                           ),
                         ),
                         const SizedBox(height: 8),
                         const Text(
-                          'Loading...',
+                          'Connecting to SoloNest server...',
                           style: TextStyle(
                             color: Color(0xFF94A3B8),
                             fontSize: 14,
@@ -159,11 +179,11 @@ class _SoloNestWebViewState extends State<SoloNestWebView> {
                         ),
                         const SizedBox(height: 24),
                         SizedBox(
-                          width: 200,
+                          width: 220,
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(8),
                             child: LinearProgressIndicator(
-                              value: _loadingProgress,
+                              value: _loadingProgress > 0 ? _loadingProgress : null,
                               backgroundColor: const Color(0xFF1A2942),
                               valueColor: const AlwaysStoppedAnimation<Color>(
                                 Color(0xFF4F46E5),
@@ -177,7 +197,7 @@ class _SoloNestWebViewState extends State<SoloNestWebView> {
                   ),
                 ),
 
-              // Error screen
+              // Real Hardware Offline Screen
               if (_hasError)
                 Container(
                   color: const Color(0xFF0F1B2D),
@@ -189,7 +209,7 @@ class _SoloNestWebViewState extends State<SoloNestWebView> {
                         children: [
                           const Icon(
                             Icons.wifi_off_rounded,
-                            color: Color(0xFF94A3B8),
+                            color: Color(0xFFEF4444),
                             size: 64,
                           ),
                           const SizedBox(height: 20),
@@ -202,10 +222,10 @@ class _SoloNestWebViewState extends State<SoloNestWebView> {
                             ),
                           ),
                           const SizedBox(height: 8),
-                          const Text(
-                            'Please check your connection and try again.',
+                          Text(
+                            _errorMessage,
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: const TextStyle(
                               color: Color(0xFF94A3B8),
                               fontSize: 14,
                             ),
@@ -214,7 +234,7 @@ class _SoloNestWebViewState extends State<SoloNestWebView> {
                           ElevatedButton.icon(
                             onPressed: _retryLoading,
                             icon: const Icon(Icons.refresh),
-                            label: const Text('Retry'),
+                            label: const Text('Try Again'),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF4F46E5),
                               foregroundColor: Colors.white,
@@ -233,14 +253,14 @@ class _SoloNestWebViewState extends State<SoloNestWebView> {
                   ),
                 ),
 
-              // Top loading bar
+              // Top loading bar during navigation
               if (_isLoading && !_hasError)
                 Positioned(
                   top: 0,
                   left: 0,
                   right: 0,
                   child: LinearProgressIndicator(
-                    value: _loadingProgress,
+                    value: _loadingProgress > 0 ? _loadingProgress : null,
                     backgroundColor: Colors.transparent,
                     valueColor: const AlwaysStoppedAnimation<Color>(
                       Color(0xFFF59E0B),
