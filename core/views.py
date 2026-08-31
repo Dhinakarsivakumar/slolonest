@@ -53,6 +53,23 @@ def test_oauth(request):
         })
 
 
+def google_login_wrapper(request):
+    """Intercept Google Login to check for GOOGLE_CLIENT_ID before redirecting to Google."""
+    client_id = os.environ.get('GOOGLE_CLIENT_ID', '').strip()
+    if not client_id:
+        from django.contrib import messages
+        messages.error(
+            request,
+            "Google Login key is not set yet. Please add GOOGLE_CLIENT_ID in your Render environment variables, or use Phone OTP / Username login below."
+        )
+        return redirect('login')
+    try:
+        from allauth.socialaccount.providers.google.views import oauth2_login
+        return oauth2_login(request)
+    except Exception:
+        return redirect('/accounts/google/login/internal/')
+
+
 
 # ─────────────────────────────────────────────────────────────
 # HOME / SEARCH
