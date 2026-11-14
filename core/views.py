@@ -55,7 +55,9 @@ def test_oauth(request):
 
 def google_login_wrapper(request):
     """Intercept Google Login to check for GOOGLE_CLIENT_ID before redirecting to Google."""
-    client_id = os.environ.get('GOOGLE_CLIENT_ID', '').strip()
+    from django.conf import settings
+    provider_app = settings.SOCIALACCOUNT_PROVIDERS.get('google', {}).get('APP', {})
+    client_id = (os.environ.get('GOOGLE_CLIENT_ID', '') or provider_app.get('client_id', '')).strip()
     if not client_id:
         from django.contrib import messages
         messages.error(
@@ -67,7 +69,7 @@ def google_login_wrapper(request):
         from allauth.socialaccount.providers.google.views import oauth2_login
         return oauth2_login(request)
     except Exception:
-        return redirect('/accounts/google/login/internal/')
+        return redirect('/accounts/google/login/')
 
 
 

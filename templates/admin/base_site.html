@@ -1,0 +1,238 @@
+{% extends "admin/base.html" %}
+{% load static %}
+
+{% block title %}{{ title }} | {{ site_title|default:"SoloNest Admin" }}{% endblock %}
+
+{% block branding %}
+<div id="site-name">
+  <a href="{% url 'admin:index' %}" style="display:inline-flex;align-items:center;gap:12px;text-decoration:none;color:#ffffff;">
+    <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#6366F1,#4F46E5);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(99,102,241,0.4);">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#ffffff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        <polyline points="9 22 9 12 15 12 15 22"/>
+      </svg>
+    </div>
+    <div>
+      <span style="font-family:'Inter',system-ui,-apple-system,sans-serif;font-weight:800;font-size:1.15rem;letter-spacing:-0.02em;color:#FFFFFF;display:block;line-height:1.2;">SoloNest</span>
+      <span style="font-size:0.68rem;font-weight:600;color:#A5B4FC;letter-spacing:0.08em;text-transform:uppercase;">Admin Control Center</span>
+    </div>
+  </a>
+</div>
+{% endblock %}
+
+{% block userlinks %}
+<div style="display:inline-flex;align-items:center;gap:12px;">
+  <a href="/" target="_blank" style="background:rgba(255,255,255,0.12);color:#FFFFFF;padding:5px 12px;border-radius:6px;font-size:0.75rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:6px;transition:background 0.2s;">
+    <span>🌐 View Live Site</span>
+  </a>
+  <a href="/support/portal/" target="_blank" style="background:rgba(99,102,241,0.25);border:1px solid rgba(165,180,252,0.4);color:#E0E7FF;padding:5px 12px;border-radius:6px;font-size:0.75rem;font-weight:600;text-decoration:none;display:inline-flex;align-items:center;gap:6px;">
+    <span>🎧 Support Tickets</span>
+  </a>
+  {{ block.super }}
+</div>
+{% endblock %}
+
+{% block extrahead %}
+{{ block.super }}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #4F46E5;
+    --primary-hover: #4338CA;
+    --primary-light: #EEF2FF;
+    --primary-dark: #3730A3;
+    --secondary: #10B981;
+    --dark-bg: #0F172A;
+    --header-bg: #1E1B4B;
+    --accent: #6366F1;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif !important;
+    background: #F8FAFC !important;
+    color: #1E293B !important;
+  }
+
+  /* Header & Navigation */
+  #header {
+    background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 60%, #312E81 100%) !important;
+    padding: 14px 24px !important;
+    border-bottom: 1px solid rgba(255,255,255,0.08) !important;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
+  }
+
+  #branding h1 {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  div.breadcrumbs {
+    background: #FFFFFF !important;
+    color: #64748B !important;
+    padding: 12px 24px !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+    font-size: 0.82rem !important;
+    font-weight: 500 !important;
+  }
+  div.breadcrumbs a {
+    color: var(--primary) !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+  }
+
+  /* Content Container */
+  #content {
+    padding: 24px !important;
+    max-width: 1440px !important;
+    margin: 0 auto !important;
+  }
+
+  /* Module / App Containers */
+  .module {
+    background: #FFFFFF !important;
+    border-radius: 12px !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 10px 15px -5px rgba(0,0,0,0.02) !important;
+    margin-bottom: 24px !important;
+    overflow: hidden !important;
+  }
+
+  .module h2, .module caption {
+    background: #F8FAFC !important;
+    color: #0F172A !important;
+    font-weight: 700 !important;
+    font-size: 0.95rem !important;
+    letter-spacing: -0.01em !important;
+    padding: 14px 18px !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+  }
+
+  /* Tables */
+  table {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+    width: 100% !important;
+  }
+
+  table thead th {
+    background: #F8FAFC !important;
+    color: #475569 !important;
+    font-weight: 700 !important;
+    font-size: 0.75rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    padding: 12px 16px !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+  }
+
+  table tbody td, table tbody th {
+    padding: 12px 16px !important;
+    font-size: 0.88rem !important;
+    border-bottom: 1px solid #F1F5F9 !important;
+    vertical-align: middle !important;
+  }
+
+  table tbody tr:hover td, table tbody tr:hover th {
+    background: #F8FAFC !important;
+  }
+
+  /* Action Buttons & Links */
+  .button, input[type=submit], input[type=button], .submit-row input, a.button {
+    background: linear-gradient(135deg, #4F46E5, #4338CA) !important;
+    color: #FFFFFF !important;
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 10px 18px !important;
+    font-size: 0.86rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    box-shadow: 0 2px 4px rgba(79,70,229,0.2) !important;
+    text-decoration: none !important;
+    display: inline-block !important;
+  }
+
+  .button:hover, input[type=submit]:hover, input[type=button]:hover, .submit-row input:hover {
+    background: linear-gradient(135deg, #4338CA, #3730A3) !important;
+    box-shadow: 0 4px 12px rgba(79,70,229,0.35) !important;
+    transform: translateY(-1px) !important;
+  }
+
+  .button.default, input[type=submit].default {
+    background: linear-gradient(135deg, #10B981, #059669) !important;
+    box-shadow: 0 2px 4px rgba(16,185,129,0.25) !important;
+  }
+  .button.default:hover, input[type=submit].default:hover {
+    background: linear-gradient(135deg, #059669, #047857) !important;
+    box-shadow: 0 4px 12px rgba(16,185,129,0.35) !important;
+  }
+
+  /* Form inputs */
+  input[type=text], input[type=password], input[type=email], input[type=url], 
+  input[type=number], input[type=tel], textarea, select {
+    border: 1px solid #CBD5E1 !important;
+    border-radius: 8px !important;
+    padding: 9px 12px !important;
+    font-family: inherit !important;
+    font-size: 0.88rem !important;
+    color: #1E293B !important;
+    background: #FFFFFF !important;
+    outline: none !important;
+    transition: border-color 0.15s, box-shadow 0.15s !important;
+  }
+
+  input[type=text]:focus, input[type=password]:focus, input[type=email]:focus, 
+  textarea:focus, select:focus {
+    border-color: #6366F1 !important;
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.15) !important;
+  }
+
+  /* Changelist Filter Sidebar */
+  #changelist-filter {
+    background: #FFFFFF !important;
+    border-radius: 12px !important;
+    border: 1px solid #E2E8F0 !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+    margin-left: 20px !important;
+  }
+
+  #changelist-filter h2 {
+    background: #F8FAFC !important;
+    color: #0F172A !important;
+    font-weight: 700 !important;
+    font-size: 0.88rem !important;
+    border-bottom: 1px solid #E2E8F0 !important;
+    border-radius: 12px 12px 0 0 !important;
+    padding: 12px 16px !important;
+  }
+
+  #changelist-filter h3 {
+    font-weight: 700 !important;
+    font-size: 0.78rem !important;
+    color: #64748B !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.04em !important;
+    padding: 10px 16px 4px !important;
+  }
+
+  #changelist-filter ul {
+    padding: 0 16px 12px !important;
+  }
+
+  #changelist-filter li.selected a {
+    color: var(--primary) !important;
+    font-weight: 700 !important;
+  }
+
+  /* Search bar */
+  #toolbar {
+    background: #FFFFFF !important;
+    border: 1px solid #E2E8F0 !important;
+    border-radius: 10px !important;
+    padding: 10px 14px !important;
+    margin-bottom: 16px !important;
+  }
+</style>
+{% endblock %}

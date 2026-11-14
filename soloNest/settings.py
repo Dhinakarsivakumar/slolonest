@@ -7,6 +7,20 @@ import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+# Load local .env if present
+env_path = BASE_DIR / '.env'
+if env_path.exists():
+    try:
+        with open(env_path, 'r', encoding='utf-8') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    k, v = line.split('=', 1)
+                    os.environ.setdefault(k.strip(), v.strip())
+    except Exception:
+        pass
+
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -75,6 +89,8 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'core.context_processors.unread_notifications',
+                'core.context_processors.google_maps',
+                'core.context_processors.admin_stats',
             ],
         },
     },
@@ -157,6 +173,10 @@ SOCIALACCOUNT_PROVIDERS = {
         }
     }
 }
+
+# ---- Google Maps API ----
+GOOGLE_MAPS_API_KEY = os.environ.get('GOOGLE_MAPS_API_KEY', '')
+
 
 
 # ---- Email (env-based). Defaults to console for dev.

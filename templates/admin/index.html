@@ -1,0 +1,101 @@
+{% extends "admin/index.html" %}
+{% load i18n static %}
+
+{% block content %}
+<div class="admin-dashboard-header" style="margin-bottom:28px;">
+  <div style="background:linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #4338CA 100%);padding:24px 28px;border-radius:16px;color:#FFFFFF;box-shadow:0 10px 25px -5px rgba(79,70,229,0.3);position:relative;overflow:hidden;">
+    <div style="position:absolute;right:-20px;bottom:-20px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,0.06);pointer-events:none;"></div>
+    <div style="position:relative;z-index:2;">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+        <div>
+          <span style="background:rgba(255,255,255,0.15);padding:4px 10px;border-radius:20px;font-size:0.75rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;">SoloNest Executive Hub</span>
+          <h1 style="font-size:1.6rem;font-weight:800;margin:8px 0 4px;color:#FFFFFF;letter-spacing:-0.02em;">Platform Overview & Analytics</h1>
+          <p style="color:#C7D2FE;font-size:0.88rem;margin:0;">Manage users, verify host documents, monitor live room bookings, and moderate content.</p>
+        </div>
+        <div style="display:flex;gap:10px;">
+          <a href="/admin/core/user/?verification_status__exact=pending" class="button" style="background:#F59E0B !important;color:#FFFFFF !important;box-shadow:0 4px 12px rgba(245,158,11,0.35) !important;">
+            {% if admin_kpi.pending_verifications %}{{ admin_kpi.pending_verifications }} Pending ID Proofs{% else %}Review IDs{% endif %}
+          </a>
+          <a href="/admin/core/listing/add/" class="button default">
+            + Post New Room
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- KPI Metric Cards Grid -->
+  {% if admin_kpi %}
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:20px;">
+    <!-- Metric 1: Users -->
+    <div style="background:#FFFFFF;border:1px solid #E2E8F0;border-radius:12px;padding:18px 20px;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:0.75rem;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:0.04em;">Registered Users</span>
+        <div style="width:32px;height:32px;border-radius:8px;background:#EEF2FF;display:flex;align-items:center;justify-content:center;color:#4F46E5;">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+      </div>
+      <div style="font-size:1.65rem;font-weight:800;color:#0F172A;line-height:1.2;">{{ admin_kpi.total_users }}</div>
+      <div style="font-size:0.75rem;color:#64748B;margin-top:4px;"><a href="/admin/core/user/" style="color:#4F46E5;font-weight:600;text-decoration:none;">View all accounts →</a></div>
+    </div>
+
+    <!-- Metric 2: Listings -->
+    <div style="background:#FFFFFF;border:1px solid #E2E8F0;border-radius:12px;padding:18px 20px;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:0.75rem;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:0.04em;">Active Listings</span>
+        <div style="width:32px;height:32px;border-radius:8px;background:#F0FDF4;display:flex;align-items:center;justify-content:center;color:#16A34A;">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+      </div>
+      <div style="font-size:1.65rem;font-weight:800;color:#0F172A;line-height:1.2;">{{ admin_kpi.active_listings }} <span style="font-size:0.85rem;font-weight:500;color:#64748B;">/ {{ admin_kpi.total_listings }} total</span></div>
+      <div style="font-size:0.75rem;color:#64748B;margin-top:4px;"><a href="/admin/core/listing/" style="color:#16A34A;font-weight:600;text-decoration:none;">Manage rooms →</a></div>
+    </div>
+
+    <!-- Metric 3: Bookings -->
+    <div style="background:#FFFFFF;border:1px solid #E2E8F0;border-radius:12px;padding:18px 20px;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:0.75rem;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:0.04em;">Bookings</span>
+        <div style="width:32px;height:32px;border-radius:8px;background:#FEF3C7;display:flex;align-items:center;justify-content:center;color:#D97706;">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        </div>
+      </div>
+      <div style="font-size:1.65rem;font-weight:800;color:#0F172A;line-height:1.2;">{{ admin_kpi.total_bookings }} <span style="font-size:0.85rem;font-weight:500;color:#16A34A;">({{ admin_kpi.confirmed_bookings }} confirmed)</span></div>
+      <div style="font-size:0.75rem;color:#64748B;margin-top:4px;"><a href="/admin/core/booking/" style="color:#D97706;font-weight:600;text-decoration:none;">Review bookings →</a></div>
+    </div>
+
+    <!-- Metric 4: Pending ID Verifications -->
+    <div style="background:#FFFFFF;border:1px solid {% if admin_kpi.pending_verifications %}#FDE68A{% else %}#E2E8F0{% endif %};border-radius:12px;padding:18px 20px;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:0.75rem;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:0.04em;">Pending ID Checks</span>
+        <div style="width:32px;height:32px;border-radius:8px;background:{% if admin_kpi.pending_verifications %}#FEF2F2{% else %}#F1F5F9{% endif %};display:flex;align-items:center;justify-content:center;color:{% if admin_kpi.pending_verifications %}#EF4444{% else %}#64748B{% endif %};">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+      </div>
+      <div style="font-size:1.65rem;font-weight:800;color:{% if admin_kpi.pending_verifications %}#DC2626{% else %}#0F172A{% endif %};line-height:1.2;">{{ admin_kpi.pending_verifications }}</div>
+      <div style="font-size:0.75rem;color:#64748B;margin-top:4px;">
+        {% if admin_kpi.pending_verifications %}
+          <a href="/admin/core/user/?verification_status__exact=pending" style="color:#DC2626;font-weight:700;text-decoration:none;">Action required: Review now →</a>
+        {% else %}
+          <span style="color:#16A34A;font-weight:600;">All documents verified ✓</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Metric 5: Revenue -->
+    <div style="background:#FFFFFF;border:1px solid #E2E8F0;border-radius:12px;padding:18px 20px;box-shadow:0 1px 3px rgba(0,0,0,0.04);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <span style="font-size:0.75rem;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:0.04em;">Platform Revenue</span>
+        <div style="width:32px;height:32px;border-radius:8px;background:#F0FDF4;display:flex;align-items:center;justify-content:center;color:#16A34A;">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+      </div>
+      <div style="font-size:1.65rem;font-weight:800;color:#16A34A;line-height:1.2;">₹{{ admin_kpi.total_revenue }}</div>
+      <div style="font-size:0.75rem;color:#64748B;margin-top:4px;"><a href="/admin/core/payment/" style="color:#16A34A;font-weight:600;text-decoration:none;">Transaction history →</a></div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<!-- Django Default App & Model Tables (styled cleanly) -->
+{{ block.super }}
+{% endblock %}

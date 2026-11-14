@@ -88,8 +88,31 @@
           </p>
         </div>
 
-        {% if listing.latitude and listing.longitude %}
-        <!-- Embedded Map -->
+        {% if GOOGLE_MAPS_API_KEY %}
+          {% if listing.latitude and listing.longitude %}
+          <!-- Official Google Maps Embed -->
+          <div id="mapContainer" style="border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:12px;">
+            <iframe
+              id="googleMapFrame"
+              width="100%" height="300" frameborder="0" style="border:0;display:block;"
+              loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"
+              src="https://www.google.com/maps/embed/v1/place?key={{ GOOGLE_MAPS_API_KEY }}&q={{ listing.latitude }},{{ listing.longitude }}&zoom=16"
+              title="Google Maps room location">
+            </iframe>
+          </div>
+          {% elif listing.address or listing.city %}
+          <div id="mapContainer" style="border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:12px;">
+            <iframe
+              id="googleMapFrame"
+              width="100%" height="300" frameborder="0" style="border:0;display:block;"
+              loading="lazy" allowfullscreen referrerpolicy="no-referrer-when-downgrade"
+              src="https://www.google.com/maps/embed/v1/place?key={{ GOOGLE_MAPS_API_KEY }}&q={{ listing.address|urlencode }}+{{ listing.area|urlencode }}+{{ listing.city|urlencode }}&zoom=15"
+              title="Google Maps room location">
+            </iframe>
+          </div>
+          {% endif %}
+        {% elif listing.latitude and listing.longitude %}
+        <!-- OpenStreetMap Fallback -->
         <div id="mapContainer" style="border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);margin-bottom:12px;">
           <iframe
             id="mapFrame"
@@ -108,6 +131,9 @@
               'https://www.openstreetmap.org/export/embed.html?bbox='+bbox+'&layer=mapnik&marker='+lat+','+lng;
           })();
         </script>
+        {% endif %}
+
+        {% if listing.latitude and listing.longitude %}
 
         <!-- Map Action Buttons -->
         <div style="display:flex;gap:10px;flex-wrap:wrap;">

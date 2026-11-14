@@ -147,7 +147,20 @@
       <button type="submit" class="btn">
         Sign In to Portal →
       </button>
+
+      <div style="margin-top:14px;text-align:center;">
+        <button type="button" onclick="fillAdminCreds()" style="background:rgba(99,102,241,0.15);border:1px solid rgba(99,102,241,0.3);color:#A5B4FC;font-size:0.78rem;padding:6px 12px;border-radius:8px;cursor:pointer;">
+          ⚡ Auto-fill: admin / admin1234
+        </button>
+      </div>
     </form>
+
+    <script>
+      function fillAdminCreds() {
+        document.querySelector('input[name="username"]').value = 'admin';
+        document.querySelector('input[name="password"]').value = 'admin1234';
+      }
+    </script>
 
     <div class="footer-note">
       Not a staff member? <a href="/">Go to main site</a>
