@@ -30,6 +30,12 @@ services:
         value: "False"
       - key: CSRF_TRUSTED_ORIGINS
         value: "https://slolonest.onrender.com"
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_MAPS_API_KEY
+        sync: false
 
 databases:
   - name: slolonest-db

@@ -31,31 +31,12 @@ except Site.DoesNotExist:
     site = Site.objects.create(id=1, domain='slolonest.onrender.com', name='SoloNest')
     print(' Site created successfully')
 
-# 3. Google OAuth Setup (loaded via env vars)
-client_id = os.environ.get('GOOGLE_CLIENT_ID')
-client_secret = os.environ.get('GOOGLE_CLIENT_SECRET')
-
-if client_id and client_secret:
-    app, created = SocialApp.objects.get_or_create(
-        provider='google',
-        name='Google Login',
-        defaults={
-            'client_id': client_id,
-            'secret': client_secret,
-        }
-    )
-
-    if not created:
-        app.client_id = client_id
-        app.secret = client_secret
-        app.save()
-        print(' Google SocialApp updated with latest keys')
-    else:
-        print(' Google SocialApp created successfully')
-
-    # Link SocialApp to current Site
-    if not app.sites.filter(id=site.id).exists():
-        app.sites.add(site)
-        print(' Google SocialApp linked to Site')
-else:
-    print('️ GOOGLE_CLIENT_ID or GOOGLE_CLIENT_SECRET not set in environment variables. Skipping SocialApp configuration.')
+# 3. Google OAuth Setup — use settings.py APP block as the single source of truth.
+#    Remove any stale DB SocialApps to prevent MultipleObjectsReturned errors.
+try:
+    existing_apps = SocialApp.objects.filter(provider='google')
+    if existing_apps.exists():
+        existing_apps.delete()
+        print(' Cleared stale Google SocialApp entries from DB (settings.py APP block is used instead)')
+except Exception as e:
+    print(f'  Could not clear SocialApp entries: {e}')
