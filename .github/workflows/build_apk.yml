@@ -47,6 +47,18 @@ jobs:
         working-directory: solonest_mobile
         run: flutter pub get
 
+      - name: Configure Android permissions and SDK version
+        working-directory: solonest_mobile
+        run: |
+          # Set minSdk to 21 for webview_flutter support
+          find android -name "build.gradle*" -exec sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 21/g' {} +
+          find android -name "build.gradle*" -exec sed -i 's/minSdkVersion = flutter.minSdkVersion/minSdkVersion = 21/g' {} +
+          find android -name "build.gradle*" -exec sed -i 's/minSdk = flutter.minSdkVersion/minSdk = 21/g' {} +
+          find android -name "local.properties" -exec sed -i '$a flutter.minSdkVersion=21' {} + || true
+
+          # Add Internet permissions to AndroidManifest.xml
+          find android -name "AndroidManifest.xml" -exec sed -i '/<manifest/a \    <uses-permission android:name="android.permission.INTERNET"/>\n    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>' {} +
+
       - name: Build Android APK
         working-directory: solonest_mobile
         run: flutter build apk --release --no-tree-shake-icons
