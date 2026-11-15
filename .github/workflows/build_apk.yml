@@ -31,15 +31,17 @@ jobs:
       - name: Create full Flutter project structure
         working-directory: solonest_mobile
         run: |
-          # Save our custom Dart source files
+          # Save our custom Dart source files and pubspec
           cp -r lib lib_backup
+          cp pubspec.yaml pubspec_backup.yaml
 
           # Generate a complete Flutter project (including android/ folder)
           flutter create --org com.solonest --project-name solonest_mobile --platforms android .
 
-          # Restore our custom source files over the generated ones
+          # Restore our custom source files and dependencies over the generated ones
           rm -rf lib
           mv lib_backup lib
+          mv pubspec_backup.yaml pubspec.yaml
 
       - name: Install dependencies
         working-directory: solonest_mobile
