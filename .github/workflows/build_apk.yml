@@ -62,18 +62,12 @@ jobs:
       - name: Build Android APK
         working-directory: solonest_mobile
         run: |
-          flutter build apk --release --no-tree-shake-icons --verbose 2>&1 | tee build.log
-
-      - name: Upload Build Log if Failed
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: flutter-build-failure-log
-          path: solonest_mobile/build.log
+          flutter build apk --release --no-tree-shake-icons
+          find build/ -name "*.apk"
 
       - name: Upload APK Artifact
         if: success()
         uses: actions/upload-artifact@v4
         with:
           name: SoloNest-Android-APK
-          path: solonest_mobile/build/app/outputs/flutter-apk/app-release.apk
+          path: solonest_mobile/build/**/*.apk
