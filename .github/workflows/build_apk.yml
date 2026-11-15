@@ -38,32 +38,41 @@ jobs:
           # Generate a complete Flutter project (including android/ folder)
           flutter create --org com.solonest --project-name solonest_mobile --platforms android .
 
-          # Restore our custom source files and dependencies over the generated ones
+          # Restore our custom source files and dependencies
           rm -rf lib
           mv lib_backup lib
           mv pubspec_backup.yaml pubspec.yaml
+
+          # Add Internet permissions cleanly before </manifest> in AndroidManifest.xml
+          MANIFEST="android/app/src/main/AndroidManifest.xml"
+          if [ -f "$MANIFEST" ]; then
+            sed -i 's|</manifest>|    <uses-permission android:name="android.permission.INTERNET"/>\n    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>\n</manifest>|' "$MANIFEST"
+          fi
+
+          # Ensure minSdk is at least 21
+          echo "flutter.minSdkVersion=21" >> android/local.properties
+          if [ -f "android/app/build.gradle" ]; then
+            sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 21/g' android/app/build.gradle
+          fi
 
       - name: Install dependencies
         working-directory: solonest_mobile
         run: flutter pub get
 
-      - name: Configure Android permissions and SDK version
-        working-directory: solonest_mobile
-        run: |
-          # Set minSdk to 21 for webview_flutter support
-          find android -name "build.gradle*" -exec sed -i 's/minSdkVersion flutter.minSdkVersion/minSdkVersion 21/g' {} +
-          find android -name "build.gradle*" -exec sed -i 's/minSdkVersion = flutter.minSdkVersion/minSdkVersion = 21/g' {} +
-          find android -name "build.gradle*" -exec sed -i 's/minSdk = flutter.minSdkVersion/minSdk = 21/g' {} +
-          find android -name "local.properties" -exec sed -i '$a flutter.minSdkVersion=21' {} + || true
-
-          # Add Internet permissions to AndroidManifest.xml
-          find android -name "AndroidManifest.xml" -exec sed -i '/<manifest/a \    <uses-permission android:name="android.permission.INTERNET"/>\n    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>' {} +
-
       - name: Build Android APK
         working-directory: solonest_mobile
-        run: flutter build apk --release --no-tree-shake-icons
+        run: |
+          flutter build apk --release --no-tree-shake-icons --verbose 2>&1 | tee build.log
+
+      - name: Upload Build Log if Failed
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: flutter-build-failure-log
+          path: solonest_mobile/build.log
 
       - name: Upload APK Artifact
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: SoloNest-Android-APK
