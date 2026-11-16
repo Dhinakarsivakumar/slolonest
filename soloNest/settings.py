@@ -190,7 +190,16 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 
 
 # ---- CSRF Trusted Origins ----
-CSRF_TRUSTED_ORIGINS = ['http://127.0.0.1:8000', 'http://localhost:8000', 'https://*.up.railway.app', 'https://*.railway.app', 'https://*.onrender.com', 'https://*.loca.lt', 'https://*.serveo.net']
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1:8000',
+    'http://localhost:8000',
+    'https://*.run.app',
+    'https://*.onrender.com',
+    'https://*.up.railway.app',
+    'https://*.railway.app',
+    'https://*.loca.lt',
+    'https://*.serveo.net'
+]
 
 
 # ---- Production HTTPS and Security settings ----
